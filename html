@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>لـ رقية ❤️ - حبيبتي</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Arial', 'Tahoma', sans-serif;
+            background: linear-gradient(135deg, #ffb6c1 0%, #ffc0cb 30%, #ff69b4 70%, #dc143c 100%);
+            color: #8b0000;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: manipulation;
+        }
+        
+        /* منع التكبير والتصغير والنسخ */
+        body, html {
+            max-width: 100%;
+            overflow: hidden;
+            overscroll-behavior: none;
+        }
+        
+        .container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            padding: 15px;
+        }
+        
+        .screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 95%;
+            max-width: 450px;
+            padding: 25px 15px;
+            background-color: rgba(255, 182, 193, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(139, 0, 0, 0.3);
+            border: 2px solid #dc143c;
+            animation: fadeIn 0.6s ease-out;
+            position: relative;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+        
+        .screen.active {
+            display: flex;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: #8b0000;
+            text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.7);
+            line-height: 1.3;
+            padding: 0 5px;
+        }
+        
+        .message {
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            color: #b22222;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            font-weight: bold;
+        }
+        
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #dc143c;
+            animation: typing 3s steps(35, end), blink-caret 0.75s step-end infinite;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #dc143c, #ff1493);
+            color: white;
+            border: none;
+            padding: 12px 22px;
+            font-size: 1.2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(220, 20, 60, 0.5);
+            min-width: 110px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:hover, .btn:active {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 18px rgba(220, 20, 60, 0.7);
+        }
+        
+        .btn-no {
+            background: linear-gradient(45deg, #4682b4, #1e90ff);
+        }
+        
+        .heart-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .heart {
+            position: absolute;
+            color: rgba(220, 20, 60, 0.9);
+            animation: float 8s linear infinite;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.7));
+        }
+        
+        .name-heart {
+            position: absolute;
+            color: rgba(139, 0, 0, 0.95);
+            font-weight: bold;
+            animation: floatName 12s linear infinite;
+            z-index: 3;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+            filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
+        }
+        
+        .percentage {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #dc143c;
+            margin-top: 15px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            direction: ltr;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .emojis {
+            font-size: 2rem;
+            margin: 12px 0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #dc143c }
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes floatName {
+            0% {
+                transform: translate(0, 100vh) rotate(0deg) scale(1);
+            }
+            25% {
+                transform: translate(20vw, 50vh) rotate(90deg) scale(1.1);
+            }
+            50% {
+                transform: translate(40vw, 20vh) rotate(180deg) scale(0.9);
+            }
+            75% {
+                transform: translate(60vw, 50vh) rotate(270deg) scale(1.1);
+            }
+            100% {
+                transform: translate(80vw, 100vh) rotate(360deg) scale(1);
+            }
+        }
+        
+        @keyframes countUp {
+            from { transform: translateY(15px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* تصميم متجاوب لجميع الأجهزة */
+        @media (max-width: 768px) {
+            .screen {
+                width: 92%;
+                padding: 20px 12px;
+                max-width: 400px;
+            }
+            
+            h1 {
+                font-size: 1.9rem;
+                margin-bottom: 15px;
+            }
+            
+            .message {
+                font-size: 1.4rem;
+                margin-bottom: 20px;
+            }
+            
+            .btn {
+                padding: 10px 18px;
+                font-size: 1.1rem;
+                min-width: 100px;
+            }
+            
+            .emojis {
+                font-size: 1.8rem;
+            }
+            
+            .percentage {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .screen {
+                width: 90%;
+                padding: 18px 10px;
+                max-width: 350px;
+            }
+            
+            h1 {
+                font-size: 1.7rem;
+            }
+            
+            .message {
+                font-size: 1.3rem;
+            }
+            
+            .btn {
+                padding: 9px 16px;
+                font-size: 1rem;
+                min-width: 90px;
+            }
+            
+            .emojis {
+                font-size: 1.6rem;
+            }
+            
+            .percentage {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .screen {
+                max-width: 500px;
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .message {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .screen {
+                max-width: 550px;
+            }
+        }
+        
+        /* دعم خاص للأيفون */
+        @supports (-webkit-touch-callout: none) {
+            .screen {
+                -webkit-backdrop-filter: blur(5px);
+                backdrop-filter: blur(5px);
+            }
+        }
+        
+        /* دعم خاص للسامسونج */
+        @media screen and (-webkit-min-device-pixel-ratio:0) and (min-resolution:.001dpcm) {
+            .screen {
+                background-color: rgba(255, 182, 193, 0.98);
+            }
+        }
+        
+        /* منع النسخ */
+        .no-copy {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        /* رسالة نهاية */
+        .final-message {
+            font-size: 1.6rem;
+            color: #8b0000;
+            margin-top: 15px;
+            line-height: 1.4;
+            font-weight: bold;
+        }
+        
+        /* تأثير اهتزاز للقلوب */
+        .heartbeat {
+            animation: heartbeat 1.5s ease-in-out infinite both;
+        }
+        
+        @keyframes heartbeat {
+            from {
+                transform: scale(1);
+                transform-origin: center center;
+                animation-timing-function: ease-out;
+            }
+            10% {
+                transform: scale(0.95);
+                animation-timing-function: ease-in;
+            }
+            17% {
+                transform: scale(0.98);
+                animation-timing-function: ease-out;
+            }
+            33% {
+                transform: scale(0.9);
+                animation-timing-function: ease-in;
+            }
+            45% {
+                transform: scale(1);
+                animation-timing-function: ease-out;
+            }
+        }
+        
+        /* تأثير للشاشة 8 (التي تختفي بعد 3 ثواني) */
+        .auto-hide {
+            animation: autoHide 3s ease-in-out forwards;
+        }
+        
+        @keyframes autoHide {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+        
+        /* تأثير اللمس للأزرار */
+        .btn:active {
+            transform: scale(0.97);
+            transition: transform 0.1s;
+        }
+    </style>
+</head>
+<body class="no-copy" oncontextmenu="return false;">
+    <!-- الخلفية المتحركة مع القلوب الحمراء -->
+    <div class="heart-bg" id="heart-bg"></div>
+    
+    <!-- الشاشات الرئيسية -->
+    <div class="container">
+        <!-- الشاشة الأولى -->
+        <div class="screen active" id="screen1">
+            <h1>أنتي رقية ضياء؟؟ ❤️</h1>
+            <div class="emojis"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(2)">اي🙂</button>
+            </div>
+        </div>
+        
+        <!-- الشاشة الثانية -->
+        <div class="screen" id="screen2">
+            <h1>هلوو رقاوي 💕🌚</h1>
+            <div class="emojis"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(3)">هلا بيك 🥲</button>
+            </div>
+        </div>
+        
+        <!-- الشاشة الثالثة -->
+        <div class="screen" id="screen3">
+            <h1>عندي سؤال الجج 🌚</h1>
+            <div class="emojis"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(4)">شنو هو؟ 😒</button>
+            </div>
+        </div>
+        
+        <!-- الشاشة الرابعة -->
+        <div class="screen" id="screen4">
+            <h1>تحبيني؟ 🌚💕</h1>
+            <div class="emojis"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(5)">اي </button>
+                <button class="btn btn-no" onclick="showScreen(10)">لااء 🌚🔪</button>
+            </div>
+        </div>
+        
+        <!-- الشاشة الخامسة -->
+        <div class="screen" id="screen5">
+            <h1 class="typing-effect" id="typing-text"></h1>
+            <div class="emojis heartbeat"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(6)" id="btn5">حبيبي 🥺❤️</button>
+            </div>
+        </div>
+        
+        <!-- الشاشة السادسة -->
+        <div class="screen" id="screen6">
+            <h1>بس أني اكثرر 🥹</h1>
+            <div class="emojis"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(7)">ماا انيي ❤️</button>
+            </div>
+        </div>
+        
+        <!-- الشاشة السابعة -->
+        <div class="screen" id="screen7">
+            <h1>احببببببچ موتتتتتتت 🥹</h1>
+            <div class="emojis"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(8)">وأني هم أحبك 🥹</button>
+            </div>
+        </div>
+        
+        <!-- الشاشة الثامنة -->
+        <div class="screen" id="screen8">
+            <h1>أحبججججججججججج</h1>
+            <div class="message">وإدري انتي اكثر !!😜<br>بس لو تدرين شكد أحبج 🥹💐💐</div>
+            <div class="emojis"></div>
+        </div>
+        
+        <!-- الشاشة التاسعة -->
+        <div class="screen" id="screen9">
+            <h1>إني أحبجججج حبببببب حبببببب<br>حبببببب گد الكون<br>أحبجججج!!!</h1>
+            <div class="emojis">🥹🥹💕💕🫶🏻🫶🏻🫶🏻</div>
+            <div class="final-message">أحبج هلگد</div>
+            <div class="percentage" id="percentage">0%</div>
+            <div class="emojis heartbeat"></div>
+        </div>
+        
+        <!-- مسار الرفض (الشاشات 10-13) -->
+        <div class="screen" id="screen10">
+            <h1>ليش أني خطية؟ 🥺</h1>
+            <div class="emojis"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(11)">لا مو خطية 🌚</button>
+            </div>
+        </div>
+        
+        <div class="screen" id="screen11">
+            <h1>خلص زاعلتج 🥺💔</h1>
+            <div class="emojis"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(12)">أشاقة وياك 🌚</button>
+            </div>
+        </div>
+        
+        <div class="screen" id="screen12">
+            <h1>يعني شنو؟ 🥺❤</h1>
+            <div class="emojis"></div>
+            <div class="buttons">
+                <button class="btn" onclick="showScreen(6)">أحبككككك 🥹♥</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // إنشاء الخلفية المتحركة مع القلوب الحمراء والأسماء
+        const heartBg = document.getElementById('heart-bg');
+        const names = ["رقية", "روحي", "حبيبتي", "قلبي", "عمري", "غلاي", "حياتي", "نور عيوني"];
+        const heartEmojis = ["❤️", "🧡", "💛", "💚", "💙", "💜", "🤎", "🖤", "💖", "💗", "💓", "💞", "💕", "❣️", "💔", "❤️‍🔥", "❤️‍🩹", "💘", "💝"];
+        
+        // إنشاء القلوب الحمراء المتحركة
+        function createHearts(count) {
+            for (let i = 0; i < count; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+                heart.classList.add('heart');
+                
+                // مواقع عشوائية
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 20 + 12) + 'px';
+                heart.style.animationDelay = Math.random() * 7 + 's';
+                heart.style.opacity = Math.random() * 0.6 + 0.4;
+                heart.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                
+                heartBg.appendChild(heart);
+            }
+        }
+        
+        // إنشاء الأسماء المتحركة داخل قلوب حمراء
+        function createNameHearts(count) {
+            for (let i = 0; i < count; i++) {
+                const nameHeart = document.createElement('div');
+                const randomName = names[Math.floor(Math.random() * names.length)];
+                nameHeart.innerHTML = '❤️ ' + randomName + ' ❤️';
+                nameHeart.classList.add('name-heart');
+                
+                // مواقع عشوائية
+                nameHeart.style.left = Math.random() * 90 + 'vw';
+                nameHeart.style.animationDelay = Math.random() * 10 + 's';
+                nameHeart.style.fontSize = (Math.random() * 5 + 14) + 'px';
+                nameHeart.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                
+                heartBg.appendChild(nameHeart);
+            }
+        }
+        
+        // التحكم في الشاشات
+        let currentScreen = 1;
+        
+        function showScreen(screenNumber) {
+            // إخفاء الشاشة الحالية
+            document.getElementById(`screen${currentScreen}`).classList.remove('active');
+            
+            // إظهار الشاشة الجديدة
+            const newScreen = document.getElementById(`screen${screenNumber}`);
+            newScreen.classList.add('active');
+            currentScreen = screenNumber;
+            
+            // معالجة خاصة لكل شاشة
+            switch(screenNumber) {
+                case 5:
+                    // تأثير الكتابة التلقائية
+                    const typingText = document.getElementById('typing-text');
+                    const text = "يررروحييي واني احبچ اكثرر";
+                    typingText.textContent = "";
+                    typingText.classList.add('typing-effect');
+                    
+                    let i = 0;
+                    const typeWriter = () => {
+                        if (i < text.length) {
+                            typingText.textContent += text.charAt(i);
+                            i++;
+                            setTimeout(typeWriter, 100);
+                        }
+                    };
+                    
+                    setTimeout(typeWriter, 300);
+                    break;
+                    
+                case 8:
+                    // إضافة تأثير الاختفاء التلقائي
+                    newScreen.classList.add('auto-hide');
+                    
+                    // الانتقال التلقائي بعد 3 ثواني
+                    setTimeout(() => {
+                        showScreen(9);
+                    }, 3000);
+                    break;
+                    
+                case 9:
+                    // تأثير العد السريع للنسبة المئوية
+                    const percentageElement = document.getElementById('percentage');
+                    let percent = 0;
+                    const increasePercent = () => {
+                        if (percent <= 1000000) {
+                            percentageElement.textContent = percent.toLocaleString() + '%';
+                            
+                            // تسريع العد
+                            if (percent < 1000) percent += 100;
+                            else if (percent < 10000) percent += 1000;
+                            else if (percent < 100000) percent += 10000;
+                            else if (percent < 500000) percent += 25000;
+                            else percent += 50000;
+                            
+                            setTimeout(increasePercent, 5);
+                        }
+                    };
+                    
+                    setTimeout(increasePercent, 300);
+                    
+                    // إضافة قلوب إضافية عند الوصول للنهاية
+                    setTimeout(() => {
+                        createHearts(15);
+                        createNameHearts(5);
+                    }, 1000);
+                    break;
+            }
+        }
+        
+        // منع التكبير والتصغير
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+            if (e.scale !== 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        
+        // منع نسخ النص
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+            alert("ممنوع النسخ يا حبيبي! ❤️");
+        });
+        
+        // منع حفظ الصور (القلوب)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        
+        // دعم لجميع أحجام الشاشات
+        function adjustForScreenSize() {
+            const screen = document.querySelector('.screen');
+            const container = document.querySelector('.container');
+            
+            // ضبط الحجم بناءً على ارتفاع الشاشة
+            const screenHeight = window.innerHeight;
+            
+            if (screenHeight < 600) {
+                // هواتف صغيرة
+                container.style.padding = "10px";
+                document.querySelectorAll('.screen').forEach(s => {
+                    s.style.padding = "15px 8px";
+                });
+            } else if (screenHeight > 900) {
+                // أجهزة كبيرة (تابلت، لابتوب)
+                container.style.padding = "20px";
+            }
+        }
+        
+        // بدء التطبيق مع الشاشة الأولى
+        window.onload = function() {
+            // إنشاء القلوب الحمراء
+            createHearts(40);
+            createNameHearts(12);
+            
+            // ضبط الحجم للشاشة
+            adjustForScreenSize();
+            
+            // إضافة بعض القلوب الإضافية بعد التحميل
+            setTimeout(() => {
+                createHearts(10);
+                createNameHearts(3);
+            }, 1500);
+        };
+        
+        // إعادة ضبط الحجم عند تغيير اتجاه الشاشة
+        window.addEventListener('resize', adjustForScreenSize);
+        window.addEventListener('orientationchange', adjustForScreenSize);
+        
+        // تحسين للأجهزة التي تدعم اللمس
+        if ('ontouchstart' in window) {
+            document.body.classList.add('touch-device');
+            
+            // تحسين تجربة اللمس للأزرار
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+                
+                btn.addEventListener('touchend', function() {
+                    this.style.transform = '';
+                });
+            });
+        }
+    </script>
+</body>
+</html>
