@@ -6,9 +6,10 @@
     <title>زايلو - Xylo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
     
     <style>
-        /* إعدادات التطبيق الأساسية - المطلب 3 (سلاسة عالية) */
+        /* إعدادات التطبيق الأساسية */
         html, body {
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
@@ -25,30 +26,41 @@
             touch-action: pan-y;
         }
 
-        /* حاويات التمرير بسلاسة 120 هرتز */
         .smooth-scroll {
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
             will-change: scroll-position;
         }
 
-        /* إخفاء شريط التمرير */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        @keyframes pulse-xylo {
-            0% { transform: scale(0.8); opacity: 0; filter: blur(10px); letter-spacing: -10px; }
-            50% { transform: scale(1.05); opacity: 1; filter: blur(0px); letter-spacing: 5px; }
-            80% { transform: scale(0.95); opacity: 1; letter-spacing: 2px; }
-            100% { transform: scale(1); opacity: 1; filter: blur(0px); letter-spacing: 2px; }
+        /* شاشة البداية الفخمة (المطلب 8) */
+        #splash-screen {
+            background-color: #0a192f; /* كحلي عميق */
         }
-        .xylo-brand {
-            animation: pulse-xylo 2.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            background: linear-gradient(135deg, #2563eb, #9333ea, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0px 10px 30px rgba(147, 51, 234, 0.3);
-            display: inline-block;
+        @keyframes glow-z {
+            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3); transform: scale(0.95); opacity: 0; }
+            50% { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.6); transform: scale(1.05); opacity: 1; }
+            100% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.5); transform: scale(1); opacity: 1; }
+        }
+        @keyframes fade-in-up {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .elegant-z {
+            font-family: 'Great Vibes', cursive;
+            color: #ffd700; /* ذهبي */
+            font-size: 10rem;
+            animation: glow-z 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            line-height: 1;
+        }
+        .elegant-text {
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            animation: fade-in-up 1s ease-out 1.5s forwards;
+            opacity: 0;
+            letter-spacing: 2px;
         }
 
         .modal-slide-in { animation: slideIn 0.35s forwards cubic-bezier(0.175, 0.885, 0.32, 1.1); }
@@ -56,76 +68,57 @@
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0.8; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
-        /* المطلب 4: تفاعلات الأزرار السلسة والجميلة */
         .btn-tap {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
-        .btn-tap:active {
-            transform: scale(0.92);
-            opacity: 0.8;
-        }
+        .btn-tap:active { transform: scale(0.92); opacity: 0.8; }
         .btn-tap::after {
-            content: '';
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 100%; height: 100%;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            opacity: 0;
-            transition: transform 0.3s, opacity 0.3s;
+            content: ''; position: absolute; top: 50%; left: 50%; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.2); border-radius: 50%; transform: translate(-50%, -50%) scale(0);
+            opacity: 0; transition: transform 0.3s, opacity 0.3s;
         }
-        .btn-tap:active::after {
-            transform: translate(-50%, -50%) scale(2);
-            opacity: 1;
-            transition: 0s;
-        }
+        .btn-tap:active::after { transform: translate(-50%, -50%) scale(2); opacity: 1; transition: 0s; }
 
         .bg-xylo { background: linear-gradient(135deg, #1d4ed8, #6d28d9); }
         .text-xylo { color: #4f46e5; }
         
-        /* السحب للتحديث (المطلب 6) */
-        .ptr-container {
-            transition: transform 0.3s ease;
-            position: relative;
-        }
-        #ptr-spinner {
-            position: absolute;
-            top: -50px; left: 50%;
-            transform: translateX(-50%);
-            z-index: 50;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
+        .ptr-container { transition: transform 0.3s ease; position: relative; }
+        #ptr-spinner { position: absolute; top: -50px; left: 50%; transform: translateX(-50%); z-index: 50; opacity: 0; transition: opacity 0.2s; }
         .text-unread { font-weight: 900 !important; color: #000 !important; }
         
-        /* قائمة المنشن */
         #mentions-dropdown {
-            position: absolute;
-            bottom: 100%; left: 0; right: 0;
-            background: white; border-radius: 16px 16px 0 0;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-            max-height: 200px; overflow-y: auto;
-            z-index: 200; display: none;
+            position: absolute; bottom: 100%; left: 0; right: 0; background: white; border-radius: 16px 16px 0 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto; z-index: 200; display: none;
         }
+
+        /* سحب الرسالة */
+        .msg-bubble { transition: transform 0.2s ease-out; touch-action: pan-y; }
+        
+        /* خلفية المحادثة للحساب المميز */
+        .premium-chat-bg {
+            background-color: #e6f0ff;
+            background-image: radial-gradient(#cce0ff 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        .sub-tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: bold; }
+        .sub-tab-inactive { border-bottom: 2px solid transparent; color: #6b7280; font-weight: normal; }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col text-gray-800 antialiased pb-safe">
 
     <!-- 1. شاشة البداية (Splash Screen) -->
-    <div id="splash-screen" class="fixed inset-0 z-[100] bg-white flex flex-col items-center justify-center transition-opacity duration-500">
-        <h1 class="text-7xl font-black xylo-brand">زايلو</h1>
-        <div class="mt-8">
-            <i class="ph ph-spinner-gap animate-spin text-3xl text-blue-600 opacity-50"></i>
-        </div>
+    <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
+        <div class="elegant-z">Z</div>
+        <h1 class="text-4xl font-black mt-4 elegant-text">زايلو</h1>
     </div>
 
     <!-- 2. قسم المصادقة -->
     <div id="auth-screen" class="hidden fixed inset-0 z-50 bg-white overflow-y-auto hide-scrollbar smooth-scroll">
         <div class="min-h-screen flex flex-col items-center justify-center p-6">
-            <h1 class="text-6xl font-black xylo-brand mb-10">زايلو</h1>
+            <h1 class="text-6xl font-black xylo-brand mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">زايلو</h1>
             
             <div id="login-form" class="w-full max-w-sm space-y-4">
                 <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">تسجيل الدخول</h2>
@@ -142,7 +135,7 @@
                 <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">حساب جديد</h2>
                 <input type="text" id="reg-name" placeholder="اسم الحساب" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
                 <input type="email" id="reg-email" placeholder="البريد الإلكتروني" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
-                <input type="password" id="reg-password" placeholder="رمز الحساب" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
+                <input type="password" id="reg-password" placeholder="كلمة السر" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
                 <button onclick="Auth.register()" class="btn-tap w-full bg-xylo text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30">إنشاء حساب مباشرة</button>
                 
                 <div class="relative flex py-4 items-center">
@@ -151,8 +144,10 @@
                     <div class="flex-grow border-t border-gray-300"></div>
                 </div>
 
-                <button onclick="Auth.loginWithGoogle()" class="btn-tap w-full bg-white border-2 border-gray-200 text-gray-700 font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-sm">
-                    <i class="ph-fill ph-google-logo text-red-500 text-xl"></i> تسجيل بحساب كوكل
+                <!-- المطلب 1: زر تسجيل الدخول بجوجل بالشكل الرسمي -->
+                <button onclick="Auth.loginWithGoogle()" class="btn-tap w-full bg-white border border-gray-300 text-[#3c4043] font-medium py-3 rounded-full flex items-center justify-center gap-3 shadow-sm hover:bg-gray-50 transition-colors">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="abcRioButtonSvg"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
+                    Continue with Google
                 </button>
                 <button onclick="UI.switchAuth('login')" class="w-full text-center text-blue-600 font-semibold mt-4 p-2 btn-tap">لدي حساب بالفعل</button>
             </div>
@@ -209,7 +204,7 @@
                 </button>
                 <button onclick="UI.switchTab('messages')" class="nav-btn flex-1 py-3 flex flex-col items-center gap-1 text-gray-500 border-b-2 border-transparent transition-colors relative btn-tap">
                     <i class="ph ph-chat-circle-text text-2xl"></i>
-                    <span id="badge-messages" class="hidden absolute top-2 right-1/4 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+                    <span id="badge-messages" class="hidden absolute top-1 right-1/4 bg-blue-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white"></span>
                 </button>
                 <button onclick="UI.switchTab('notifications')" class="nav-btn flex-1 py-3 flex flex-col items-center gap-1 text-gray-500 border-b-2 border-transparent transition-colors relative btn-tap">
                     <i class="ph ph-bell text-2xl"></i>
@@ -248,10 +243,10 @@
                 </div>
             </div>
 
-            <!-- القسم الثالث: الأصدقاء والملاحظات (تم حل المطلب 1 و 2 و 9) -->
-            <div id="tab-notes" class="hidden p-2 space-y-3">
-                <!-- إزالة نص ملاحظات الأصدقاء وتمكين التمرير الأفقي بسلاسة -->
-                <div class="bg-white rounded-xl shadow-sm p-4">
+            <!-- القسم الثالث: الأصدقاء والملاحظات -->
+            <div id="tab-notes" class="hidden p-2 space-y-3 flex flex-col h-full">
+                <!-- شريط الملاحظات الأفقي -->
+                <div class="bg-white rounded-xl shadow-sm p-4 shrink-0">
                     <div class="flex overflow-x-auto smooth-scroll hide-scrollbar gap-3 pb-2 pt-2 items-start" id="notes-container" style="scroll-snap-type: x mandatory;">
                         <!-- زر أنت -->
                         <div class="inline-flex flex-col items-center relative cursor-pointer shrink-0 btn-tap w-20" onclick="App.checkAndCreateNote()" style="scroll-snap-align: start;">
@@ -268,18 +263,23 @@
                                 إضافة ملاحظة
                             </div>
                         </div>
-                        <!-- ملاحظات أخرى تحقن هنا -->
+                        <!-- ملاحظات أخرى -->
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-4 min-h-[300px]">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h3 class="font-bold text-gray-800 text-sm">طلبات الصداقة</h3>
-                        <button onclick="UI.openModal('friends-list-modal')" class="text-blue-600 font-bold text-sm bg-blue-50 px-3 py-1.5 rounded-full btn-tap flex items-center gap-1">
-                            <i class="ph-fill ph-users"></i> الأصدقاء
-                        </button>
+                <!-- المطلب 9: تقسيم قسم الأصدقاء -->
+                <div class="bg-white rounded-xl shadow-sm flex-1 flex flex-col overflow-hidden">
+                    <div class="flex border-b border-gray-100 bg-gray-50 shrink-0">
+                        <button onclick="App.switchFriendsSubTab('requests')" id="subtab-requests" class="flex-1 py-3 text-center text-sm font-bold sub-tab-active btn-tap transition-colors">طلبات الصداقة</button>
+                        <button onclick="App.switchFriendsSubTab('friends')" id="subtab-friends" class="flex-1 py-3 text-center text-sm font-bold sub-tab-inactive btn-tap transition-colors">الأصدقاء</button>
+                        <button onclick="App.switchFriendsSubTab('suggestions')" id="subtab-suggestions" class="flex-1 py-3 text-center text-sm font-bold sub-tab-inactive btn-tap transition-colors">اقتراحات</button>
                     </div>
-                    <div id="friend-requests-container" class="space-y-3 mt-2">
+                    
+                    <div class="flex-1 overflow-y-auto smooth-scroll p-3 relative">
+                        <!-- الحاويات -->
+                        <div id="subtab-content-requests" class="space-y-3"></div>
+                        <div id="subtab-content-friends" class="hidden space-y-3"></div>
+                        <div id="subtab-content-suggestions" class="hidden space-y-3"></div>
                     </div>
                 </div>
             </div>
@@ -297,9 +297,9 @@
                 
                 <div class="bg-white rounded-xl p-4 shadow-sm flex items-center gap-4 mb-6 cursor-pointer btn-tap border border-gray-50" onclick="UI.openModal('profile-modal', window.currentUser.uid)">
                     <img id="settings-avatar" src="" class="w-14 h-14 rounded-full object-cover bg-gray-200 border border-gray-100">
-                    <div class="flex-1">
+                    <div class="flex-1 flex items-center gap-1">
                         <h3 id="settings-name" class="font-bold text-lg leading-tight">...</h3>
-                        <p class="text-gray-500 text-sm mt-0.5">عرض ملفك الشخصي</p>
+                        <span id="settings-premium-badge"></span>
                     </div>
                     <i class="ph ph-caret-left text-gray-400 text-xl"></i>
                 </div>
@@ -311,6 +311,14 @@
                         <i class="ph ph-caret-left text-gray-400"></i>
                     </button>
 
+                    <!-- المطلب 10: زر الاشتراك المميز -->
+                    <button onclick="UI.openModal('premium-modal')" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 p-4 rounded-xl shadow-sm flex items-center gap-4 btn-tap text-white relative overflow-hidden">
+                        <div class="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full animate-[shimmer_3s_infinite]"></div>
+                        <div class="w-10 h-10 rounded-full bg-white/20 text-yellow-300 flex items-center justify-center backdrop-blur-sm"><i class="ph-fill ph-crown text-xl"></i></div>
+                        <span class="font-bold flex-1 text-right">الاشتراك المميز</span>
+                        <i class="ph ph-caret-left text-white/70"></i>
+                    </button>
+
                     <button onclick="UI.openModal('privacy-modal')" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center gap-4 btn-tap">
                         <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center"><i class="ph-fill ph-lock-key text-xl"></i></div>
                         <span class="font-semibold flex-1 text-right text-gray-700">الخصوصية</span>
@@ -319,14 +327,14 @@
 
                     <button onclick="UI.openModal('account-settings-modal')" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center gap-4 btn-tap">
                         <div class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center"><i class="ph-fill ph-gear text-xl"></i></div>
-                        <span class="font-semibold flex-1 text-right text-gray-700">إعدادات الحساب</span>
+                        <span class="font-semibold flex-1 text-right text-gray-700">إعدادات الحساب والأمان</span>
                         <i class="ph ph-caret-left text-gray-400"></i>
                     </button>
-                    
-                    <!-- المطلب 7: زر المحظورين -->
-                    <button onclick="UI.openModal('blocked-users-modal')" class="w-full bg-white p-4 rounded-xl shadow-sm border border-gray-50 flex items-center gap-4 btn-tap">
-                        <div class="w-10 h-10 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center"><i class="ph-fill ph-prohibit text-xl"></i></div>
-                        <span class="font-semibold flex-1 text-right text-gray-700">المحظورين</span>
+
+                    <!-- زر لوحة تحكم المالك يظهر فقط للمالك -->
+                    <button id="admin-panel-btn" onclick="UI.openModal('admin-modal')" class="hidden w-full bg-gray-900 p-4 rounded-xl shadow-sm flex items-center gap-4 btn-tap">
+                        <div class="w-10 h-10 rounded-full bg-gray-800 text-white flex items-center justify-center"><i class="ph-fill ph-shield-star text-xl"></i></div>
+                        <span class="font-bold flex-1 text-right text-white">لوحة تحكم المالك</span>
                         <i class="ph ph-caret-left text-gray-400"></i>
                     </button>
 
@@ -362,9 +370,8 @@
         </div>
     </div>
 
-    <!-- المطلب 5: نافذة المنشن -->
+    <!-- قائمة المنشن -->
     <div id="mentions-dropdown" class="smooth-scroll border-t-2 border-blue-500">
-        <!-- تحقن نتائج المنشن هنا -->
     </div>
 
     <!-- نافذة إنشاء منشور -->
@@ -393,13 +400,28 @@
         </div>
     </div>
 
-    <!-- المطلب 9: نافذة عرض الملاحظة -->
-    <div id="note-view-modal" class="hidden fixed inset-0 bg-black/90 z-[100] flex flex-col justify-center items-center p-4 modal-slide-in" onclick="UI.closeModal('note-view-modal')">
-        <div class="w-full max-w-sm flex flex-col items-center" onclick="event.stopPropagation()">
-            <img id="nv-avatar" class="w-24 h-24 rounded-full border-4 border-gray-700 mb-4 object-cover">
-            <h3 id="nv-name" class="text-white font-bold text-xl mb-1">...</h3>
-            <span id="nv-time" class="text-gray-400 text-sm mb-8">...</span>
+    <!-- المطلب 2: نافذة عرض الملاحظة (تشبه القصص/الستوري) -->
+    <div id="note-view-modal" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col modal-slide-in">
+        <div class="p-4 flex items-center gap-3 absolute top-0 w-full z-10 bg-gradient-to-b from-black/60 to-transparent">
+            <img id="nv-avatar" class="w-10 h-10 rounded-full border border-gray-600 object-cover cursor-pointer btn-tap" onclick="App.viewProfileFromNote()">
+            <div class="flex-1 flex flex-col cursor-pointer" onclick="App.viewProfileFromNote()">
+                <div class="flex items-center gap-1">
+                    <h3 id="nv-name" class="text-white font-bold text-sm">...</h3>
+                    <span id="nv-premium-badge"></span>
+                </div>
+                <span id="nv-time" class="text-gray-300 text-[10px]">...</span>
+            </div>
+            <button onclick="UI.closeModal('note-view-modal')" class="w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center btn-tap"><i class="ph ph-x"></i></button>
+        </div>
+        
+        <div class="flex-1 flex items-center justify-center p-6 relative">
             <div id="nv-text" class="text-white text-3xl font-black text-center leading-relaxed whitespace-pre-wrap">...</div>
+        </div>
+
+        <div id="note-reply-section" class="p-4 w-full flex gap-3 items-center z-10 bg-gradient-to-t from-black/80 to-transparent pb-safe hidden">
+            <input type="text" id="note-reply-input" placeholder="إرسال رسالة..." class="flex-1 bg-white/10 text-white placeholder-white/50 border border-white/20 rounded-full px-5 py-3 outline-none text-sm focus:bg-white/20 transition-colors backdrop-blur-sm">
+            <button onclick="App.likeNote()" class="w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center btn-tap border border-white/20 transition-colors shrink-0"><i class="ph-fill ph-heart text-2xl"></i></button>
+            <button onclick="App.sendNoteReply()" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center btn-tap shadow-lg shrink-0"><i class="ph-fill ph-paper-plane-right text-xl"></i></button>
         </div>
     </div>
 
@@ -437,18 +459,7 @@
         </div>
     </div>
 
-    <!-- نافذة المحظورين (المطلب 7) -->
-    <div id="blocked-users-modal" class="hidden fixed inset-0 bg-white z-[80] flex flex-col modal-slide-in">
-        <div class="p-4 border-b flex items-center gap-3 shadow-sm bg-white z-10 sticky top-0">
-            <button onclick="UI.closeModal('blocked-users-modal')" class="p-2 bg-gray-100 rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
-            <span class="font-bold text-lg flex-1">المحظورين</span>
-        </div>
-        <div class="flex-1 overflow-y-auto smooth-scroll p-2" id="blocked-list-container">
-            <!-- تحقن قائمة المحظورين هنا -->
-        </div>
-    </div>
-
-    <!-- نافذة تعديل الملف الشخصي (المطلب 11) -->
+    <!-- نافذة تعديل الملف الشخصي -->
     <div id="edit-profile-modal" class="hidden fixed inset-0 bg-white z-[70] flex flex-col modal-slide-in">
         <div class="p-4 border-b flex items-center gap-3 shadow-sm z-10">
             <button onclick="UI.closeModal('edit-profile-modal')" class="p-2 bg-gray-100 rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
@@ -480,6 +491,81 @@
         </div>
     </div>
 
+    <!-- المطلب 10: نافذة الاشتراك المميز -->
+    <div id="premium-modal" class="hidden fixed inset-0 bg-white z-[75] flex flex-col modal-slide-in">
+        <div class="p-4 flex justify-between items-center bg-white z-10 sticky top-0">
+            <button onclick="UI.closeModal('premium-modal')" class="p-2 bg-gray-100 rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
+        </div>
+        <div class="flex-1 overflow-y-auto smooth-scroll px-6 pb-10 flex flex-col items-center">
+            <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-yellow-400 to-yellow-600 flex items-center justify-center shadow-[0_0_30px_rgba(234,179,8,0.4)] mb-6 mt-4">
+                <i class="ph-fill ph-crown text-5xl text-white"></i>
+            </div>
+            <h2 class="text-3xl font-black text-gray-900 mb-2">زايلو المميز</h2>
+            <p class="text-gray-500 text-center mb-8">ارتقِ بتجربتك واحصل على ميزات حصرية تجعلك مميزاً.</p>
+
+            <div id="premium-active-status" class="hidden w-full bg-green-50 border border-green-200 p-4 rounded-2xl mb-6 text-center">
+                <h3 class="font-bold text-green-700 text-lg mb-1">حسابك مميز حالياً 🎉</h3>
+                <p class="text-sm text-green-600" id="premium-expiry-text"></p>
+            </div>
+
+            <div class="w-full space-y-4">
+                <input type="text" id="premium-code-input" placeholder="أدخل كود التفعيل هنا..." class="w-full bg-gray-100 border border-gray-200 p-4 rounded-xl outline-none focus:border-blue-500 text-center font-bold text-lg dir-ltr">
+                <button onclick="App.verifyPremiumCode()" class="w-full bg-gray-900 text-white font-bold py-4 rounded-xl shadow-md btn-tap">تأكيد الكود</button>
+                <button onclick="App.showPremiumFeatures()" class="w-full bg-blue-50 text-blue-700 font-bold py-4 rounded-xl btn-tap border border-blue-100">مميزات الحساب المميز</button>
+                <button onclick="window.open('https://t.me/mslmh19', '_blank')" class="w-full bg-[#0088cc]/10 text-[#0088cc] font-bold py-4 rounded-xl btn-tap flex items-center justify-center gap-2">
+                    <i class="ph-fill ph-telegram-logo text-xl"></i> الحصول على كود مميز
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- المطلب 10: نافذة لوحة تحكم المالك -->
+    <div id="admin-modal" class="hidden fixed inset-0 bg-gray-50 z-[80] flex flex-col modal-slide-in">
+        <div class="bg-white p-4 border-b flex items-center gap-3 shadow-sm z-10">
+            <button onclick="UI.closeModal('admin-modal')" class="p-2 bg-gray-100 rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
+            <span class="font-bold text-lg flex-1">لوحة التحكم (الإدارة)</span>
+        </div>
+        <div class="p-4 space-y-3 flex-1 overflow-y-auto">
+            <button onclick="UI.openModal('admin-subs-modal')" class="w-full bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 btn-tap">
+                <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center"><i class="ph-fill ph-users-three text-2xl"></i></div>
+                <div class="flex-1 text-right">
+                    <h3 class="font-bold text-lg text-gray-800">الاشتراكات المميزة</h3>
+                    <p class="text-xs text-gray-500 mt-1">إنشاء وإدارة أكواد التفعيل</p>
+                </div>
+                <i class="ph ph-caret-left text-gray-400"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="admin-subs-modal" class="hidden fixed inset-0 bg-white z-[85] flex flex-col modal-slide-in">
+        <div class="bg-gray-50 p-4 border-b flex items-center gap-3 shadow-sm z-10">
+            <button onclick="UI.closeModal('admin-subs-modal')" class="p-2 bg-white border rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
+            <span class="font-bold text-lg flex-1">إدارة الاشتراكات</span>
+        </div>
+        <div class="p-6 space-y-6 flex-1 overflow-y-auto">
+            <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                <h3 class="font-bold text-blue-800 mb-4 text-lg">إنشاء كود جديد</h3>
+                <div class="grid grid-cols-2 gap-2 mb-4">
+                    <button onclick="App.generateCode(1)" class="bg-white border border-blue-200 text-blue-700 py-2 rounded-lg font-bold btn-tap text-sm hover:bg-blue-100 transition-colors">شهر واحد</button>
+                    <button onclick="App.generateCode(3)" class="bg-white border border-blue-200 text-blue-700 py-2 rounded-lg font-bold btn-tap text-sm hover:bg-blue-100 transition-colors">3 أشهر</button>
+                    <button onclick="App.generateCode(6)" class="bg-white border border-blue-200 text-blue-700 py-2 rounded-lg font-bold btn-tap text-sm hover:bg-blue-100 transition-colors">6 أشهر</button>
+                    <button onclick="App.generateCode(12)" class="bg-white border border-blue-200 text-blue-700 py-2 rounded-lg font-bold btn-tap text-sm hover:bg-blue-100 transition-colors">سنة كاملة</button>
+                </div>
+                <div id="generated-code-result" class="hidden bg-white p-3 rounded-lg border border-blue-200 text-center flex items-center justify-between">
+                    <span id="new-code-text" class="font-mono font-bold text-lg tracking-wider text-gray-800 dir-ltr select-all"></span>
+                    <button onclick="App.copyGeneratedCode()" class="text-blue-600 p-2"><i class="ph-fill ph-copy text-xl"></i></button>
+                </div>
+            </div>
+
+            <div class="bg-red-50 p-5 rounded-2xl border border-red-100">
+                <h3 class="font-bold text-red-800 mb-4 text-lg">حذف وتعطيل كود</h3>
+                <input type="text" id="admin-revoke-code" placeholder="أدخل الكود هنا..." class="w-full bg-white border border-red-200 p-3 rounded-xl outline-none mb-3 font-mono dir-ltr text-center">
+                <button onclick="App.revokeCode()" class="w-full bg-red-600 text-white font-bold py-3 rounded-xl btn-tap shadow-sm hover:bg-red-700 transition-colors">حذف وتعطيل</button>
+            </div>
+        </div>
+    </div>
+
+
     <!-- نافذة الخصوصية -->
     <div id="privacy-modal" class="hidden fixed inset-0 bg-gray-50 z-[70] flex flex-col modal-slide-in">
         <div class="bg-white p-4 border-b flex items-center gap-3 shadow-sm">
@@ -507,6 +593,19 @@
                     <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                 </label>
             </div>
+            
+            <!-- ميزة التخفي للمميزين -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center border border-gray-100" id="stealth-mode-container">
+                <div>
+                    <h4 class="font-bold text-gray-800 flex items-center gap-1">وضع التخفي <i class="ph-fill ph-crown text-yellow-500 text-sm"></i></h4>
+                    <p class="text-xs text-gray-500 mt-0.5">إخفاء آخر ظهور وعلامة القراءة</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="priv-stealth" class="sr-only peer" onchange="App.toggleStealthMode(this.checked)">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
+
             <div class="bg-white p-4 rounded-2xl shadow-sm space-y-3 border border-gray-100">
                 <h4 class="font-bold border-b pb-2 text-gray-800">من يمكنه رؤية أصدقائي</h4>
                 <select id="priv-friends-vis" class="w-full bg-gray-50 p-3 rounded-xl outline-none border border-gray-200 focus:border-blue-500" onchange="App.updatePrivacy('friendsVisibility', this.value)">
@@ -526,30 +625,50 @@
         </div>
     </div>
 
-    <!-- نافذة إعدادات الحساب -->
+    <!-- المطلب 11: نافذة إعدادات الحساب والأمان (تم دمج المحظورين وكلمة السر) -->
     <div id="account-settings-modal" class="hidden fixed inset-0 bg-gray-50 z-[70] flex flex-col modal-slide-in">
         <div class="bg-white p-4 border-b flex items-center gap-3 shadow-sm">
             <button onclick="UI.closeModal('account-settings-modal')" class="p-2 bg-gray-100 rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
             <span class="font-bold text-lg">إعدادات الحساب والأمان</span>
         </div>
-        <div class="p-4">
-            <div class="bg-white p-5 rounded-2xl shadow-sm space-y-4 border border-gray-100">
-                <h4 class="font-bold text-red-600 text-lg flex items-center gap-2"><i class="ph ph-shield-warning"></i> تغيير كلمة السر</h4>
-                <p class="text-sm text-gray-500">سيتم إرسال رابط لبريدك الإلكتروني لإعادة تعيين كلمة السر الخاصة بك.</p>
-                <button onclick="Auth.resetPasswordFromSettings()" class="w-full bg-red-50 text-red-600 font-bold py-3.5 rounded-xl border border-red-100 btn-tap mt-2">إرسال رابط التغيير</button>
+        <div class="p-4 space-y-4">
+            
+            <button onclick="UI.openModal('blocked-users-modal')" class="w-full bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4 btn-tap">
+                <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center"><i class="ph-fill ph-prohibit text-2xl"></i></div>
+                <div class="flex-1 text-right">
+                    <h3 class="font-bold text-lg text-gray-800">المستخدمين المحظورين</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">إدارة الأشخاص المحظورين</p>
+                </div>
+                <i class="ph ph-caret-left text-gray-400"></i>
+            </button>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <button onclick="document.getElementById('password-section-content').classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('-rotate-90')" class="w-full p-5 flex items-center gap-4 btn-tap">
+                    <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center"><i class="ph-fill ph-shield-warning text-2xl"></i></div>
+                    <div class="flex-1 text-right">
+                        <h3 class="font-bold text-lg text-gray-800">تغيير كلمة السر</h3>
+                    </div>
+                    <i class="ph ph-caret-down text-gray-400 chevron transition-transform duration-300"></i>
+                </button>
+                <div id="password-section-content" class="hidden px-5 pb-5 pt-2 border-t border-gray-50">
+                    <p class="text-sm text-gray-500 mb-4">سيتم إرسال رابط لبريدك الإلكتروني لإعادة تعيين كلمة السر الخاصة بك بأمان.</p>
+                    <button onclick="Auth.resetPasswordFromSettings()" class="w-full bg-red-50 text-red-600 font-bold py-3.5 rounded-xl border border-red-100 btn-tap">إرسال رابط التغيير</button>
+                </div>
             </div>
+            
         </div>
     </div>
 
-    <!-- نافذة الأصدقاء -->
-    <div id="friends-list-modal" class="hidden fixed inset-0 bg-white z-[80] flex flex-col modal-slide-in">
+    <!-- نافذة المحظورين -->
+    <div id="blocked-users-modal" class="hidden fixed inset-0 bg-white z-[80] flex flex-col modal-slide-in">
         <div class="p-4 border-b flex items-center gap-3 shadow-sm bg-white z-10 sticky top-0">
-            <button onclick="UI.closeModal('friends-list-modal')" class="p-2 bg-gray-100 rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
-            <span class="font-bold text-lg flex-1">الأصدقاء</span>
+            <button onclick="UI.closeModal('blocked-users-modal')" class="p-2 bg-gray-100 rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
+            <span class="font-bold text-lg flex-1">المحظورين</span>
         </div>
-        <div class="flex-1 overflow-y-auto smooth-scroll p-2" id="friends-list-container">
+        <div class="flex-1 overflow-y-auto smooth-scroll p-4" id="blocked-list-container">
         </div>
     </div>
+
 
     <!-- ملف شخصي -->
     <div id="profile-modal" class="hidden fixed inset-0 bg-white z-[80] flex flex-col modal-slide-in">
@@ -562,7 +681,10 @@
             <div class="px-4 relative mb-6">
                 <img id="vp-image" src="" class="w-28 h-28 rounded-full border-4 border-white absolute -top-14 object-cover bg-white shadow-md">
                 <div class="flex justify-end pt-3 h-14 items-center gap-2" id="vp-action-container"></div>
-                <h2 id="vp-name" class="text-3xl font-black mt-4 leading-tight">...</h2>
+                <div class="flex items-center gap-2 mt-4">
+                    <h2 id="vp-name" class="text-3xl font-black leading-tight">...</h2>
+                    <span id="vp-premium-badge"></span>
+                </div>
                 <p id="vp-username" class="text-gray-500 text-sm dir-ltr text-left w-max mt-1 font-medium bg-gray-100 px-2 py-0.5 rounded-md">@...</p>
                 <p id="vp-bio" class="mt-4 text-gray-800 leading-relaxed">...</p>
             </div>
@@ -577,28 +699,54 @@
 
     <!-- نافذة المحادثة (الشات) -->
     <div id="chat-modal" class="hidden fixed inset-0 bg-gray-50 z-[90] flex flex-col modal-slide-in">
-        <div class="bg-white p-3 border-b flex items-center gap-3 shadow-sm z-10">
-            <button onclick="UI.closeModal('chat-modal')" class="p-2 bg-gray-100 rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
-            <div class="relative cursor-pointer" onclick="UI.openModal('profile-modal', window.currentChatUserId)">
-                <img id="chat-user-img" src="" class="w-11 h-11 rounded-full object-cover">
-                <span id="chat-online-dot" class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full hidden"></span>
+        <!-- هيدر المحادثة -->
+        <div class="bg-white p-3 border-b flex items-center justify-between shadow-sm z-20">
+            <div class="flex items-center gap-3">
+                <button onclick="UI.closeModal('chat-modal')" class="p-2 bg-gray-100 rounded-full btn-tap shrink-0"><i class="ph ph-arrow-right text-lg"></i></button>
+                <div class="relative cursor-pointer shrink-0" onclick="UI.openModal('profile-modal', window.currentChatUserId)">
+                    <img id="chat-user-img" src="" class="w-11 h-11 rounded-full object-cover">
+                    <span id="chat-online-dot" class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full hidden"></span>
+                </div>
+                <div class="flex-1 overflow-hidden min-w-0" onclick="UI.openModal('profile-modal', window.currentChatUserId)">
+                    <div class="flex items-center gap-1">
+                        <h3 id="chat-user-name" class="font-bold leading-tight truncate">...</h3>
+                        <span id="chat-header-premium-badge" class="shrink-0"></span>
+                    </div>
+                    <p id="chat-user-status" class="text-[11px] text-gray-500 truncate mt-0.5">...</p>
+                </div>
             </div>
-            <div class="flex-1 overflow-hidden">
-                <h3 id="chat-user-name" class="font-bold leading-tight truncate">...</h3>
-                <p id="chat-user-status" class="text-xs text-gray-500 truncate mt-0.5">...</p>
+            <!-- المطلب 7: كائن المحادثة (Xylo Pet) -->
+            <div id="xylo-pet-container" class="shrink-0 bg-gray-50 p-2 rounded-xl flex flex-col items-center justify-center cursor-pointer ml-1 btn-tap border border-gray-100 min-w-[50px]">
+                <span id="pet-emoji" class="text-2xl drop-shadow-sm transition-transform duration-300 transform hover:scale-110">🥚</span>
+                <span id="pet-streak" class="text-[9px] font-bold text-gray-500 mt-1">يوم 0</span>
             </div>
         </div>
-        <div id="chat-messages-container" class="flex-1 overflow-y-auto smooth-scroll p-4 space-y-4 flex flex-col relative">
+        
+        <!-- الحاوية المخصصة للمحادثة (المطلب 10: خلفية للمميزين) -->
+        <div id="chat-background" class="flex-1 overflow-hidden flex flex-col relative bg-gray-50">
+            <div id="chat-messages-container" class="flex-1 overflow-y-auto smooth-scroll p-4 space-y-4 flex flex-col relative z-10 pb-4">
+                <!-- الرسائل -->
+            </div>
         </div>
-        <div class="p-3 bg-white border-t flex gap-2 items-end pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.05)] relative z-10">
-            <textarea id="chat-input" placeholder="اكتب رسالة..." class="flex-1 bg-gray-100 rounded-3xl px-5 py-3 outline-none resize-none max-h-28 hide-scrollbar text-[15px] focus:bg-gray-200 transition-colors" rows="1" oninput="this.style.height = '';this.style.height = Math.min(this.scrollHeight, 112) + 'px'"></textarea>
+
+        <!-- حالة الرد (المطلب 6) -->
+        <div id="replying-to-container" class="hidden bg-gray-100 border-t border-gray-200 px-4 py-2 flex items-center justify-between shadow-[0_-2px_10px_rgba(0,0,0,0.02)] z-10 relative">
+            <div class="flex flex-col border-r-4 border-blue-500 pr-3">
+                <span class="text-xs font-bold text-blue-600" id="reply-to-name">الرد على...</span>
+                <span class="text-sm text-gray-600 truncate max-w-[250px]" id="reply-to-text">...</span>
+            </div>
+            <button onclick="App.cancelReply()" class="w-8 h-8 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center btn-tap"><i class="ph ph-x"></i></button>
+        </div>
+
+        <div class="p-3 bg-white border-t flex gap-2 items-end pb-safe shadow-[0_-5px_20px_rgba(0,0,0,0.05)] relative z-20">
+            <textarea id="chat-input" placeholder="اكتب رسالة..." class="flex-1 bg-gray-100 rounded-3xl px-5 py-3 outline-none resize-none max-h-28 hide-scrollbar text-[15px] focus:bg-gray-200 transition-colors border border-transparent focus:border-gray-300" rows="1" oninput="this.style.height = '';this.style.height = Math.min(this.scrollHeight, 112) + 'px'"></textarea>
             <button onclick="App.sendMessage()" class="w-12 h-12 bg-blue-600 hover:bg-blue-700 transition-colors text-white rounded-full flex items-center justify-center shrink-0 btn-tap shadow-md mb-0.5"><i class="ph-fill ph-paper-plane-right text-xl"></i></button>
         </div>
     </div>
 
-    <!-- قائمة الخيارات المنبثقة (المطلب 8 وغيرها) -->
+    <!-- قائمة الخيارات المنبثقة العامة (المطلب 4 وغيرها) -->
     <div id="action-modal" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-end justify-center">
-        <div class="bg-white w-full rounded-t-3xl p-4 modal-slide-in shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
+        <div class="bg-white w-full rounded-t-3xl p-4 modal-slide-in shadow-[0_-10px_40px_rgba(0,0,0,0.2)] pb-safe">
             <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
             <div id="action-modal-content" class="space-y-2">
             </div>
@@ -619,8 +767,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, deleteDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig;
         if (typeof __firebase_config !== 'undefined') {
@@ -652,35 +800,31 @@
         const MESSAGES_PATH = `artifacts/${appId}/public/data/messages`;
         const NOTES_PATH = `artifacts/${appId}/public/data/notes`;
         const NOTIFS_PATH = `artifacts/${appId}/public/data/notifications`;
+        const PREMIUM_CODES_PATH = `artifacts/${appId}/public/data/premium_codes`; // للوحة المالك
 
         window.Memory = {
-            users: {},
-            posts: [],
-            comments: [],
-            requests: [],
-            friends: [],
-            messages: [],
-            notes: [],
-            notifications: []
+            users: {}, posts: [], comments: [], requests: [], friends: [], messages: [], notes: [], notifications: [], premiumCodes: []
         };
 
         window.currentUser = null;
         window.currentChatUserId = null;
         window.currentPostIdForComment = null;
         window.currentManageNoteId = null;
+        window.noteViewAuthorId = null; 
+        window.replyingToMessage = null; // المطلب 6
 
         const escapeHTML = (str) => {
+            if(!str) return '';
             return str.replace(/[&<>'"]/g, tag => ({
                 '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
             }[tag] || tag));
         };
 
+        const adminEmail = 'mslmalmyaly223@gmail.com';
+
         // المطلب 6: نظام السحب للتحديث
         window.PullToRefresh = {
-            startY: 0,
-            isPulling: false,
-            spinner: null,
-            container: null,
+            startY: 0, isPulling: false, spinner: null, container: null,
             init: () => {
                 PullToRefresh.container = document.getElementById('main-content-area');
                 PullToRefresh.spinner = document.getElementById('ptr-spinner');
@@ -698,8 +842,8 @@
                     const y = e.touches[0].clientY;
                     const diff = y - PullToRefresh.startY;
                     if (diff > 0 && PullToRefresh.container.scrollTop <= 0) {
-                        e.preventDefault(); // منع سحب المتصفح الافتراضي
-                        let pullDistance = Math.min(diff * 0.4, 70); // مقاومة السحب
+                        e.preventDefault();
+                        let pullDistance = Math.min(diff * 0.4, 70); 
                         PullToRefresh.spinner.style.transform = `translate(-50%, ${pullDistance}px) rotate(${pullDistance*2}deg)`;
                         PullToRefresh.spinner.style.opacity = Math.min(pullDistance / 50, 1);
                     }
@@ -714,11 +858,9 @@
                     const diff = y - PullToRefresh.startY;
                     
                     if (diff > 80 && PullToRefresh.container.scrollTop <= 0) {
-                        // تفعيل التحديث
                         PullToRefresh.spinner.style.transform = `translate(-50%, 50px) rotate(360deg)`;
                         PullToRefresh.spinner.classList.add('animate-spin');
                         
-                        // محاكاة تحميل
                         setTimeout(() => {
                             App.renderFeed();
                             App.renderNotifications();
@@ -728,7 +870,6 @@
                             UI.showMessage('تم التحديث');
                         }, 1000);
                     } else {
-                        // إلغاء
                         PullToRefresh.spinner.style.transform = `translate(-50%, -50px)`;
                         PullToRefresh.spinner.style.opacity = 0;
                     }
@@ -736,7 +877,6 @@
             }
         };
 
-        // المطلب 5: نظام المنشن
         window.Mentions = {
             activeInput: null,
             setup: () => {
@@ -770,7 +910,6 @@
                 const dropdown = document.getElementById('mentions-dropdown');
                 dropdown.innerHTML = '';
                 
-                // تصفية الأصدقاء فقط (أو الكل حسب الرغبة، الأفضل الأصدقاء)
                 const friendsIds = Memory.friends.map(f => f.user1 === currentUser.uid ? f.user2 : (f.user2 === currentUser.uid ? f.user1 : null)).filter(id => id);
                 
                 let results = Object.values(Memory.users).filter(u => 
@@ -784,7 +923,6 @@
                     return;
                 }
 
-                // ترتيب حسب الاكثر تفضيلاً
                 const mentionsCount = currentUser.mentionsCount || {};
                 results.sort((a,b) => (mentionsCount[b.uid] || 0) - (mentionsCount[a.uid] || 0));
 
@@ -799,20 +937,18 @@
                         </div>
                     `;
                     item.onmousedown = (e) => {
-                        e.preventDefault(); // لمنع فقدان التركيز (blur)
+                        e.preventDefault(); 
                         Mentions.selectUser(u.username, u.uid);
                     };
                     dropdown.appendChild(item);
                 });
 
-                // موقع القائمة المنسدلة بناء على مكان الإدخال
                 const rect = input.getBoundingClientRect();
                 dropdown.style.bottom = 'auto';
                 dropdown.style.top = (rect.bottom + window.scrollY) + 'px';
                 if(input.id === 'comment-input' || input.id === 'post-text-input') {
-                    // نظرا لتصميم المودل، سنثبت القائمة أسفل النافذة أو فوق الكيبورد
                     dropdown.style.top = 'auto';
-                    dropdown.style.bottom = '60px'; // تقريباً فوق حقل التعليق
+                    dropdown.style.bottom = '60px'; 
                 }
                 
                 dropdown.style.display = 'block';
@@ -826,7 +962,7 @@
                 const textAfterCursor = text.substring(cursorPos);
                 
                 const words = textBeforeCursor.split(/\s/);
-                words.pop(); // حذف كلمة المنشن
+                words.pop(); 
                 
                 const newTextBefore = (words.length > 0 ? words.join(' ') + ' ' : '') + '@' + username + ' ';
                 input.value = newTextBefore + textAfterCursor;
@@ -834,8 +970,6 @@
                 input.setSelectionRange(newTextBefore.length, newTextBefore.length);
                 
                 document.getElementById('mentions-dropdown').style.display = 'none';
-                
-                // زيادة عداد التفضيل
                 App.incrementMentionCount(uid);
             }
         };
@@ -881,8 +1015,11 @@
                 
                 App.updateLastActive();
                 
-                if(tabId === 'messages') document.getElementById('badge-messages').classList.add('hidden');
-                if(tabId === 'notes') document.getElementById('badge-requests').classList.add('hidden');
+                if(tabId === 'messages') App.renderChats(); 
+                if(tabId === 'notes') {
+                    document.getElementById('badge-requests').classList.add('hidden');
+                    App.switchFriendsSubTab('friends'); // افتراضي
+                }
                 if(tabId === 'notifications') document.getElementById('badge-notifications').classList.add('hidden');
 
                 document.getElementById('main-content-area').scrollTop = 0;
@@ -899,9 +1036,10 @@
                     App.renderUserProfile(data);
                 } else if (modalId === 'chat-modal' && data) {
                     window.currentChatUserId = data;
+                    App.cancelReply(); // مسح الرد السابق
                     App.renderChatInfo(data);
                     App.renderMessages();
-                    App.markChatAsRead(data); // المطلب 10
+                    App.markChatAsRead(data); 
                 } else if (modalId === 'comments-modal' && data) {
                     window.currentPostIdForComment = data;
                     document.getElementById('comment-my-avatar').src = currentUser.photo || App.getDefaultAvatar();
@@ -911,7 +1049,6 @@
                     document.getElementById('edit-bio').value = currentUser.bio || '';
                     document.getElementById('edit-profile-img').src = currentUser.photo || App.getDefaultAvatar();
                     
-                    // المطلب 11: تعطيل الإدخال إذا تم التغيير قريبا
                     const usernameInput = document.getElementById('edit-username');
                     usernameInput.value = currentUser.username || '';
                     const tenDaysInMs = 10 * 24 * 60 * 60 * 1000;
@@ -922,19 +1059,28 @@
                     } else {
                         usernameInput.disabled = false;
                     }
-
                 } else if (modalId === 'privacy-modal') {
                     document.getElementById('priv-requests').checked = currentUser.allowRequests !== false;
                     document.getElementById('priv-private').checked = currentUser.isPrivate === true;
                     document.getElementById('priv-friends-vis').value = currentUser.friendsVisibility || 'all';
                     document.getElementById('priv-msgs').value = currentUser.messagePrivacy || 'all';
+                    
+                    // التخفي
+                    if(App.isPremium()) {
+                        document.getElementById('stealth-mode-container').classList.remove('opacity-50', 'pointer-events-none');
+                        document.getElementById('priv-stealth').checked = currentUser.stealthMode === true;
+                    } else {
+                        document.getElementById('stealth-mode-container').classList.add('opacity-50', 'pointer-events-none');
+                        document.getElementById('priv-stealth').checked = false;
+                    }
+
                 } else if (modalId === 'create-note-modal') {
                     document.getElementById('create-note-preview-avatar').src = currentUser.photo || App.getDefaultAvatar();
                     document.getElementById('note-text-input').value = '';
-                } else if (modalId === 'friends-list-modal') {
-                    App.renderFriendsList();
                 } else if (modalId === 'blocked-users-modal') {
-                    App.renderBlockedUsers(); // المطلب 7
+                    App.renderBlockedUsers(); 
+                } else if (modalId === 'premium-modal') {
+                    App.renderPremiumModal();
                 }
             },
             closeModal: (modalId) => {
@@ -963,12 +1109,15 @@
 
         window.Auth = {
             init: async () => {
+                // المطلب 8: إظهار شاشة البداية 
+                UI.showScreen('splash-screen');
+
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     try { await signInWithCustomToken(auth, __initial_auth_token); } catch(e){}
                 } else if (!auth.currentUser) {
                     setTimeout(() => {
                         if(!auth.currentUser) UI.showScreen('auth-screen');
-                    }, 2500); 
+                    }, 3000); // وقت كافٍ لرؤية الانميشن الفخم
                 }
 
                 onAuthStateChanged(auth, async (user) => {
@@ -978,19 +1127,20 @@
                             window.currentUser = userDoc.data();
                             if(!window.currentUser.blockedUsers) window.currentUser.blockedUsers = [];
                             if(!window.currentUser.mentionsCount) window.currentUser.mentionsCount = {};
-                            App.startCore();
+                            
+                            setTimeout(() => { App.startCore(); }, 1500); // تمديد بسيط لاستمتاع بالشعار
                             
                             const urlParams = new URLSearchParams(window.location.search);
                             const postIdParam = urlParams.get('post');
                             if(postIdParam) {
-                                setTimeout(() => App.openSinglePost(postIdParam), 1000);
+                                setTimeout(() => App.openSinglePost(postIdParam), 2500);
                             }
                         } else {
-                            UI.showScreen('setup-profile-screen');
+                            setTimeout(() => { UI.showScreen('setup-profile-screen'); }, 1500);
                         }
                     } else {
                         window.currentUser = null;
-                        UI.showScreen('auth-screen');
+                        setTimeout(() => { UI.showScreen('auth-screen'); }, 3000);
                     }
                 });
             },
@@ -1009,9 +1159,23 @@
                     UI.showMessage('حدث خطأ، ربما البريد مستخدم مسبقاً أو الرمز ضعيف');
                 }
             },
+            // المطلب 1: تصحيح تسجيل الدخول بجوجل
             loginWithGoogle: async () => {
                 try {
-                    const result = await signInWithPopup(auth, googleProvider);
+                    UI.showMessage('جاري التحويل لجوجل...');
+                    // نستخدم signInWithPopup كخيار أول في الويب
+                    const result = await signInWithPopup(auth, googleProvider).catch(async (e) => {
+                        if(e.code === 'auth/popup-blocked' || e.code === 'auth/unauthorized-domain') {
+                            UI.showMessage('تم حظر النافذة أو الدومين غير مصرح. حاول عبر متصفح خارجي.');
+                            throw e;
+                        } else {
+                            // محاولة التحويل كبديل
+                            return await signInWithRedirect(auth, googleProvider);
+                        }
+                    });
+                    
+                    if(!result) return; // قيد التحويل
+
                     const user = result.user;
                     const userDoc = await getDoc(doc(db, USERS_PATH, user.uid));
                     if (!userDoc.exists()) {
@@ -1033,7 +1197,8 @@
                         });
                     }
                 } catch (error) {
-                    UI.showMessage('فشل تسجيل الدخول بجوجل');
+                    console.error(error);
+                    UI.showMessage('فشل تسجيل الدخول. ' + (error.message.includes('invalid') ? 'تأكد من إعدادات Firebase' : ''));
                 }
             },
             login: async () => {
@@ -1065,6 +1230,7 @@
                 }
             },
             logout: async () => {
+                App.updateLastActive(true); // تحديث كغير متصل فوراً
                 await signOut(auth);
                 window.location.reload();
             },
@@ -1131,6 +1297,19 @@
         window.App = {
             getDefaultAvatar: () => "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>",
             
+            // المطلب 10: منطق الحساب المميز
+            isPremium: (u = currentUser) => {
+                if(!u) return false;
+                if(u.email === adminEmail) return true; // المالك دائمًا مميز
+                return u.isPremium === true && u.premiumUntil && u.premiumUntil > Date.now();
+            },
+            isStealthActive: (u = currentUser) => {
+                return App.isPremium(u) && u.stealthMode === true;
+            },
+            getPremiumBadgeHTML: (u) => {
+                return App.isPremium(u) ? '<i class="ph-fill ph-seal-check text-blue-500 text-sm ml-1" title="حساب مميز"></i>' : '';
+            },
+
             startCore: () => {
                 UI.showScreen('main-app');
                 App.updateUIWithUserData();
@@ -1139,6 +1318,11 @@
                 Mentions.setup();
                 PullToRefresh.init();
                 setInterval(App.updateLastActive, 60000);
+                
+                // إظهار لوحة التحكم للمالك
+                if(currentUser.email === adminEmail) {
+                    document.getElementById('admin-panel-btn').classList.remove('hidden');
+                }
             },
 
             updateUIWithUserData: () => {
@@ -1147,12 +1331,16 @@
                 document.getElementById('current-user-avatar-note').src = photo;
                 document.getElementById('settings-avatar').src = photo;
                 document.getElementById('settings-name').innerText = currentUser.name;
+                document.getElementById('settings-premium-badge').innerHTML = App.getPremiumBadgeHTML(currentUser);
                 document.getElementById('create-post-avatar').src = photo;
             },
 
-            updateLastActive: async () => {
+            updateLastActive: async (forceOffline = false) => {
                 if(!currentUser) return;
-                const now = Date.now();
+                // إذا كان التخفي مفعل والمستخدم متصل، لا نحدث وقت الظهور (ليبقى غير متصل للآخرين)
+                if(App.isStealthActive() && !forceOffline) return;
+                
+                const now = forceOffline ? (Date.now() - (6 * 60 * 1000)) : Date.now();
                 currentUser.lastActive = now;
                 try {
                     await updateDoc(doc(db, USERS_PATH, currentUser.uid), { lastActive: now });
@@ -1169,9 +1357,14 @@
                         if(d.id === currentUser.uid) {
                             currentUser.blockedUsers = data.blockedUsers || [];
                             currentUser.mentionsCount = data.mentionsCount || {};
+                            currentUser.isPremium = data.isPremium;
+                            currentUser.premiumUntil = data.premiumUntil;
+                            currentUser.stealthMode = data.stealthMode;
+                            App.updateUIWithUserData();
                         }
                     });
                     App.renderChats(); 
+                    App.renderFeed(); // إعادة رسم لتحديث العلامات الزرقاء
                 }, errHandler);
 
                 onSnapshot(collection(db, POSTS_PATH), (snap) => {
@@ -1187,12 +1380,13 @@
 
                 onSnapshot(collection(db, REQUESTS_PATH), (snap) => {
                     Memory.requests = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                    App.renderFriendRequests();
+                    App.renderFriendsTab('requests'); // المطلب 9
                 }, errHandler);
 
                 onSnapshot(collection(db, FRIENDS_PATH), (snap) => {
                     Memory.friends = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     App.renderNotes();
+                    App.renderFriendsTab('friends'); // المطلب 9
                 }, errHandler);
 
                 onSnapshot(collection(db, NOTES_PATH), (snap) => {
@@ -1206,7 +1400,10 @@
                 onSnapshot(collection(db, MESSAGES_PATH), (snap) => {
                     Memory.messages = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     App.renderChats();
-                    if(window.currentChatUserId) App.renderMessages();
+                    if(window.currentChatUserId) {
+                        App.renderMessages();
+                        App.markChatAsRead(window.currentChatUserId);
+                    }
                 }, errHandler);
 
                 onSnapshot(collection(db, NOTIFS_PATH), (snap) => {
@@ -1214,6 +1411,13 @@
                                             .filter(n => n.to === currentUser.uid);
                     App.renderNotifications();
                 }, errHandler);
+
+                // الاستماع للأكواد للمدير فقط
+                if(currentUser.email === adminEmail) {
+                    onSnapshot(collection(db, PREMIUM_CODES_PATH), (snap) => {
+                        Memory.premiumCodes = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    }, errHandler);
+                }
             },
 
             isFriend: (uid1, uid2) => {
@@ -1238,14 +1442,18 @@
             },
             isOnline: (lastActive) => {
                 if(!lastActive) return false;
+                // إخفاء الاتصال لمن فعل وضع التخفي
+                const user = Object.values(Memory.users).find(u => u.lastActive === lastActive);
+                if(user && App.isStealthActive(user)) return false;
+                
                 return (Date.now() - lastActive) < (5 * 60 * 1000);
             },
             parseMentions: (text) => {
                 const escaped = escapeHTML(text);
                 return escaped.replace(/@([\w_.]+)/g, (match, username) => {
-                    const exists = Object.values(Memory.users).some(u => u.username === username);
+                    const exists = Object.values(Memory.users).find(u => u.username === username);
                     if(exists) {
-                        return `<span class="text-blue-600 font-bold cursor-pointer hover:underline" onclick="event.stopPropagation(); UI.openProfileByUsername('${username}')">${match}</span>`;
+                        return `<span class="text-blue-600 font-bold cursor-pointer hover:underline" onclick="event.stopPropagation(); UI.openProfileByUsername('${username}')">${match}${App.getPremiumBadgeHTML(exists)}</span>`;
                     }
                     return match; 
                 });
@@ -1280,14 +1488,12 @@
                 sortedPosts.forEach(post => {
                     const author = Memory.users[post.authorId];
                     if(!author || App.isBlocked(author.uid)) return;
-
                     if(author.isPrivate && author.uid !== currentUser.uid && !App.isFriend(currentUser.uid, author.uid)) return;
                     
                     visibleCount++;
                     const isLiked = post.likes && post.likes.includes(currentUser.uid);
                     const likesCount = post.likes ? post.likes.length : 0;
                     const commentsCount = Memory.comments.filter(c => c.postId === post.id).length;
-
                     const parsedText = App.parseMentions(post.text);
 
                     const postEl = document.createElement('div');
@@ -1297,11 +1503,11 @@
                             <div class="flex items-center gap-3 cursor-pointer group btn-tap" onclick="UI.openModal('profile-modal', '${author.uid}')">
                                 <img src="${author.photo || App.getDefaultAvatar()}" class="w-11 h-11 rounded-full object-cover border border-gray-100">
                                 <div>
-                                    <h4 class="font-bold leading-tight group-hover:text-blue-600 transition-colors">${author.name}</h4>
+                                    <h4 class="font-bold leading-tight group-hover:text-blue-600 transition-colors flex items-center gap-1">${author.name} ${App.getPremiumBadgeHTML(author)}</h4>
                                     <span class="text-xs text-gray-400">${App.timeAgo(post.timestamp)}</span>
                                 </div>
                             </div>
-                            ${post.authorId === currentUser.uid ? `<button onclick="App.deletePost('${post.id}')" class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors btn-tap"><i class="ph ph-trash text-lg"></i></button>` : ''}
+                            ${post.authorId === currentUser.uid || currentUser.email === adminEmail ? `<button onclick="App.deletePost('${post.id}')" class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors btn-tap"><i class="ph ph-trash text-lg"></i></button>` : ''}
                         </div>
                         <div class="px-4 py-2 text-gray-800 text-[15px] leading-relaxed whitespace-pre-wrap">${parsedText}</div>
                         <div class="px-4 py-3 text-xs text-gray-400 flex justify-between items-center mt-2 border-b border-gray-50">
@@ -1336,12 +1542,8 @@
                 document.getElementById('post-text-input').value = '';
                 
                 const postRef = await addDoc(collection(db, POSTS_PATH), {
-                    authorId: currentUser.uid,
-                    text: text,
-                    timestamp: Date.now(),
-                    likes: []
+                    authorId: currentUser.uid, text: text, timestamp: Date.now(), likes: []
                 });
-                
                 App.notifyMentions(text, 'منشور', postRef.id);
                 UI.showMessage('تم النشر بنجاح');
             },
@@ -1402,7 +1604,6 @@
                 }
 
                 const parsedText = App.parseMentions(post.text);
-                const isLiked = post.likes && post.likes.includes(currentUser.uid);
                 const likesCount = post.likes ? post.likes.length : 0;
                 
                 container.innerHTML = `
@@ -1410,7 +1611,7 @@
                         <div class="p-4 flex items-center gap-3 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${author.uid}')">
                             <img src="${author.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-100">
                             <div>
-                                <h4 class="font-bold text-lg">${author.name}</h4>
+                                <h4 class="font-bold text-lg flex items-center gap-1">${author.name} ${App.getPremiumBadgeHTML(author)}</h4>
                                 <span class="text-sm text-gray-400">${App.timeAgo(post.timestamp)}</span>
                             </div>
                         </div>
@@ -1444,7 +1645,6 @@
                 postComments.forEach(c => {
                     const author = Memory.users[c.authorId];
                     if(!author || App.isBlocked(author.uid)) return;
-                    
                     const parsedText = App.parseMentions(c.text);
 
                     const el = document.createElement('div');
@@ -1453,7 +1653,7 @@
                         <img src="${author.photo || App.getDefaultAvatar()}" class="w-10 h-10 rounded-full object-cover border border-gray-100 cursor-pointer btn-tap" onclick="UI.openProfileByUsername('${author.username}')">
                         <div class="flex-1">
                             <div class="bg-gray-100 rounded-2xl rounded-tr-sm p-3.5 inline-block min-w-[50%] max-w-full shadow-sm">
-                                <h5 class="font-bold text-sm text-gray-900 cursor-pointer" onclick="UI.openProfileByUsername('${author.username}')">${author.name}</h5>
+                                <h5 class="font-bold text-sm text-gray-900 cursor-pointer flex items-center gap-1" onclick="UI.openProfileByUsername('${author.username}')">${author.name} ${App.getPremiumBadgeHTML(author)}</h5>
                                 <p class="text-gray-800 text-[15px] mt-1 break-words">${parsedText}</p>
                             </div>
                             <span class="text-[11px] text-gray-400 mx-2 mt-1 block">${App.timeAgo(c.timestamp)}</span>
@@ -1461,7 +1661,6 @@
                     `;
                     container.appendChild(el);
                 });
-                
                 setTimeout(() => container.scrollTop = container.scrollHeight, 10);
             },
 
@@ -1473,21 +1672,17 @@
                 document.getElementById('comment-input').value = '';
                 
                 await addDoc(collection(db, COMMENTS_PATH), {
-                    postId: postId,
-                    authorId: currentUser.uid,
-                    text: text,
-                    timestamp: Date.now()
+                    postId: postId, authorId: currentUser.uid, text: text, timestamp: Date.now()
                 });
 
                 const post = Memory.posts.find(p => p.id === postId);
                 if(post && post.authorId !== currentUser.uid && !App.isBlocked(post.authorId)) {
                     App.sendNotification(post.authorId, 'علق على منشورك', postId);
                 }
-
                 App.notifyMentions(text, 'تعليق', postId);
             },
 
-            // --- الملاحظات (المطلب 1 و 2 و 9) ---
+            // --- الملاحظات (المطلب 2) ---
             renderNotes: () => {
                 const container = document.getElementById('notes-container');
                 const myBtnContainer = container.firstElementChild.outerHTML;
@@ -1522,19 +1717,18 @@
                     const el = document.createElement('div');
                     el.className = 'inline-flex flex-col items-center cursor-pointer shrink-0 btn-tap w-20';
                     el.style.scrollSnapAlign = 'start';
-                    
                     const shortName = author.name.split(' ')[0];
                     
                     el.innerHTML = `
-                        <img src="${author.photo || App.getDefaultAvatar()}" class="w-16 h-16 rounded-full object-cover border-2 border-transparent ring-2 ring-blue-500 p-0.5 shadow-sm">
+                        <div class="relative">
+                            <img src="${author.photo || App.getDefaultAvatar()}" class="w-16 h-16 rounded-full object-cover border-2 border-transparent ring-2 ring-blue-500 p-0.5 shadow-sm">
+                        </div>
                         <span class="text-[11px] font-bold mt-1 text-gray-800 w-full text-center truncate">${shortName}</span>
                         <div class="bg-gray-100 text-gray-700 text-[10px] px-2 py-1.5 rounded-lg mt-1 w-full text-center truncate border border-gray-200 shadow-sm leading-tight">
                             ${escapeHTML(note.text)}
                         </div>
                     `;
-                    el.onclick = () => {
-                        App.viewNoteFull(note, author);
-                    };
+                    el.onclick = () => { App.viewNoteFull(note, author); };
                     container.appendChild(el);
                 });
             },
@@ -1542,32 +1736,67 @@
             viewNoteFull: (note, author) => {
                 document.getElementById('nv-avatar').src = author.photo || App.getDefaultAvatar();
                 document.getElementById('nv-name').innerText = author.name;
+                document.getElementById('nv-premium-badge').innerHTML = App.getPremiumBadgeHTML(author);
                 document.getElementById('nv-time').innerText = App.timeAgo(note.timestamp);
                 document.getElementById('nv-text').innerHTML = App.parseMentions(note.text);
+                
+                window.noteViewAuthorId = author.uid;
+                window.noteViewId = note.id;
+                
+                if(author.uid !== currentUser.uid) {
+                    document.getElementById('note-reply-section').classList.remove('hidden');
+                    document.getElementById('note-reply-input').value = '';
+                } else {
+                    document.getElementById('note-reply-section').classList.add('hidden');
+                }
+
                 UI.openModal('note-view-modal');
+            },
+            viewProfileFromNote: () => {
+                if(window.noteViewAuthorId) {
+                    UI.closeModal('note-view-modal');
+                    UI.openModal('profile-modal', window.noteViewAuthorId);
+                }
+            },
+            sendNoteReply: async () => {
+                const text = document.getElementById('note-reply-input').value.trim();
+                if(!text || !window.noteViewAuthorId) return;
+                
+                const note = Memory.notes.find(n => n.id === window.noteViewId);
+                if(!note) return;
+
+                const replyText = `[رد على ملاحظة: "${note.text}"]\n${text}`;
+                
+                await addDoc(collection(db, MESSAGES_PATH), {
+                    participants: [currentUser.uid, window.noteViewAuthorId],
+                    senderId: currentUser.uid,
+                    text: replyText,
+                    timestamp: Date.now(),
+                    read: false
+                });
+
+                UI.showMessage('تم إرسال الرد للخاص');
+                UI.closeModal('note-view-modal');
+            },
+            likeNote: async () => {
+                if(!window.noteViewAuthorId) return;
+                App.sendNotification(window.noteViewAuthorId, 'تفاعل بـ ❤️ مع ملاحظتك', null);
+                UI.showMessage('تم الإعجاب');
             },
 
             checkAndCreateNote: () => {
                 const myActiveNote = Memory.notes.find(n => n.authorId === currentUser.uid);
-                if(myActiveNote) {
-                    App.openManageNote(myActiveNote.id, myActiveNote.text);
-                } else {
-                    UI.openModal('create-note-modal');
-                }
+                if(myActiveNote) App.openManageNote(myActiveNote.id, myActiveNote.text);
+                else UI.openModal('create-note-modal');
             },
 
             createNote: async () => {
                 const text = document.getElementById('note-text-input').value.trim();
                 if(!text) return UI.showMessage('اكتب شيئاً');
-                
                 UI.closeModal('create-note-modal');
-                
                 await addDoc(collection(db, NOTES_PATH), {
-                    authorId: currentUser.uid,
-                    text: text,
-                    timestamp: Date.now()
+                    authorId: currentUser.uid, text: text, timestamp: Date.now()
                 });
-                
                 App.notifyMentions(text, 'ملاحظة', null);
                 UI.showMessage('تمت الإضافة (صالحة لـ 24 ساعة)');
             },
@@ -1594,18 +1823,225 @@
                 UI.closeModal('manage-note-modal');
                 UI.showMessage('تم حذف الملاحظة');
                 
-                const container = document.getElementById('notes-container');
-                const myBtnEl = container.firstElementChild;
-                const myTextCont = myBtnEl.querySelector('#my-note-text-container');
-                const myAvatar = myBtnEl.querySelector('#current-user-avatar-note');
-                const myPlusIcon = myBtnEl.querySelector('#my-note-plus-icon');
-                
-                myTextCont.innerText = 'إضافة ملاحظة';
-                myTextCont.classList.replace('text-white', 'text-gray-500');
-                myTextCont.classList.replace('bg-gray-800', 'bg-gray-100');
-                myAvatar.classList.replace('border-gray-800', 'border-transparent');
-                myPlusIcon.classList.remove('hidden');
+                const myBtnEl = document.getElementById('notes-container').firstElementChild;
+                myBtnEl.querySelector('#my-note-text-container').innerText = 'إضافة ملاحظة';
+                myBtnEl.querySelector('#my-note-text-container').classList.replace('text-white', 'text-gray-500');
+                myBtnEl.querySelector('#my-note-text-container').classList.replace('bg-gray-800', 'bg-gray-100');
+                myBtnEl.querySelector('#current-user-avatar-note').classList.replace('border-gray-800', 'border-transparent');
+                myBtnEl.querySelector('#my-note-plus-icon').classList.remove('hidden');
                 myBtnEl.onclick = App.checkAndCreateNote;
+            },
+
+
+            // --- المطلب 9: تقسيم الأصدقاء ---
+            switchFriendsSubTab: (tabId) => {
+                ['requests', 'friends', 'suggestions'].forEach(id => {
+                    document.getElementById(`subtab-${id}`).className = 'flex-1 py-3 text-center text-sm font-bold sub-tab-inactive btn-tap transition-colors';
+                    document.getElementById(`subtab-content-${id}`).classList.add('hidden');
+                });
+                
+                document.getElementById(`subtab-${tabId}`).className = 'flex-1 py-3 text-center text-sm font-bold sub-tab-active btn-tap transition-colors';
+                document.getElementById(`subtab-content-${tabId}`).classList.remove('hidden');
+                
+                App.renderFriendsTab(tabId);
+            },
+            
+            renderFriendsTab: (tabId) => {
+                const container = document.getElementById(`subtab-content-${tabId}`);
+                if(!container) return;
+                container.innerHTML = '';
+
+                if(tabId === 'requests') {
+                    const myRequests = Memory.requests.filter(r => r.to === currentUser.uid);
+                    if(myRequests.length > 0) document.getElementById('badge-requests').classList.remove('hidden');
+                    else document.getElementById('badge-requests').classList.add('hidden');
+                    
+                    if(myRequests.length === 0) {
+                        container.innerHTML = '<div class="text-center text-gray-400 py-10 mt-6"><i class="ph ph-user-plus text-4xl mb-2 opacity-50 block mx-auto"></i>لا توجد طلبات جديدة</div>';
+                        return;
+                    }
+                    myRequests.forEach(req => {
+                        const fromUser = Memory.users[req.from];
+                        if(!fromUser || App.isBlocked(fromUser.uid)) return;
+                        const el = document.createElement('div');
+                        el.className = 'flex flex-col p-3 bg-white rounded-2xl border border-gray-100 shadow-sm gap-3';
+                        el.innerHTML = `
+                            <div class="flex items-center gap-3 cursor-pointer group" onclick="UI.openModal('profile-modal', '${fromUser.uid}')">
+                                <img src="${fromUser.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200">
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-gray-800 group-hover:text-blue-600 truncate flex items-center gap-1">${fromUser.name} ${App.getPremiumBadgeHTML(fromUser)}</span>
+                                    <span class="text-xs text-gray-500">${App.timeAgo(req.timestamp)}</span>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 w-full">
+                                <button onclick="App.acceptRequest('${req.id}', '${req.from}')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded-xl btn-tap shadow-sm transition-colors text-sm">قبول</button>
+                                <button onclick="App.declineRequest('${req.id}')" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 rounded-xl btn-tap transition-colors text-sm">رفض</button>
+                            </div>
+                        `;
+                        container.appendChild(el);
+                    });
+                } else if (tabId === 'friends') {
+                    const myFriendsRelations = Memory.friends.filter(f => f.user1 === currentUser.uid || f.user2 === currentUser.uid);
+                    const myFriends = myFriendsRelations.map(f => {
+                        const friendId = f.user1 === currentUser.uid ? f.user2 : f.user1;
+                        return Memory.users[friendId];
+                    }).filter(u => u !== undefined && !App.isBlocked(u.uid));
+
+                    if(myFriends.length === 0) {
+                        container.innerHTML = '<div class="text-center text-gray-400 py-10 mt-6"><i class="ph ph-users text-4xl mb-2 opacity-50 block mx-auto"></i>ليس لديك أصدقاء حالياً</div>';
+                        return;
+                    }
+                    myFriends.forEach(u => {
+                        const el = document.createElement('div');
+                        el.className = 'flex items-center gap-3 p-3 bg-white hover:bg-gray-50 rounded-2xl cursor-pointer btn-tap border border-gray-50 shadow-sm transition-colors';
+                        el.onclick = () => UI.openModal('profile-modal', u.uid);
+                        el.innerHTML = `
+                            <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200">
+                            <div class="flex-1">
+                                <h4 class="font-bold text-gray-800 flex items-center gap-1">${u.name} ${App.getPremiumBadgeHTML(u)}</h4>
+                                <p class="text-xs text-gray-500 font-medium">@${u.username}</p>
+                            </div>
+                        `;
+                        container.appendChild(el);
+                    });
+                } else if (tabId === 'suggestions') {
+                    const friendsIds = Memory.friends.map(f => f.user1 === currentUser.uid ? f.user2 : (f.user2 === currentUser.uid ? f.user1 : null)).filter(id => id);
+                    const requestedIds = Memory.requests.filter(r => r.from === currentUser.uid).map(r => r.to);
+                    
+                    let suggestions = Object.values(Memory.users).filter(u => 
+                        u.uid !== currentUser.uid && 
+                        !friendsIds.includes(u.uid) && 
+                        !requestedIds.includes(u.uid) &&
+                        !App.isBlocked(u.uid) &&
+                        u.allowRequests !== false
+                    );
+                    
+                    // إعطاء الأفضلية للمشتركين المميزين في الاقتراحات
+                    suggestions.sort((a,b) => {
+                        if(App.isPremium(a) && !App.isPremium(b)) return -1;
+                        if(!App.isPremium(a) && App.isPremium(b)) return 1;
+                        return 0.5 - Math.random(); 
+                    });
+                    
+                    suggestions = suggestions.slice(0, 10); // عرض 10 فقط
+
+                    if(suggestions.length === 0) {
+                        container.innerHTML = '<div class="text-center text-gray-400 py-10 mt-6">لا توجد اقتراحات حالياً</div>';
+                        return;
+                    }
+                    suggestions.forEach(u => {
+                        const el = document.createElement('div');
+                        el.className = 'flex items-center gap-3 p-3 bg-white rounded-2xl border border-gray-50 shadow-sm';
+                        el.innerHTML = `
+                            <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${u.uid}')">
+                            <div class="flex-1 cursor-pointer" onclick="UI.openModal('profile-modal', '${u.uid}')">
+                                <h4 class="font-bold text-gray-800 flex items-center gap-1">${u.name} ${App.getPremiumBadgeHTML(u)}</h4>
+                                <p class="text-xs text-gray-500 font-medium">@${u.username}</p>
+                            </div>
+                            <button onclick="App.sendFriendRequest('${u.uid}')" class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full font-bold text-sm btn-tap hover:bg-blue-100">إضافة</button>
+                        `;
+                        container.appendChild(el);
+                    });
+                }
+            },
+
+
+            // --- نظام الصداقة والمحظورين ---
+            sendFriendRequest: async (toUid) => {
+                await addDoc(collection(db, REQUESTS_PATH), {
+                    from: currentUser.uid, to: toUid, timestamp: Date.now()
+                });
+                App.sendNotification(toUid, 'أرسل لك طلب صداقة', null);
+                UI.showMessage('تم إرسال الطلب');
+                App.renderFriendsTab('suggestions');
+                if(!document.getElementById('profile-modal').classList.contains('hidden')) App.renderUserProfile(toUid);
+            },
+            cancelRequest: async (reqId, uid) => {
+                await deleteDoc(doc(db, REQUESTS_PATH, reqId));
+                UI.showMessage('تم إلغاء الطلب');
+                if(uid && !document.getElementById('profile-modal').classList.contains('hidden')) App.renderUserProfile(uid);
+            },
+            acceptRequest: async (reqId, fromUid) => {
+                await deleteDoc(doc(db, REQUESTS_PATH, reqId));
+                await addDoc(collection(db, FRIENDS_PATH), {
+                    user1: currentUser.uid, user2: fromUid, timestamp: Date.now()
+                });
+                App.sendNotification(fromUid, 'وافق على طلب الصداقة', null);
+                UI.showMessage('تم قبول الطلب');
+                if(!document.getElementById('profile-modal').classList.contains('hidden')) App.renderUserProfile(fromUid);
+            },
+            declineRequest: async (reqId) => {
+                await deleteDoc(doc(db, REQUESTS_PATH, reqId));
+                UI.showMessage('تم رفض الطلب');
+            },
+            unfriend: async (uid) => {
+                if(confirm('هل أنت متأكد من إزالة الصداقة؟')) {
+                    const friendship = Memory.friends.find(f => 
+                        (f.user1 === currentUser.uid && f.user2 === uid) || 
+                        (f.user1 === uid && f.user2 === currentUser.uid)
+                    );
+                    if(friendship) {
+                        await deleteDoc(doc(db, FRIENDS_PATH, friendship.id));
+                        UI.showMessage('تمت إزالة الصداقة');
+                        UI.closeModal('action-modal'); 
+                        if(!document.getElementById('profile-modal').classList.contains('hidden')) App.renderUserProfile(uid);
+                    }
+                }
+            },
+
+            blockUser: async (uid) => {
+                if(confirm('هل أنت متأكد من حظر هذا المستخدم؟')) {
+                    const updatedBlocks = [...(currentUser.blockedUsers || []), uid];
+                    await updateDoc(doc(db, USERS_PATH, currentUser.uid), { blockedUsers: updatedBlocks });
+                    currentUser.blockedUsers = updatedBlocks;
+                    
+                    const friendship = Memory.friends.find(f => 
+                        (f.user1 === currentUser.uid && f.user2 === uid) || 
+                        (f.user1 === uid && f.user2 === currentUser.uid)
+                    );
+                    if(friendship) await deleteDoc(doc(db, FRIENDS_PATH, friendship.id));
+
+                    UI.closeModal('action-modal');
+                    UI.closeModal('chat-modal');
+                    UI.showMessage('تم الحظر بنجاح');
+                    App.startCore(); 
+                }
+            },
+            unblockUser: async (uid) => {
+                const updatedBlocks = (currentUser.blockedUsers || []).filter(id => id !== uid);
+                await updateDoc(doc(db, USERS_PATH, currentUser.uid), { blockedUsers: updatedBlocks });
+                currentUser.blockedUsers = updatedBlocks;
+                UI.showMessage('تم إلغاء الحظر');
+                if(!document.getElementById('blocked-users-modal').classList.contains('hidden')){
+                    App.renderBlockedUsers();
+                }
+                if(!document.getElementById('profile-modal').classList.contains('hidden')){
+                    App.renderUserProfile(uid);
+                }
+            },
+            renderBlockedUsers: () => {
+                const container = document.getElementById('blocked-list-container');
+                container.innerHTML = '';
+                const blockedList = currentUser.blockedUsers || [];
+                if(blockedList.length === 0) {
+                    container.innerHTML = '<div class="text-center text-gray-400 py-20 mt-10"><i class="ph ph-prohibit text-4xl mb-2 opacity-50 block mx-auto"></i>لا يوجد مستخدمين محظورين</div>';
+                    return;
+                }
+                blockedList.forEach(uid => {
+                    const u = Memory.users[uid];
+                    if(!u) return;
+                    const el = document.createElement('div');
+                    el.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-100 mb-2';
+                    el.innerHTML = `
+                        <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${u.uid}')">
+                        <div class="flex-1 cursor-pointer" onclick="UI.openModal('profile-modal', '${u.uid}')">
+                            <h4 class="font-bold text-gray-800">${u.name}</h4>
+                            <p class="text-xs text-gray-500 font-medium">@${u.username}</p>
+                        </div>
+                        <button class="bg-gray-200 text-gray-800 px-3 py-1.5 rounded-full font-bold text-sm btn-tap" onclick="App.unblockUser('${u.uid}')">إلغاء الحظر</button>
+                    `;
+                    container.appendChild(el);
+                });
             },
 
 
@@ -1641,7 +2077,7 @@
                     el.innerHTML = `
                         <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200">
                         <div class="flex-1">
-                            <h4 class="font-bold text-gray-800">${u.name}</h4>
+                            <h4 class="font-bold text-gray-800 flex items-center gap-1">${u.name} ${App.getPremiumBadgeHTML(u)}</h4>
                             <p class="text-xs text-gray-500 font-medium">@${u.username}</p>
                         </div>
                     `;
@@ -1649,317 +2085,53 @@
                 });
             },
 
-            // --- الملف الشخصي ---
-            renderUserProfile: (uid) => {
-                const u = Memory.users[uid];
-                if(!u) return;
-                
-                const isMe = uid === currentUser.uid;
-                const isMyFriend = App.isFriend(currentUser.uid, uid);
-                const isBlocked = App.isBlocked(uid);
-                
-                document.getElementById('vp-image').src = u.photo || App.getDefaultAvatar();
-                document.getElementById('vp-name').innerText = u.name;
-                document.getElementById('vp-username').innerText = `@${u.username}`;
-                document.getElementById('vp-bio').innerText = u.bio || 'لا توجد نبذة';
-                
-                const userFriends = Memory.friends.filter(f => f.user1 === uid || f.user2 === uid).length;
-                const userPosts = Memory.posts.filter(p => p.authorId === uid).length;
-                
-                let showFriendsCount = true;
-                if(!isMe) {
-                    if(u.friendsVisibility === 'only_me') showFriendsCount = false;
-                    if(u.friendsVisibility === 'friends' && !isMyFriend) showFriendsCount = false;
-                }
-                
-                document.getElementById('vp-friends-count').innerText = showFriendsCount ? userFriends : '-';
-                document.getElementById('vp-posts-count').innerText = userPosts;
-
-                const actionContainer = document.getElementById('vp-action-container');
-                actionContainer.innerHTML = '';
-                
-                if(!isMe) {
-                    if(isBlocked) {
-                        const blockBtn = document.createElement('button');
-                        blockBtn.className = 'px-4 h-10 bg-gray-200 text-gray-800 font-bold rounded-full btn-tap flex items-center gap-1.5 shadow-sm';
-                        blockBtn.innerHTML = '<i class="ph-fill ph-lock-key-open"></i> إلغاء الحظر';
-                        blockBtn.onclick = () => App.unblockUser(uid);
-                        actionContainer.appendChild(blockBtn);
-                    } else {
-                        let canMessage = true;
-                        if(u.messagePrivacy === 'closed') canMessage = false;
-                        if(u.messagePrivacy === 'friends' && !isMyFriend) canMessage = false;
-
-                        if(canMessage) {
-                            const msgBtn = document.createElement('button');
-                            msgBtn.className = 'w-10 h-10 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-full flex items-center justify-center ml-2 btn-tap transition-colors border border-gray-200';
-                            msgBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text text-xl"></i>';
-                            msgBtn.onclick = () => {
-                                UI.closeModal('profile-modal');
-                                UI.openModal('chat-modal', uid);
-                            };
-                            actionContainer.appendChild(msgBtn);
-                        }
-
-                        if(isMyFriend) {
-                            const unfriendBtn = document.createElement('button');
-                            unfriendBtn.className = 'px-4 h-10 bg-gray-100 text-gray-800 font-bold rounded-full btn-tap flex items-center gap-1.5 border border-gray-200 shadow-sm';
-                            unfriendBtn.innerHTML = '<i class="ph-fill ph-user-minus"></i> إزالة صديق';
-                            unfriendBtn.onclick = () => App.unfriend(uid);
-                            actionContainer.appendChild(unfriendBtn);
-                        } else {
-                            const reqSent = Memory.requests.find(r => r.from === currentUser.uid && r.to === uid);
-                            const reqReceived = Memory.requests.find(r => r.from === uid && r.to === currentUser.uid);
-
-                            if(reqSent) {
-                                const cancelBtn = document.createElement('button');
-                                cancelBtn.className = 'px-4 h-10 bg-gray-200 text-gray-700 font-bold rounded-full btn-tap flex items-center gap-1.5 shadow-sm';
-                                cancelBtn.innerHTML = '<i class="ph-fill ph-clock"></i> تم الإرسال';
-                                cancelBtn.onclick = () => App.cancelRequest(reqSent.id, uid);
-                                actionContainer.appendChild(cancelBtn);
-                            } else if(reqReceived) {
-                                const accBtn = document.createElement('button');
-                                accBtn.className = 'px-4 h-10 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full btn-tap flex items-center gap-1.5 shadow-md transition-colors';
-                                accBtn.innerHTML = '<i class="ph-fill ph-check"></i> قبول الطلب';
-                                accBtn.onclick = () => App.acceptRequest(reqReceived.id, uid);
-                                actionContainer.appendChild(accBtn);
-                            } else if (u.allowRequests !== false) {
-                                const addBtn = document.createElement('button');
-                                addBtn.className = 'px-4 h-10 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-full btn-tap flex items-center gap-1.5 shadow-md transition-colors';
-                                addBtn.innerHTML = '<i class="ph-fill ph-user-plus"></i> إضافة صديق';
-                                addBtn.onclick = () => App.sendFriendRequest(uid);
-                                actionContainer.appendChild(addBtn);
-                            }
-                        }
-                    }
-                } else {
-                     const editBtn = document.createElement('button');
-                     editBtn.className = 'px-5 h-10 bg-gray-900 text-white font-bold rounded-full btn-tap shadow-md';
-                     editBtn.innerText = 'تعديل الملف';
-                     editBtn.onclick = () => UI.openModal('edit-profile-modal');
-                     actionContainer.appendChild(editBtn);
-                }
-
-                const postsContainer = document.getElementById('vp-posts-container');
-                postsContainer.innerHTML = '';
-                
-                if(!isMe && (isBlocked || (u.isPrivate && !isMyFriend))) {
-                    postsContainer.innerHTML = `
-                        <div class="text-center py-16 text-gray-400 mt-4 bg-white rounded-2xl border border-gray-100 mx-2 shadow-sm">
-                            <i class="ph-fill ph-lock-key text-5xl mb-3 text-gray-300"></i>
-                            <h4 class="font-bold text-gray-700 text-lg mb-1">${isBlocked ? 'حساب محظور' : 'هذا الحساب خاص'}</h4>
-                            <p class="text-sm">${isBlocked ? 'قم بإلغاء الحظر لرؤية المنشورات' : 'تابع هذا الحساب لرؤية صوره ومقاطع الفيديو الخاصة به.'}</p>
-                        </div>
-                    `;
-                } else {
-                    const userPostsArr = Memory.posts.filter(p => p.authorId === uid).sort((a,b) => b.timestamp - a.timestamp);
-                    if(userPostsArr.length === 0) {
-                        postsContainer.innerHTML = '<div class="text-center text-gray-400 py-10">لا توجد منشورات</div>';
-                    } else {
-                        userPostsArr.forEach(post => {
-                            const parsedText = App.parseMentions(post.text);
-                            const postEl = document.createElement('div');
-                            postEl.className = 'bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mx-2 mb-3 cursor-pointer btn-tap';
-                            postEl.onclick = () => App.openSinglePost(post.id);
-                            postEl.innerHTML = `
-                                <p class="text-gray-800 text-[15px] mb-2 whitespace-pre-wrap leading-relaxed">${parsedText}</p>
-                                <span class="text-xs font-semibold text-gray-400">${App.timeAgo(post.timestamp)}</span>
-                            `;
-                            postsContainer.appendChild(postEl);
-                        });
-                    }
-                }
-            },
-
-            // --- نظام الصداقة والمحظورين ---
-            sendFriendRequest: async (toUid) => {
-                await addDoc(collection(db, REQUESTS_PATH), {
-                    from: currentUser.uid,
-                    to: toUid,
-                    timestamp: Date.now()
-                });
-                App.sendNotification(toUid, 'أرسل لك طلب صداقة', null);
-                UI.showMessage('تم إرسال الطلب');
-                App.renderUserProfile(toUid);
-            },
-
-            cancelRequest: async (reqId, uid) => {
-                await deleteDoc(doc(db, REQUESTS_PATH, reqId));
-                UI.showMessage('تم إلغاء الطلب');
-                if(uid) App.renderUserProfile(uid);
-            },
-
-            acceptRequest: async (reqId, fromUid) => {
-                await deleteDoc(doc(db, REQUESTS_PATH, reqId));
-                await addDoc(collection(db, FRIENDS_PATH), {
-                    user1: currentUser.uid,
-                    user2: fromUid,
-                    timestamp: Date.now()
-                });
-                App.sendNotification(fromUid, 'وافق على طلب الصداقة', null);
-                UI.showMessage('تم قبول الطلب');
-                if(document.getElementById('profile-modal').classList.contains('hidden') === false){
-                    App.renderUserProfile(fromUid);
-                }
-            },
-
-            declineRequest: async (reqId) => {
-                await deleteDoc(doc(db, REQUESTS_PATH, reqId));
-            },
-
-            unfriend: async (uid) => {
-                if(confirm('هل أنت متأكد من إزالة الصداقة؟')) {
-                    const friendship = Memory.friends.find(f => 
-                        (f.user1 === currentUser.uid && f.user2 === uid) || 
-                        (f.user1 === uid && f.user2 === currentUser.uid)
-                    );
-                    if(friendship) {
-                        await deleteDoc(doc(db, FRIENDS_PATH, friendship.id));
-                        UI.showMessage('تمت إزالة الصداقة');
-                        UI.closeModal('action-modal'); // إغلاقه لو مفتوح من الشات
-                        if(document.getElementById('profile-modal').classList.contains('hidden') === false){
-                            App.renderUserProfile(uid);
-                        }
-                    }
-                }
-            },
-
-            blockUser: async (uid) => {
-                if(confirm('هل أنت متأكد من حظر هذا المستخدم؟ لن يتمكن من رؤية منشوراتك أو مراسلتك.')) {
-                    const updatedBlocks = [...(currentUser.blockedUsers || []), uid];
-                    await updateDoc(doc(db, USERS_PATH, currentUser.uid), { blockedUsers: updatedBlocks });
-                    currentUser.blockedUsers = updatedBlocks;
-                    
-                    // حذف الصداقة إن وجدت
-                    const friendship = Memory.friends.find(f => 
-                        (f.user1 === currentUser.uid && f.user2 === uid) || 
-                        (f.user1 === uid && f.user2 === currentUser.uid)
-                    );
-                    if(friendship) await deleteDoc(doc(db, FRIENDS_PATH, friendship.id));
-
-                    UI.closeModal('action-modal');
-                    UI.showMessage('تم الحظر بنجاح');
-                    App.startCore(); // ريفرش للقوائم
-                }
-            },
+            // --- المطلب 3 و 4 و 5 و 6 و 7 و 10: نظام المحادثة المتقدم ---
             
-            unblockUser: async (uid) => {
-                const updatedBlocks = (currentUser.blockedUsers || []).filter(id => id !== uid);
-                await updateDoc(doc(db, USERS_PATH, currentUser.uid), { blockedUsers: updatedBlocks });
-                currentUser.blockedUsers = updatedBlocks;
-                UI.showMessage('تم إلغاء الحظر');
-                if(!document.getElementById('blocked-users-modal').classList.contains('hidden')){
-                    App.renderBlockedUsers();
+            // המطلب 7: حساب وتحديث Xylo Pet (الستريك)
+            calculatePetStatus: (otherUid) => {
+                const msgs = Memory.messages
+                    .filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid))
+                    .sort((a,b) => b.timestamp - a.timestamp); // الأحدث أولاً
+
+                if(msgs.length === 0) return { emoji: '🥚', days: 0 };
+
+                let currentDayStr = new Date().toDateString();
+                let daysCount = 0;
+                let lastValidMsgTime = Date.now();
+                
+                // للتبسيط في هذا السياق: نحسب الأيام بناءً على الفروقات بين الرسائل بحد أقصى 48 ساعة
+                // كل رسالة جديدة تجدد الستريك إذا كانت خلال 48 ساعة من السابقة
+                const OneDayMs = 24 * 60 * 60 * 1000;
+                let activeTime = msgs[0].timestamp;
+                
+                // إذا كان آخر رسالة قديمة جداً (> 48 ساعة) فالستريك مكسور
+                if(Date.now() - activeTime > 2 * OneDayMs) return { emoji: '🥚', days: 0 };
+
+                let streakStart = activeTime;
+                for(let i = 1; i < msgs.length; i++) {
+                    let diff = activeTime - msgs[i].timestamp;
+                    if(diff <= 2 * OneDayMs) {
+                        streakStart = msgs[i].timestamp;
+                        activeTime = msgs[i].timestamp;
+                    } else {
+                        break; // انكسر الستريك هنا
+                    }
                 }
-                if(!document.getElementById('profile-modal').classList.contains('hidden')){
-                    App.renderUserProfile(uid);
-                }
+
+                daysCount = Math.floor((Date.now() - streakStart) / OneDayMs);
+                
+                let emoji = '🥚';
+                if(daysCount >= 7 && daysCount < 14) emoji = '🐥';
+                else if(daysCount >= 14 && daysCount < 21) emoji = '🐥🎩';
+                else if(daysCount >= 21) emoji = '🦅👑';
+                else if(daysCount > 0) emoji = '🐣';
+
+                return { emoji, days: daysCount };
             },
 
-            renderBlockedUsers: () => {
-                const container = document.getElementById('blocked-list-container');
-                container.innerHTML = '';
-                
-                const blockedList = currentUser.blockedUsers || [];
-                if(blockedList.length === 0) {
-                    container.innerHTML = '<div class="text-center text-gray-400 py-20 mt-10"><i class="ph ph-prohibit text-4xl mb-2 opacity-50 block mx-auto"></i>لا يوجد مستخدمين محظورين</div>';
-                    return;
-                }
-
-                blockedList.forEach(uid => {
-                    const u = Memory.users[uid];
-                    if(!u) return;
-                    
-                    const el = document.createElement('div');
-                    el.className = 'flex items-center gap-3 p-3 bg-gray-50 rounded-2xl border border-gray-50 mb-2';
-                    el.innerHTML = `
-                        <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${u.uid}')">
-                        <div class="flex-1 cursor-pointer" onclick="UI.openModal('profile-modal', '${u.uid}')">
-                            <h4 class="font-bold text-gray-800">${u.name}</h4>
-                            <p class="text-xs text-gray-500 font-medium">@${u.username}</p>
-                        </div>
-                        <button class="bg-gray-200 text-gray-800 px-3 py-1.5 rounded-full font-bold text-sm btn-tap" onclick="App.unblockUser('${u.uid}')">إلغاء الحظر</button>
-                    `;
-                    container.appendChild(el);
-                });
-            },
-
-            renderFriendRequests: () => {
-                const container = document.getElementById('friend-requests-container');
-                container.innerHTML = '';
-                
-                const myRequests = Memory.requests.filter(r => r.to === currentUser.uid);
-                
-                if(myRequests.length > 0) {
-                    document.getElementById('badge-requests').classList.remove('hidden');
-                } else {
-                    document.getElementById('badge-requests').classList.add('hidden');
-                    container.innerHTML = '<div class="text-center text-gray-400 py-6 text-sm bg-gray-50 rounded-xl border border-dashed border-gray-200">لا توجد طلبات جديدة</div>';
-                    return;
-                }
-
-                myRequests.forEach(req => {
-                    const fromUser = Memory.users[req.from];
-                    if(!fromUser || App.isBlocked(fromUser.uid)) return;
-
-                    const el = document.createElement('div');
-                    el.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-2xl border border-gray-100';
-                    el.innerHTML = `
-                        <div class="flex items-center gap-3 cursor-pointer group btn-tap" onclick="UI.openModal('profile-modal', '${fromUser.uid}')">
-                            <img src="${fromUser.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200">
-                            <div class="flex flex-col">
-                                <span class="font-bold text-sm text-gray-800 group-hover:text-blue-600 truncate max-w-[120px] transition-colors">${fromUser.name}</span>
-                                <span class="text-xs text-gray-500">${App.timeAgo(req.timestamp)}</span>
-                            </div>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="App.acceptRequest('${req.id}', '${req.from}')" class="bg-blue-600 hover:bg-blue-700 text-white w-9 h-9 rounded-full flex items-center justify-center btn-tap shadow-md transition-colors"><i class="ph-fill ph-check text-lg"></i></button>
-                            <button onclick="App.declineRequest('${req.id}')" class="bg-gray-200 hover:bg-gray-300 text-gray-600 w-9 h-9 rounded-full flex items-center justify-center btn-tap transition-colors"><i class="ph-fill ph-x text-lg"></i></button>
-                        </div>
-                    `;
-                    container.appendChild(el);
-                });
-            },
-
-            renderFriendsList: () => {
-                const container = document.getElementById('friends-list-container');
-                container.innerHTML = '';
-                
-                const myFriendsRelations = Memory.friends.filter(f => f.user1 === currentUser.uid || f.user2 === currentUser.uid);
-                const myFriends = myFriendsRelations.map(f => {
-                    const friendId = f.user1 === currentUser.uid ? f.user2 : f.user1;
-                    return Memory.users[friendId];
-                }).filter(u => u !== undefined && !App.isBlocked(u.uid));
-
-                if(myFriends.length === 0) {
-                    container.innerHTML = '<div class="text-center text-gray-400 py-20 mt-10"><i class="ph ph-users text-4xl mb-2 opacity-50 block mx-auto"></i>ليس لديك أصدقاء حالياً</div>';
-                    return;
-                }
-
-                myFriends.forEach(u => {
-                    const el = document.createElement('div');
-                    el.className = 'flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer btn-tap border border-gray-50 mb-2 transition-colors';
-                    el.onclick = () => {
-                        UI.closeModal('friends-list-modal');
-                        UI.openModal('profile-modal', u.uid);
-                    };
-                    el.innerHTML = `
-                        <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200">
-                        <div class="flex-1">
-                            <h4 class="font-bold text-gray-800">${u.name}</h4>
-                            <p class="text-xs text-gray-500 font-medium">@${u.username}</p>
-                        </div>
-                        <button class="w-8 h-8 rounded-full bg-white border shadow-sm flex items-center justify-center text-gray-500"><i class="ph ph-caret-left"></i></button>
-                    `;
-                    container.appendChild(el);
-                });
-            },
-
-            // --- نظام الرسائل والمحادثات ---
             showChatOptions: (otherUid) => {
                 const isMyFriend = App.isFriend(currentUser.uid, otherUid);
                 const content = document.getElementById('action-modal-content');
-                
                 content.innerHTML = `
                     <div class="text-center font-bold text-lg mb-4 text-gray-800 border-b pb-2">خيارات المحادثة</div>
                     ${isMyFriend ? `
@@ -1976,13 +2148,10 @@
                 `;
                 UI.openModal('action-modal');
             },
-
             deleteChatHistory: async (otherUid) => {
                 if(confirm('هل أنت متأكد من حذف هذه المحادثة بالكامل؟')) {
                     const msgsToDelete = Memory.messages.filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid));
-                    for(let msg of msgsToDelete) {
-                        await deleteDoc(doc(db, MESSAGES_PATH, msg.id));
-                    }
+                    for(let msg of msgsToDelete) { await deleteDoc(doc(db, MESSAGES_PATH, msg.id)); }
                     UI.closeModal('action-modal');
                     UI.showMessage('تم حذف المحادثة');
                 }
@@ -1993,41 +2162,52 @@
                 container.innerHTML = '';
                 
                 const chatUsers = {};
+                let totalUnreadCount = 0; // إجمالي الغير مقروء للبادة الحمراء السفلية
+
                 Memory.messages.forEach(msg => {
                     if(msg.participants.includes(currentUser.uid)) {
                         const otherUid = msg.participants.find(id => id !== currentUser.uid);
-                        if(App.isBlocked(otherUid)) return; // المطلب 7: اخفاء شات المحظورين
+                        if(App.isBlocked(otherUid)) return;
                         
-                        if(!chatUsers[otherUid] || chatUsers[otherUid].timestamp < msg.timestamp) {
-                            chatUsers[otherUid] = msg;
+                        // تجاهل الرسائل المحذوفة من عندي
+                        if(msg.deletedFor && msg.deletedFor.includes(currentUser.uid)) return;
+
+                        if(!chatUsers[otherUid]) chatUsers[otherUid] = { lastMsg: msg, unreadCount: 0 };
+                        
+                        if(chatUsers[otherUid].lastMsg.timestamp < msg.timestamp) {
+                            chatUsers[otherUid].lastMsg = msg;
+                        }
+                        
+                        // المطلب 3: حساب عدد الرسائل غير المقروءة بدقة
+                        if(msg.senderId === otherUid && !msg.read) {
+                            chatUsers[otherUid].unreadCount++;
+                            totalUnreadCount++;
                         }
                     }
                 });
 
-                const sortedChats = Object.entries(chatUsers).sort((a,b) => b[1].timestamp - a[1].timestamp);
-                let unread = false;
+                const sortedChats = Object.entries(chatUsers).sort((a,b) => b[1].lastMsg.timestamp - a[1].lastMsg.timestamp);
 
                 if(sortedChats.length === 0) {
                     container.innerHTML = '<div class="text-center text-gray-400 py-10 mt-10"><i class="ph ph-chat-circle-dots text-4xl mb-2 opacity-50 block mx-auto"></i>لا توجد رسائل بعد</div>';
+                    document.getElementById('badge-messages').classList.add('hidden');
                     return;
                 }
 
-                sortedChats.forEach(([otherUid, lastMsg]) => {
+                sortedChats.forEach(([otherUid, chatData]) => {
+                    const lastMsg = chatData.lastMsg;
                     const u = Memory.users[otherUid];
                     if(!u) return;
 
-                    const isUnread = lastMsg.senderId !== currentUser.uid && !lastMsg.read; // المطلب 10
-                    if(isUnread) unread = true;
+                    const isUnread = chatData.unreadCount > 0;
                     const isOnline = App.isOnline(u.lastActive);
 
                     const el = document.createElement('div');
-                    el.className = `flex items-center gap-3 p-3 border-b border-gray-50 cursor-pointer btn-tap transition-colors ${isUnread ? 'bg-blue-50/30' : 'hover:bg-gray-50'}`;
+                    el.className = `flex items-center gap-3 p-3 border-b border-gray-50 cursor-pointer btn-tap transition-colors ${isUnread ? 'bg-blue-50/40' : 'hover:bg-gray-50'}`;
                     
-                    // المطلب 8: الضغط المطول للشات
                     let pressTimer;
                     const startPress = () => { pressTimer = setTimeout(() => App.showChatOptions(u.uid), 600); };
                     const cancelPress = () => clearTimeout(pressTimer);
-
                     el.addEventListener('mousedown', startPress);
                     el.addEventListener('touchstart', startPress, {passive: true});
                     el.addEventListener('mouseup', cancelPress);
@@ -2040,36 +2220,52 @@
                         UI.openModal('chat-modal', u.uid);
                     };
 
+                    // المطلب 5: علامة الصح للقراءة
+                    let tickHtml = '';
+                    if(lastMsg.senderId === currentUser.uid) {
+                        tickHtml = lastMsg.read ? '<i class="ph-fill ph-checks text-blue-500 text-[13px] ml-1"></i>' : '<i class="ph ph-check text-gray-400 text-[13px] ml-1"></i>';
+                    }
+
                     el.innerHTML = `
                         <div class="relative">
                             <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border border-gray-100">
                             ${isOnline ? '<span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>' : ''}
                         </div>
-                        <div class="flex-1 overflow-hidden pr-1">
+                        <div class="flex-1 overflow-hidden pr-1 relative">
                             <div class="flex justify-between items-center mb-0.5">
-                                <h4 class="font-bold truncate text-[15px] ${isUnread ? 'text-black' : 'text-gray-800'}">${u.name}</h4>
+                                <h4 class="font-bold truncate text-[15px] flex items-center gap-1 ${isUnread ? 'text-black' : 'text-gray-800'}">${u.name} ${App.getPremiumBadgeHTML(u)}</h4>
                                 <span class="text-xs ${isUnread ? 'font-bold text-blue-600' : 'text-gray-400'} whitespace-nowrap">${App.timeAgo(lastMsg.timestamp)}</span>
                             </div>
-                            <p class="text-sm truncate ${isUnread ? 'text-unread' : (lastMsg.senderId !== currentUser.uid ? 'font-medium text-gray-800' : 'text-gray-500')}">
-                                ${lastMsg.senderId === currentUser.uid ? 'أنت: ' : ''}${lastMsg.text}
-                            </p>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm truncate flex-1 flex items-center gap-0.5 ${isUnread ? 'text-unread' : (lastMsg.senderId !== currentUser.uid ? 'font-medium text-gray-800' : 'text-gray-500')}">
+                                    ${tickHtml} ${lastMsg.text.replace(/\n/g, ' ')}
+                                </p>
+                                ${isUnread ? `<span class="bg-blue-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-sm mr-2">${chatData.unreadCount}</span>` : ''}
+                            </div>
                         </div>
                     `;
                     container.appendChild(el);
                 });
 
-                if(unread) document.getElementById('badge-messages').classList.remove('hidden');
-                else document.getElementById('badge-messages').classList.add('hidden');
+                if(totalUnreadCount > 0) {
+                    const badge = document.getElementById('badge-messages');
+                    badge.classList.remove('hidden');
+                    badge.innerText = totalUnreadCount > 9 ? '+9' : totalUnreadCount;
+                } else {
+                    document.getElementById('badge-messages').classList.add('hidden');
+                }
             },
 
             markChatAsRead: async (otherUid) => {
+                // المطلب 10: التخفي (لا ترسل إشعار قراءة إذا مفعل التخفي)
+                if(App.isStealthActive()) return; 
+
                 const unreadMsgs = Memory.messages.filter(m => 
                     m.participants.includes(currentUser.uid) && 
                     m.participants.includes(otherUid) &&
                     m.senderId === otherUid && 
                     !m.read
                 );
-                
                 for(let msg of unreadMsgs) {
                     await updateDoc(doc(db, MESSAGES_PATH, msg.id), { read: true });
                 }
@@ -2080,10 +2276,81 @@
                 if(!u) return;
                 document.getElementById('chat-user-img').src = u.photo || App.getDefaultAvatar();
                 document.getElementById('chat-user-name').innerText = u.name;
+                document.getElementById('chat-header-premium-badge').innerHTML = App.getPremiumBadgeHTML(u);
                 
                 const isOnline = App.isOnline(u.lastActive);
                 document.getElementById('chat-online-dot').style.display = isOnline ? 'block' : 'none';
                 document.getElementById('chat-user-status').innerText = isOnline ? 'نشط الآن' : `آخر ظهور ${App.timeAgo(u.lastActive)}`;
+
+                // المطلب 7: عرض الستريك
+                const petData = App.calculatePetStatus(uid);
+                document.getElementById('pet-emoji').innerText = petData.emoji;
+                document.getElementById('pet-streak').innerText = `يوم ${petData.days}`;
+
+                // المطلب 10: تطبيق خلفية مميزة إذا كان المستخدم (أنا) مميز
+                if(App.isPremium()) {
+                    document.getElementById('chat-background').classList.add('premium-chat-bg');
+                } else {
+                    document.getElementById('chat-background').classList.remove('premium-chat-bg');
+                }
+            },
+
+            // المطلب 4: خيارات الرسالة الفردية
+            showMessageOptions: (msgId, isMe, text) => {
+                const content = document.getElementById('action-modal-content');
+                content.innerHTML = `
+                    <div class="text-center font-bold text-lg mb-4 text-gray-800 border-b pb-2">خيارات الرسالة</div>
+                    <button onclick="App.copyText('${escapeHTML(text).replace(/'/g, "\\'")}')" class="w-full bg-gray-50 text-gray-700 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-gray-100 mb-2">
+                        <i class="ph-fill ph-copy text-xl"></i> نسخ النص
+                    </button>
+                    <button onclick="App.pinMessage('${msgId}')" class="w-full bg-blue-50 text-blue-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-blue-100 mb-2">
+                        <i class="ph-fill ph-push-pin text-xl"></i> تثبيت الرسالة
+                    </button>
+                    ${isMe ? `
+                    <button onclick="App.deleteMessage('${msgId}', 'all')" class="w-full bg-red-50 text-red-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-red-100 mb-2">
+                        <i class="ph-fill ph-trash text-xl"></i> حذف للجميع
+                    </button>
+                    ` : ''}
+                    <button onclick="App.deleteMessage('${msgId}', 'me')" class="w-full bg-orange-50 text-orange-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-orange-100">
+                        <i class="ph-fill ph-trash-simple text-xl"></i> حذف من عندي
+                    </button>
+                `;
+                UI.openModal('action-modal');
+            },
+            copyText: (text) => {
+                const tempInput = document.createElement("textarea");
+                tempInput.value = text;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                try { document.execCommand("copy"); UI.showMessage("تم النسخ!"); } catch(e){}
+                document.body.removeChild(tempInput);
+                UI.closeModal('action-modal');
+            },
+            pinMessage: async (msgId) => {
+                await updateDoc(doc(db, MESSAGES_PATH, msgId), { pinned: true });
+                UI.showMessage("تم تثبيت الرسالة");
+                UI.closeModal('action-modal');
+            },
+            deleteMessage: async (msgId, type) => {
+                if(type === 'all') {
+                    await deleteDoc(doc(db, MESSAGES_PATH, msgId));
+                } else if (type === 'me') {
+                    await updateDoc(doc(db, MESSAGES_PATH, msgId), { deletedFor: arrayUnion(currentUser.uid) });
+                }
+                UI.closeModal('action-modal');
+            },
+
+            // المطلب 6: وضع الرد
+            setReplyMode: (msgId, text, senderName) => {
+                window.replyingToMessage = msgId;
+                document.getElementById('reply-to-name').innerText = `الرد على ${senderName}`;
+                document.getElementById('reply-to-text').innerText = text;
+                document.getElementById('replying-to-container').classList.remove('hidden');
+                document.getElementById('chat-input').focus();
+            },
+            cancelReply: () => {
+                window.replyingToMessage = null;
+                document.getElementById('replying-to-container').classList.add('hidden');
             },
 
             renderMessages: () => {
@@ -2093,24 +2360,85 @@
                 const container = document.getElementById('chat-messages-container');
                 container.innerHTML = '';
 
-                const msgs = Memory.messages
+                let msgs = Memory.messages
                     .filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid))
                     .sort((a,b) => a.timestamp - b.timestamp);
+                
+                // تصفية المحذوف من عندي
+                msgs = msgs.filter(m => !(m.deletedFor && m.deletedFor.includes(currentUser.uid)));
+
+                // إظهار المثبت
+                const pinnedMsg = msgs.find(m => m.pinned);
+                if(pinnedMsg) {
+                    const pinEl = document.createElement('div');
+                    pinEl.className = 'sticky top-0 bg-white/90 backdrop-blur-md border-b border-gray-200 p-2 mb-4 rounded-xl shadow-sm z-20 flex items-center justify-between cursor-pointer';
+                    pinEl.innerHTML = `
+                        <div class="flex-1 overflow-hidden pr-2 border-r-4 border-blue-500">
+                            <span class="text-xs font-bold text-blue-600 block"><i class="ph-fill ph-push-pin"></i> رسالة مثبتة</span>
+                            <span class="text-sm text-gray-700 truncate block">${escapeHTML(pinnedMsg.text)}</span>
+                        </div>
+                    `;
+                    pinEl.onclick = () => { /* يمكن التمرير للرسالة */ };
+                    container.appendChild(pinEl);
+                }
 
                 if(msgs.length === 0) {
-                    container.innerHTML = '<div class="text-center text-gray-400 py-10 mt-auto">بدء محادثة جديدة 👋</div>';
+                    container.innerHTML += '<div class="text-center text-gray-400 py-10 mt-auto">بدء محادثة جديدة 👋</div>';
                     return;
                 }
 
                 msgs.forEach(m => {
                     const isMe = m.senderId === currentUser.uid;
                     const el = document.createElement('div');
-                    el.className = `max-w-[80%] rounded-2xl p-3 shadow-sm ${isMe ? 'bg-blue-600 text-white self-end rounded-br-sm' : 'bg-white border border-gray-100 text-gray-800 self-start rounded-bl-sm'}`;
+                    el.className = `msg-bubble max-w-[80%] rounded-2xl p-3 shadow-sm relative ${isMe ? 'bg-blue-600 text-white self-end rounded-br-sm' : 'bg-white border border-gray-100 text-gray-800 self-start rounded-bl-sm'}`;
+                    
+                    // المطلب 4: خيارات الرسالة (عند الضغط)
+                    el.onclick = () => App.showMessageOptions(m.id, isMe, m.text);
+
+                    // المطلب 6: السحب للرد (Swipe to Reply)
+                    let startX = 0; let currentX = 0;
+                    el.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, {passive: true});
+                    el.addEventListener('touchmove', (e) => {
+                        currentX = e.touches[0].clientX;
+                        let diff = currentX - startX;
+                        // تحديد اتجاه السحب للرد
+                        if((isMe && diff < 0) || (!isMe && diff > 0)) {
+                            let translate = Math.abs(diff) > 60 ? 60 * Math.sign(diff) : diff;
+                            el.style.transform = `translateX(${translate}px)`;
+                        }
+                    }, {passive: true});
+                    el.addEventListener('touchend', (e) => {
+                        el.style.transform = `translateX(0)`;
+                        let diff = currentX - startX;
+                        if (Math.abs(diff) > 50 && ((isMe && diff < 0) || (!isMe && diff > 0))) {
+                            const senderName = isMe ? 'نفسك' : Memory.users[m.senderId].name;
+                            App.setReplyMode(m.id, m.text, senderName);
+                        }
+                        startX = 0; currentX = 0;
+                    });
+
+                    // المطلب 5: علامات القراءة
+                    const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-300"></i>' : '<i class="ph ph-check text-blue-200"></i>') : '';
+                    
+                    // تضمين الرد إن وجد
+                    let replyHtml = '';
+                    if(m.replyToId) {
+                        const repliedMsg = Memory.messages.find(msg => msg.id === m.replyToId);
+                        if(repliedMsg) {
+                            replyHtml = `
+                            <div class="bg-black/10 rounded-lg p-2 mb-2 border-r-2 ${isMe ? 'border-white' : 'border-blue-500'}">
+                                <span class="text-xs font-bold block opacity-80">${repliedMsg.senderId === currentUser.uid ? 'أنت' : Memory.users[repliedMsg.senderId].name}</span>
+                                <span class="text-xs truncate block opacity-90">${escapeHTML(repliedMsg.text)}</span>
+                            </div>`;
+                        }
+                    }
+
                     el.innerHTML = `
-                        <p class="text-[15px] break-words leading-relaxed">${m.text}</p>
-                        <span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium ${isMe ? 'text-blue-200' : 'text-gray-400'}">
+                        ${replyHtml}
+                        <p class="text-[15px] break-words leading-relaxed whitespace-pre-wrap">${escapeHTML(m.text)}</p>
+                        <span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium ${isMe ? 'text-blue-100' : 'text-gray-400'}">
                             ${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                            ${isMe ? (m.read ? '<i class="ph-fill ph-checks text-white/80"></i>' : '<i class="ph ph-check"></i>') : ''}
+                            ${tickHtml}
                         </span>
                     `;
                     container.appendChild(el);
@@ -2128,14 +2456,20 @@
                 inputEl.value = '';
                 inputEl.style.height = ''; 
                 
-                await addDoc(collection(db, MESSAGES_PATH), {
+                const payload = {
                     participants: [currentUser.uid, otherUid],
                     senderId: currentUser.uid,
                     text: text,
                     timestamp: Date.now(),
-                    read: false // المطلب 10
-                });
+                    read: false // 1 tick by default until other reads
+                };
+
+                if(window.replyingToMessage) {
+                    payload.replyToId = window.replyingToMessage;
+                    App.cancelReply();
+                }
                 
+                await addDoc(collection(db, MESSAGES_PATH), payload);
                 App.renderMessages();
             },
 
@@ -2143,25 +2477,17 @@
             sendNotification: async (toUid, text, linkId) => {
                 if(toUid === currentUser.uid) return;
                 await addDoc(collection(db, NOTIFS_PATH), {
-                    to: toUid,
-                    from: currentUser.uid,
-                    text: text,
-                    linkId: linkId,
-                    timestamp: Date.now(),
-                    read: false // المطلب 10
+                    to: toUid, from: currentUser.uid, text: text, linkId: linkId, timestamp: Date.now(), read: false
                 });
             },
-
             deleteNotification: async (notifId) => {
                 await deleteDoc(doc(db, NOTIFS_PATH, notifId));
                 UI.closeModal('action-modal');
                 UI.showMessage('تم حذف الإشعار');
             },
-            
             markNotificationRead: async (notifId) => {
                 await updateDoc(doc(db, NOTIFS_PATH, notifId), { read: true });
             },
-
             showNotifOptions: (notifId) => {
                 const content = document.getElementById('action-modal-content');
                 content.innerHTML = `
@@ -2172,7 +2498,6 @@
                 `;
                 UI.openModal('action-modal');
             },
-
             renderNotifications: () => {
                 const container = document.getElementById('notifications-container');
                 container.innerHTML = '';
@@ -2180,11 +2505,8 @@
                 const notifs = [...Memory.notifications].sort((a,b) => b.timestamp - a.timestamp);
                 const unreadExists = notifs.some(n => !n.read && !App.isBlocked(n.from));
                 
-                if(notifs.length > 0 && unreadExists) {
-                    document.getElementById('badge-notifications').classList.remove('hidden');
-                } else {
-                    document.getElementById('badge-notifications').classList.add('hidden');
-                }
+                if(notifs.length > 0 && unreadExists) document.getElementById('badge-notifications').classList.remove('hidden');
+                else document.getElementById('badge-notifications').classList.add('hidden');
                 
                 if(notifs.length === 0) {
                     container.innerHTML = '<div class="text-center text-gray-400 py-10 mt-10"><i class="ph ph-bell-ringing text-4xl mb-2 opacity-50 block mx-auto"></i>لا توجد إشعارات</div>';
@@ -2193,17 +2515,15 @@
 
                 notifs.forEach(n => {
                     const fromUser = Memory.users[n.from];
-                    if(!fromUser || App.isBlocked(n.from)) return; // المطلب 7
+                    if(!fromUser || App.isBlocked(n.from)) return; 
 
                     const el = document.createElement('div');
                     const isUnread = !n.read;
-                    // المطلب 10: خط غامق للإشعار غير المقروء
                     el.className = `flex items-center gap-3 p-3.5 border-b border-gray-50 cursor-pointer transition-colors btn-tap ${isUnread ? 'bg-blue-50/30' : 'hover:bg-gray-50'}`;
                     
                     let pressTimer;
                     const startPress = () => { pressTimer = setTimeout(() => App.showNotifOptions(n.id), 600); };
                     const cancelPress = () => clearTimeout(pressTimer);
-
                     el.addEventListener('mousedown', startPress);
                     el.addEventListener('touchstart', startPress, {passive: true});
                     el.addEventListener('mouseup', cancelPress);
@@ -2211,7 +2531,7 @@
                     el.addEventListener('touchend', cancelPress);
                     el.addEventListener('touchmove', cancelPress);
 
-                    el.onclick = (e) => {
+                    el.onclick = () => {
                         if(pressTimer) clearTimeout(pressTimer);
                         if(isUnread) App.markNotificationRead(n.id);
                         if(n.linkId) UI.openModal('comments-modal', n.linkId);
@@ -2224,7 +2544,7 @@
                             ${isUnread ? '<div class="absolute top-0 right-0 w-3 h-3 bg-blue-600 rounded-full border-2 border-white"></div>' : ''}
                         </div>
                         <div class="flex-1">
-                            <p class="text-[15px] leading-tight ${isUnread ? 'text-unread' : 'text-gray-800'}"><span class="font-bold">${fromUser.name}</span> ${n.text}</p>
+                            <p class="text-[15px] leading-tight ${isUnread ? 'text-unread' : 'text-gray-800'}"><span class="font-bold flex items-center gap-1">${fromUser.name} ${App.getPremiumBadgeHTML(fromUser)}</span> ${n.text}</p>
                             <span class="text-xs font-semibold ${isUnread ? 'text-blue-600' : 'text-gray-400'} mt-1 block">${App.timeAgo(n.timestamp)}</span>
                         </div>
                     `;
@@ -2260,16 +2580,12 @@
                 const bio = document.getElementById('edit-bio').value.trim();
                 
                 if(!name || (!username && !usernameInput.disabled)) return UI.showMessage('الاسم والمعرف مطلوبان');
-
                 const updates = { name, bio };
 
                 if(!usernameInput.disabled && username !== currentUser.username) {
                     const tenDaysInMs = 10 * 24 * 60 * 60 * 1000;
                     const lastChange = currentUser.lastUsernameChange || 0;
-                    
-                    if (Date.now() - lastChange < tenDaysInMs) {
-                        return UI.showMessage('عذراً، يمكنك تغيير المعرف مرة واحدة فقط كل 10 أيام');
-                    }
+                    if (Date.now() - lastChange < tenDaysInMs) return UI.showMessage('عذراً، يمكنك تغيير المعرف مرة واحدة فقط كل 10 أيام');
 
                     const isTaken = Object.values(Memory.users).some(u => u.username === username && u.uid !== currentUser.uid);
                     if(isTaken) return UI.showMessage('المعرف مستخدم من قبل شخص آخر، يرجى اختيار معرف مختلف');
@@ -2281,7 +2597,6 @@
                 if(window.tempEditPhoto) updates.photo = window.tempEditPhoto;
 
                 await updateDoc(doc(db, USERS_PATH, currentUser.uid), updates);
-                
                 Object.assign(currentUser, updates);
                 window.tempEditPhoto = null;
                 App.updateUIWithUserData();
@@ -2293,7 +2608,104 @@
                 await updateDoc(doc(db, USERS_PATH, currentUser.uid), { [key]: value });
                 currentUser[key] = value;
                 UI.showMessage('تم تحديث الخصوصية');
+            },
+            
+            toggleStealthMode: async (isActive) => {
+                if(!App.isPremium()) return UI.showMessage('هذه الميزة للحسابات المميزة فقط');
+                await App.updatePrivacy('stealthMode', isActive);
+            },
+
+            // --- المطلب 10: نظام الحساب المميز (Premium) ---
+            renderPremiumModal: () => {
+                if(App.isPremium()) {
+                    document.getElementById('premium-active-status').classList.remove('hidden');
+                    if(currentUser.email === adminEmail) {
+                        document.getElementById('premium-expiry-text').innerText = 'صلاحية أبدية (المالك)';
+                    } else {
+                        document.getElementById('premium-expiry-text').innerText = `ينتهي في: ${new Date(currentUser.premiumUntil).toLocaleDateString()}`;
+                    }
+                } else {
+                    document.getElementById('premium-active-status').classList.add('hidden');
+                }
+            },
+            showPremiumFeatures: () => {
+                const content = document.getElementById('action-modal-content');
+                content.innerHTML = `
+                    <div class="text-center font-black text-xl mb-4 text-yellow-600 border-b pb-3 border-yellow-100"><i class="ph-fill ph-crown"></i> مميزات زايلو المميز</div>
+                    <ul class="space-y-4 text-right px-2">
+                        <li class="flex gap-3 items-center"><div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0"><i class="ph-fill ph-seal-check"></i></div><span class="font-bold text-gray-700">علامة توثيق زرقاء على الحساب</span></li>
+                        <li class="flex gap-3 items-center"><div class="w-8 h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center shrink-0"><i class="ph-fill ph-eye-slash"></i></div><span class="font-bold text-gray-700">قراءة الرسائل بدون علم الطرف الآخر</span></li>
+                        <li class="flex gap-3 items-center"><div class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shrink-0"><i class="ph-fill ph-clock-counter-clockwise"></i></div><span class="font-bold text-gray-700">إخفاء آخر ظهور لك عن الجميع</span></li>
+                        <li class="flex gap-3 items-center"><div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center shrink-0"><i class="ph-fill ph-star"></i></div><span class="font-bold text-gray-700">أفضلية في الاقتراحات والظهور</span></li>
+                        <li class="flex gap-3 items-center"><div class="w-8 h-8 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center shrink-0"><i class="ph-fill ph-image"></i></div><span class="font-bold text-gray-700">خلفية محادثات خاصة وجذابة</span></li>
+                    </ul>
+                `;
+                UI.openModal('action-modal');
+            },
+            verifyPremiumCode: async () => {
+                const code = document.getElementById('premium-code-input').value.trim();
+                if(!code) return UI.showMessage('أدخل كود التفعيل');
+                UI.showMessage('جاري التحقق...');
+                
+                // البحث عن الكود في قاعدة البيانات (محاكاة جلب كل الأكواد للتحقق منها)
+                const docRef = doc(db, PREMIUM_CODES_PATH, code);
+                try {
+                    const snap = await getDoc(docRef);
+                    if(snap.exists()) {
+                        const data = snap.data();
+                        const extraMs = data.months * 30 * 24 * 60 * 60 * 1000;
+                        const currentUntil = (currentUser.premiumUntil && currentUser.premiumUntil > Date.now()) ? currentUser.premiumUntil : Date.now();
+                        const newUntil = currentUntil + extraMs;
+
+                        await updateDoc(doc(db, USERS_PATH, currentUser.uid), {
+                            isPremium: true,
+                            premiumUntil: newUntil
+                        });
+                        
+                        // حذف الكود بعد الاستخدام
+                        await deleteDoc(docRef);
+                        
+                        document.getElementById('premium-code-input').value = '';
+                        UI.showMessage('تم تفعيل الحساب المميز بنجاح! 🎉');
+                        App.renderPremiumModal();
+                        App.updateUIWithUserData();
+                    } else {
+                        UI.showMessage('الكود غير صحيح أو مستخدم مسبقاً');
+                    }
+                } catch(e) {
+                    UI.showMessage('حدث خطأ أثناء التحقق');
+                }
+            },
+
+            // --- لوحة المالك ---
+            generateCode: async (months) => {
+                if(currentUser.email !== adminEmail) return;
+                const code = 'XYLO-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+                await setDoc(doc(db, PREMIUM_CODES_PATH, code), {
+                    code: code,
+                    months: months,
+                    createdAt: Date.now()
+                });
+                
+                document.getElementById('new-code-text').innerText = code;
+                document.getElementById('generated-code-result').classList.remove('hidden');
+                UI.showMessage(`تم إنشاء كود ${months} أشهر`);
+            },
+            copyGeneratedCode: () => {
+                const text = document.getElementById('new-code-text').innerText;
+                App.copyText(text);
+            },
+            revokeCode: async () => {
+                if(currentUser.email !== adminEmail) return;
+                const code = document.getElementById('admin-revoke-code').value.trim();
+                if(!code) return UI.showMessage('أدخل الكود');
+                
+                await deleteDoc(doc(db, PREMIUM_CODES_PATH, code));
+                document.getElementById('admin-revoke-code').value = '';
+                UI.showMessage('تم حذف الكود وإبطاله من النظام');
+                // ملاحظة: إبطال مفعول مستخدم استخدمه يتطلب نظام أذونات أعقد، نكتفي بحذفه من الأكواد المتاحة
             }
+
         };
 
         window.onload = () => {
