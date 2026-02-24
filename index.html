@@ -6,6 +6,7 @@
     <title>زايلو - Xylo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- إضافة خط Cairo الفخم للغة العربية -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap" rel="stylesheet">
     
     <style>
@@ -40,7 +41,7 @@
             --bubble-other-bg: #ffffff;
             --bubble-other-text: #1f2937;
             --border-color: #f3f4f6;
-            --vh: 1vh;
+            --vh: 1vh; /* للمطلب 3: ارتفاع الكيبورد */
         }
         
         body.dark-theme {
@@ -65,17 +66,6 @@
         .bubble-me { background-color: var(--bubble-me-bg); color: var(--bubble-me-text); }
         .bubble-other { background-color: var(--bubble-other-bg); color: var(--bubble-other-text); border: 1px solid var(--border-color); }
 
-        /* تصميم الروابط - المطلب 3 */
-        .app-link { 
-            color: #2563eb; 
-            font-weight: bold; 
-            text-decoration: underline;
-            transition: color 0.2s;
-        }
-        body.dark-theme .app-link { 
-            color: #22c55e; 
-        }
-
         .smooth-scroll {
             -webkit-overflow-scrolling: touch;
             scroll-behavior: smooth;
@@ -85,10 +75,12 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
+        /* شاشة البداية المحدثة */
         #splash-screen {
             background-color: #0a192f; 
         }
 
+        /* انميشن الدودة لدخول حرف Z */
         @keyframes wormSlide {
             0% { transform: translateX(100vw) scaleX(2.5) scaleY(0.4); opacity: 0; }
             40% { transform: translateX(20vw) scaleX(0.6) scaleY(1.4); opacity: 1; }
@@ -96,16 +88,19 @@
             100% { transform: translateX(0) scaleX(1) scaleY(1); opacity: 1; }
         }
 
+        /* انميشن التوهج المستمر */
         @keyframes glow-sync {
             0% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.4); transform: scale(1); }
             100% { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 215, 0, 0.8), 0 0 75px rgba(255, 215, 0, 0.6); transform: scale(1.05); }
         }
 
+        /* انميشن ظهور النص */
         @keyframes fadeUpText {
             0% { transform: translateY(20px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
         }
 
+        /* تنسيق الحرف Z الجديد */
         .elegant-z {
             font-family: 'Segoe UI', system-ui, sans-serif;
             font-weight: 900;
@@ -114,10 +109,12 @@
             line-height: 1;
             margin-bottom: 5px;
             display: inline-block;
+            /* تطبيق انميشن الدودة ثم التوهج */
             animation: wormSlide 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards,
                        glow-sync 2s 1.2s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate;
         }
 
+        /* تنسيق كلمة زايلو بخط Cairo الفخم */
         .elegant-text {
             font-family: 'Cairo', sans-serif;
             color: #ffd700;
@@ -152,6 +149,7 @@
             box-shadow: 0 -5px 20px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto; z-index: 200; display: none;
         }
 
+        /* سحب الرسالة */
         .msg-row { transition: transform 0.2s ease-out; touch-action: pan-y; width: 100%; position: relative; }
         .reply-icon-indicator {
             position: absolute; top: 50%; transform: translateY(-50%);
@@ -161,6 +159,7 @@
         .sub-tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: bold; }
         .sub-tab-inactive { border-bottom: 2px solid transparent; color: #6b7280; font-weight: normal; }
 
+        /* التفاعل بالقلب */
         .reaction-badge {
             position: absolute; bottom: -8px; 
             background: rgba(255,255,255,0.9); border-radius: 50%; padding: 2px; font-size: 14px;
@@ -180,11 +179,13 @@
             border-radius: 50%;
         }
 
+        /* المطلب 3: تعديل ارتفاع نافذة المحادثة للتوافق مع الكيبورد */
         #chat-modal {
             height: 100vh;
             height: calc(var(--vh, 1vh) * 100);
         }
 
+        /* المطلب 8: قائمة التلكرام */
         .telegram-menu {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
@@ -203,14 +204,100 @@
         }
         @keyframes popTelegram { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
+        /* ستايلات الكائن الجديد ورسائله */
         @keyframes floatPet {
-            0% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-3px) rotate(2deg); }
-            100% { transform: translateY(0px) rotate(0deg); }
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-4px) rotate(2deg); }
         }
-        .pet-animate { animation: floatPet 3s ease-in-out infinite; cursor: pointer; position: relative;}
-        .pet-glow { filter: drop-shadow(0 0 10px rgba(255,215,0,0.8)); }
+        @keyframes breathePet {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .pet-animate { 
+            animation: floatPet 3s ease-in-out infinite, breathePet 4s ease-in-out infinite; 
+            transform-origin: center bottom;
+        }
+        .pet-glow-gold { filter: drop-shadow(0 0 12px rgba(255,215,0,0.8)); }
+        
+        /* نافذة منبثقة في وسط الشاشة */
+.pet-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
 
+.pet-popup-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.pet-popup-content {
+    background: linear-gradient(135deg, #fff8e7, #ffecd6);
+    color: #1f2937;
+    padding: 30px 25px;
+    border-radius: 40px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.6;
+    max-width: 85%;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.3), 0 0 0 3px rgba(255,215,0,0.4);
+    transform: scale(0.8);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 1px solid rgba(255,215,0,0.5);
+    word-break: break-word;
+    white-space: pre-wrap;
+    position: relative;
+    animation: floatPopup 3s ease-in-out infinite;
+}
+
+.pet-popup-content.show {
+    transform: scale(1);
+}
+
+@keyframes floatPopup {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-10px) scale(1.02); }
+}
+
+.pet-popup-content::before {
+    content: '✨';
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    font-size: 30px;
+    filter: drop-shadow(0 5px 5px rgba(255,215,0,0.5));
+}
+
+.pet-popup-content::after {
+    content: '💬';
+    position: absolute;
+    bottom: -15px;
+    right: 20px;
+    font-size: 30px;
+    filter: drop-shadow(0 5px 5px rgba(255,215,0,0.5));
+}
+
+/* للوضع الليلي */
+body.dark-theme .pet-popup-content {
+    background: linear-gradient(135deg, #2d3748, #1a2634);
+    color: #f9fafb;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 3px rgba(255,215,0,0.3);
+}
+
+        /* المطلب 5: انميشن الكتابة الحية */
         @keyframes blinkCursor {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
@@ -220,11 +307,14 @@
             animation: blinkCursor 1s infinite;
             margin-right: 2px;
         }
+        
+        
+
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col antialiased pb-safe theme-bg">
 
-    <!-- شاشة البداية -->
+    <!-- 1. شاشة البداية المحدثة -->
     <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="splash-content flex flex-col items-center justify-center">
             <div class="elegant-z">Z</div>
@@ -232,7 +322,7 @@
         </div>
     </div>
 
-    <!-- قسم المصادقة -->
+    <!-- 2. قسم المصادقة -->
     <div id="auth-screen" class="hidden fixed inset-0 z-50 bg-white overflow-y-auto hide-scrollbar smooth-scroll">
         <div class="min-h-screen flex flex-col items-center justify-center p-6">
             <h1 class="text-6xl font-black xylo-brand mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600" style="font-family: 'Cairo', sans-serif;">زايلو</h1>
@@ -268,7 +358,7 @@
         </div>
     </div>
 
-    <!-- إعداد الصورة الشخصية -->
+    <!-- 3. إعداد الصورة الشخصية -->
     <div id="setup-profile-screen" class="hidden fixed inset-0 z-[60] bg-white flex flex-col items-center justify-center p-6 smooth-scroll">
         <h2 class="text-3xl font-bold mb-2 text-center text-gray-800">اختيار صورة للحساب</h2>
         <p class="text-gray-500 mb-8 text-center">اجعل حسابك مميزاً بإضافة صورة شخصية</p>
@@ -287,7 +377,7 @@
         <button onclick="Auth.completeProfileSetup()" class="btn-tap w-full max-w-xs bg-xylo text-white font-bold py-4 rounded-xl shadow-lg">التالي</button>
     </div>
 
-    <!-- التطبيق الرئيسي -->
+    <!-- 4. التطبيق الرئيسي -->
     <div id="main-app" class="hidden flex-1 flex flex-col h-screen w-full relative">
         
         <header class="theme-nav px-4 py-3 flex justify-between items-center z-20 relative shadow-sm border-b">
@@ -439,7 +529,7 @@
     </div>
 
     <!-- رسائل النظام -->
-    <div id="msg-box" class="fixed top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-2xl z-[200] opacity-0 pointer-events-none transition-opacity duration-300 flex items-center gap-2 text-sm font-semibold max-w-[90%] text-center">
+    <div id="msg-box" class="fixed top-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-2xl z-[200] opacity-0 pointer-events-none transition-opacity duration-300 flex items-center gap-2 text-sm font-semibold">
         <span id="msg-box-text">رسالة</span>
     </div>
 
@@ -510,6 +600,7 @@
         <div id="note-bottom-section" class="p-4 w-full flex flex-col gap-3 z-10 bg-gradient-to-t from-black/80 to-transparent pb-safe relative">
             <div id="note-reply-section" class="hidden flex gap-3 items-center w-full">
                 <input type="text" id="note-reply-input" placeholder="إرسال رسالة..." class="flex-1 bg-white/10 text-white placeholder-white/50 border border-white/20 rounded-full px-5 py-3 outline-none text-sm focus:bg-white/20 transition-colors backdrop-blur-sm">
+                <!-- المطلب 4: منع فقدان التركيز عند الارسال -->
                 <button onmousedown="event.preventDefault(); App.sendNoteReply();" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center btn-tap shadow-lg shrink-0"><i class="ph-fill ph-paper-plane-right text-xl"></i></button>
             </div>
             <div id="note-viewers-section" class="hidden flex flex-col items-center w-full">
@@ -686,7 +777,7 @@
     </div>
 
     <!-- الملف الشخصي -->
-    <div id="profile-modal" class="hidden fixed inset-0 theme-bg z-[100] flex flex-col modal-slide-in">
+    <div id="profile-modal" class="hidden fixed inset-0 theme-bg z-[80] flex flex-col modal-slide-in">
         <div class="p-4 border-b flex items-center gap-3 bg-opacity-80 backdrop-blur-md absolute w-full top-0 z-20 text-white" id="vp-header-bg">
             <button onclick="UI.closeModal('profile-modal')" class="p-2 bg-black/30 rounded-full btn-tap text-white"><i class="ph ph-arrow-right text-lg"></i></button>
             <span id="vp-header-name" class="font-bold text-lg">الملف الشخصي</span>
@@ -718,29 +809,32 @@
         </div>
     </div>
 
-    <!-- نافذة المحادثة -->
+    <!-- نافذة المحادثة المحدثة -->
     <div id="chat-modal" class="hidden fixed inset-0 theme-bg z-[90] flex flex-col modal-slide-in">
-        <div class="theme-card p-3 border-b flex items-center justify-between shadow-sm z-20">
+        <!-- هيدر المحادثة -->
+        <div class="theme-card p-3 border-b flex items-center justify-between shadow-sm z-20 relative">
             <div class="flex items-center gap-3">
                 <button onclick="UI.closeModal('chat-modal')" class="p-2 theme-bg border rounded-full btn-tap shrink-0"><i class="ph ph-arrow-right text-lg"></i></button>
-                <!-- المطلب 2: تعديل زر صورة الشخص ليغلق الشات أولاً ثم يفتح الملف الشخصي -->
-                <div class="relative cursor-pointer shrink-0" onclick="UI.closeModal('chat-modal'); setTimeout(() => UI.openModal('profile-modal', window.currentChatUserId), 50)">
+                <div class="relative cursor-pointer shrink-0" onclick="UI.openModal('profile-modal', window.currentChatUserId)">
                     <img id="chat-user-img" src="" class="w-11 h-11 rounded-full object-cover">
                     <span id="chat-online-dot" class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full hidden"></span>
                 </div>
-                <div class="flex-1 overflow-hidden min-w-0 cursor-pointer" onclick="UI.closeModal('chat-modal'); setTimeout(() => UI.openModal('profile-modal', window.currentChatUserId), 50)">
+                <div class="flex-1 overflow-hidden min-w-0 cursor-pointer" onclick="UI.openModal('profile-modal', window.currentChatUserId)">
                     <h3 id="chat-user-name" class="font-bold leading-tight truncate">...</h3>
                     <p id="chat-user-status" class="text-[11px] opacity-60 truncate mt-0.5">...</p>
                 </div>
             </div>
-            <!-- المطلب 6: حاوية كائن المحادثة (Pet) -->
-            <div id="chat-pet-container" class="w-12 h-12 flex items-center justify-center relative shrink-0" onclick="window.petClickHandler()">
-                <!-- سيتم وضع الكائن هنا بواسطة جافاسكربت -->
+            
+            <!-- حاوية الكائن المطور مع رسالة منبثقة -->
+            <div id="chat-pet-container" class="w-12 h-12 flex items-center justify-center relative shrink-0 cursor-pointer btn-tap">
+                <!-- سيتم وضع الكائن ورسائله هنا بواسطة جافاسكربت -->
             </div>
         </div>
         
         <div id="chat-background" class="flex-1 overflow-hidden flex flex-col relative chat-container-bg">
             <div id="chat-messages-container" class="flex-1 overflow-y-auto smooth-scroll p-4 space-y-4 flex flex-col relative z-10 pb-4 overflow-x-hidden">
+                <!-- الرسائل -->
+                <!-- المطلب 5: فقاعة الكتابة الحية -->
                 <div id="live-typing-bubble" class="hidden self-start max-w-[80%] rounded-2xl rounded-bl-sm p-3 shadow-sm bubble-other opacity-80 mt-auto typing-cursor text-sm transition-opacity">
                     ...
                 </div>
@@ -761,8 +855,8 @@
         </div>
     </div>
 
-    <!-- قائمة الخيارات المنبثقة بشكل يحاكي Telegram -->
-    <div id="action-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[110] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('action-modal')">
+    <!-- المطلب 8: قائمة الخيارات المنبثقة بشكل يحاكي Telegram -->
+    <div id="action-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('action-modal')">
         <div id="action-modal-content" class="telegram-menu flex flex-col text-sm font-semibold theme-text">
             <!-- سيتم إضافة الأزرار من خلال جافاسكربت -->
         </div>
@@ -844,6 +938,7 @@
             }[tag] || tag));
         };
 
+        // السحب للتحديث
         window.PullToRefresh = {
             startY: 0, isPulling: false, spinner: null, container: null,
             init: () => {
@@ -996,11 +1091,11 @@
         };
 
         window.UI = {
-            showMessage: (msg, duration = 3000) => {
+            showMessage: (msg) => {
                 const box = document.getElementById('msg-box');
                 document.getElementById('msg-box-text').innerText = msg;
                 box.style.opacity = '1';
-                setTimeout(() => { box.style.opacity = '0'; }, duration);
+                setTimeout(() => { box.style.opacity = '0'; }, 3000);
             },
             switchAuth: (formId) => {
                 ['login-form', 'register-form', 'forgot-form'].forEach(id => {
@@ -1048,7 +1143,6 @@
             openModal: (modalId, data = null) => {
                 const modal = document.getElementById(modalId);
                 modal.classList.remove('hidden');
-                
                 if (modal.firstElementChild && (modal.firstElementChild.classList.contains('modal-slide-in') || modal.firstElementChild.classList.contains('modal-slide-out'))) {
                     modal.firstElementChild.classList.remove('modal-slide-out');
                     modal.firstElementChild.classList.add('modal-slide-in');
@@ -1108,8 +1202,6 @@
                 if(u) {
                     UI.closeModal('comments-modal');
                     UI.closeModal('note-view-modal');
-                    UI.closeModal('chat-modal'); // إغلاق المحادثة كإجراء احتياطي
-                    UI.closeModal('single-post-modal');
                     UI.openModal('profile-modal', u.uid);
                 } else {
                     UI.showMessage('المستخدم غير موجود');
@@ -1144,17 +1236,11 @@
 
                             setTimeout(() => { App.startCore(); }, 500); 
                             
-                            // المطلب 3 و 4: معالجة الروابط عند الدخول
                             const urlParams = new URLSearchParams(window.location.search);
                             const postIdParam = urlParams.get('post');
-                            const profileParam = urlParams.get('profile');
-
                             if(postIdParam) {
-                                setTimeout(() => App.openSinglePost(postIdParam), 1500);
-                            } else if (profileParam) {
-                                setTimeout(() => UI.openProfileByUsername(profileParam), 1500);
+                                setTimeout(() => App.openSinglePost(postIdParam), 1000);
                             }
-
                         } else {
                             setTimeout(() => { UI.showScreen('setup-profile-screen'); }, 500);
                         }
@@ -1409,110 +1495,240 @@
                 } catch(e){}
             },
 
-            // المطلب 6: الكائن المطور 
-            updateChatPet: (msgs) => {
-                const container = document.getElementById('chat-pet-container');
-                let level = 1;
-                let daysSinceLastMsg = 0;
-
-                if(msgs && msgs.length > 0) {
-                    const lastMsg = msgs[msgs.length - 1];
-                    daysSinceLastMsg = (Date.now() - lastMsg.timestamp) / (1000 * 60 * 60 * 24);
-                    
-                    if(daysSinceLastMsg < 3) {
-                        let score = msgs.length;
-                        if(score > 300) level = 10;
-                        else if(score > 200) level = 9;
-                        else if(score > 150) level = 8;
-                        else if(score > 100) level = 7;
-                        else if(score > 70) level = 6;
-                        else if(score > 40) level = 5;
-                        else if(score > 20) level = 4;
-                        else if(score > 10) level = 3;
-                        else if(score > 5) level = 2;
-                    }
-                }
-
-                // رسم الكائن بأجزاء متغيرة
-                const skin = '#fcd34d'; // لون البشرة
-                let clothes = '';
-                let accessories = '';
-                let face = `<path d="M40 33 Q50 38 60 33" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round"/>`; // ابتسامة
-                let glow = '';
-
-                if (level === 1) { // فقير جدا (حزين، ملابس رثة)
-                    face = `<path d="M40 37 Q50 32 60 37" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round"/>`; // حزين
-                    clothes = `<path d="M30 50 L70 50 L65 80 L35 80 Z" fill="#9ca3af"/><path d="M35 80 L30 90 M65 80 L70 90 M30 50 L20 65 M70 50 L80 65" stroke="#9ca3af" stroke-width="4" stroke-linecap="round"/>`;
-                } 
-                else if (level === 2) { // فقير
-                    clothes = `<path d="M30 50 L70 50 L65 80 L35 80 Z" fill="#9ca3af"/><path d="M35 80 L30 90 M65 80 L70 90 M30 50 L20 65 M70 50 L80 65" stroke="#9ca3af" stroke-width="6" stroke-linecap="round"/>`;
-                }
-                else if (level === 3) { // فقير قليلا (تيشيرت ازرق)
-                    clothes = `<path d="M30 50 L70 50 L65 80 L35 80 Z" fill="#3b82f6"/><path d="M35 80 L30 90 M65 80 L70 90 M30 50 L20 65 M70 50 L80 65" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>`;
-                }
-                else if (level === 4) { // متوسط قليلا (تيشيرت وبنطال)
-                    clothes = `<path d="M30 50 L70 50 L65 70 L35 70 Z" fill="#3b82f6"/><path d="M35 70 L35 85 L65 85 L65 70 Z" fill="#1e3a8a"/><path d="M35 85 L35 95 M65 85 L65 95" stroke="${skin}" stroke-width="6" stroke-linecap="round"/><path d="M30 50 L20 65 M70 50 L80 65" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>`;
-                }
-                else if (level === 5) { // متوسط (مع ساعة)
-                    clothes = `<path d="M30 50 L70 50 L65 70 L35 70 Z" fill="#3b82f6"/><path d="M35 70 L35 85 L65 85 L65 70 Z" fill="#1e3a8a"/><path d="M35 85 L35 95 M65 85 L65 95" stroke="${skin}" stroke-width="6" stroke-linecap="round"/><path d="M30 50 L20 65 M70 50 L80 65" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>`;
-                    accessories = `<rect x="18" y="60" width="4" height="6" fill="#000"/>`;
-                }
-                else if (level === 6) { // غني قليلا (سترة)
-                    clothes = `<path d="M30 50 L70 50 L65 70 L35 70 Z" fill="#fff"/><path d="M35 70 L35 85 L65 85 L65 70 Z" fill="#111827"/><path d="M30 50 L45 70 L35 70 Z" fill="#1e40af"/><path d="M70 50 L55 70 L65 70 Z" fill="#1e40af"/><path d="M35 85 L35 95 M65 85 L65 95" stroke="${skin}" stroke-width="6" stroke-linecap="round"/><path d="M30 50 L20 65 M70 50 L80 65" stroke="#1e40af" stroke-width="6" stroke-linecap="round"/>`;
-                }
-                else if (level === 7) { // غني متوسط (نظارات)
-                    clothes = `<path d="M30 50 L70 50 L65 70 L35 70 Z" fill="#fff"/><path d="M35 70 L35 85 L65 85 L65 70 Z" fill="#111827"/><path d="M30 50 L45 70 L35 70 Z" fill="#1e40af"/><path d="M70 50 L55 70 L65 70 Z" fill="#1e40af"/><path d="M35 85 L35 95 M65 85 L65 95" stroke="${skin}" stroke-width="6" stroke-linecap="round"/><path d="M30 50 L20 65 M70 50 L80 65" stroke="#1e40af" stroke-width="6" stroke-linecap="round"/>`;
-                    accessories = `<rect x="35" y="24" width="12" height="6" rx="2" fill="#000"/><rect x="53" y="24" width="12" height="6" rx="2" fill="#000"/><path d="M47 27 L53 27" stroke="#000" stroke-width="2"/>`;
-                }
-                else if (level === 8) { // غني (سلسلة ذهبية)
-                    clothes = `<path d="M30 50 L70 50 L65 70 L35 70 Z" fill="#111827"/><path d="M35 70 L35 85 L65 85 L65 70 Z" fill="#111827"/><path d="M35 85 L35 95 M65 85 L65 95" stroke="${skin}" stroke-width="6" stroke-linecap="round"/><path d="M30 50 L20 65 M70 50 L80 65" stroke="#111827" stroke-width="6" stroke-linecap="round"/>`;
-                    accessories = `<rect x="35" y="24" width="12" height="6" rx="2" fill="#000"/><rect x="53" y="24" width="12" height="6" rx="2" fill="#000"/><path d="M47 27 L53 27" stroke="#000" stroke-width="2"/><path d="M40 50 L50 65 L60 50" stroke="#fbbf24" stroke-width="3" fill="none"/>`;
-                }
-                else if (level === 9) { // غني جدا (تاج)
-                    clothes = `<path d="M30 50 L70 50 L65 70 L35 70 Z" fill="#111827"/><path d="M35 70 L35 85 L65 85 L65 70 Z" fill="#111827"/><path d="M35 85 L35 95 M65 85 L65 95" stroke="${skin}" stroke-width="6" stroke-linecap="round"/><path d="M30 50 L20 65 M70 50 L80 65" stroke="#111827" stroke-width="6" stroke-linecap="round"/>`;
-                    accessories = `<rect x="35" y="24" width="12" height="6" rx="2" fill="#000"/><rect x="53" y="24" width="12" height="6" rx="2" fill="#000"/><path d="M47 27 L53 27" stroke="#000" stroke-width="2"/><path d="M40 50 L50 65 L60 50" stroke="#fbbf24" stroke-width="3" fill="none"/><path d="M30 15 L35 5 L50 15 L65 5 L70 15 Z" fill="#fbbf24"/>`;
-                    glow = 'pet-glow';
-                }
-                else if (level === 10) { // غني جدا جدا (رداء بنفسجي وتاج ضخم)
-                    clothes = `<path d="M25 50 L75 50 L70 90 L30 90 Z" fill="#7e22ce"/><path d="M25 50 L15 70 M75 50 L85 70" stroke="#7e22ce" stroke-width="8" stroke-linecap="round"/>`;
-                    accessories = `<rect x="35" y="24" width="12" height="6" rx="2" fill="#000"/><rect x="53" y="24" width="12" height="6" rx="2" fill="#000"/><path d="M47 27 L53 27" stroke="#000" stroke-width="2"/><path d="M35 50 L50 70 L65 50" stroke="#fbbf24" stroke-width="4" fill="none"/><path d="M25 15 L35 0 L50 10 L65 0 L75 15 Z" fill="#fbbf24"/><circle cx="50" cy="5" r="3" fill="#ef4444"/>`;
-                    glow = 'pet-glow';
-                }
-
-                const svgContent = `
-                <svg class="w-full h-full pet-animate ${glow}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    ${clothes}
-                    <!-- الأطراف السفلية المكشوفة إذا لم يغطيها الملابس -->
-                    <!-- الرأس -->
-                    <circle cx="50" cy="30" r="18" fill="${skin}"/>
-                    <!-- العيون -->
-                    <circle cx="41" cy="27" r="2.5" fill="#000"/>
-                    <circle cx="59" cy="27" r="2.5" fill="#000"/>
-                    ${face}
-                    ${accessories}
-                </svg>`;
+            // تصميم الشخصية (الستريك) برمجياً مع تفاصيل عالية بناءً على المستوى
+            getPetCharacterSVG: (level) => {
+                // الألوان والخصائص المتغيرة حسب المستوى
+                let skinColor = "#fca5a5"; // لون البشرة الافتراضي
+                let shirtColor, pantsColor, eyeExpr, mouthExpr, accessoriesHTML, auraHTML;
                 
-                container.innerHTML = svgContent;
-            },
-
-            // دالة الضغط على الكائن
-            petClickHandler: () => {
-                const now = Date.now();
-                let daysSinceLastMsg = 0;
-                const otherUid = window.currentChatUserId;
-                const msgs = Memory.messages.filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid));
-
-                if(msgs.length > 0) {
-                    const lastMsg = msgs[msgs.length - 1];
-                    daysSinceLastMsg = (now - lastMsg.timestamp) / (1000 * 60 * 60 * 24);
+                // تحديد شكل العيون والفم
+                const sadFace = `<circle cx="42" cy="38" r="3" fill="#1f2937"/><circle cx="58" cy="38" r="3" fill="#1f2937"/><path d="M45 55 Q 50 50 55 55" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+                const neutralFace = `<circle cx="42" cy="38" r="3" fill="#1f2937"/><circle cx="58" cy="38" r="3" fill="#1f2937"/><path d="M45 52 L 55 52" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+                const happyFace = `<circle cx="42" cy="38" r="3.5" fill="#1f2937"/><circle cx="58" cy="38" r="3.5" fill="#1f2937"/><path d="M44 50 Q 50 58 56 50" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+                const coolFace = `<path d="M 38 36 L 46 38 L 38 40 Z" fill="#1f2937"/><path d="M 62 36 L 54 38 L 62 40 Z" fill="#1f2937"/><path d="M43 52 Q 50 56 57 50" stroke="#1f2937" stroke-width="2" fill="none" stroke-linecap="round"/>`; // نظارات شمسية مبسطة
+                
+                auraHTML = "";
+                accessoriesHTML = "";
+                
+                switch(level) {
+                    case 1: // فقير جدا
+                        shirtColor = "#78716c"; pantsColor = "#57534e"; eyeExpr = sadFace;
+                        accessoriesHTML = `
+                            <path d="M40 65 L48 65 L45 72 Z" fill="#a8a29e" opacity="0.6"/> <!-- رقعة -->
+                            <line x1="42" y1="67" x2="46" y2="70" stroke="#444" stroke-width="1"/>
+                        `;
+                        break;
+                    case 2: // فقير
+                        shirtColor = "#a8a29e"; pantsColor = "#78716c"; eyeExpr = neutralFace;
+                        break;
+                    case 3: // فقير قليلا
+                        shirtColor = "#60a5fa"; pantsColor = "#475569"; eyeExpr = happyFace;
+                        break;
+                    case 4: // متوسط قليلا
+                        shirtColor = "#34d399"; pantsColor = "#334155"; eyeExpr = happyFace;
+                        accessoriesHTML = `<circle cx="65" cy="70" r="3" fill="#fbbf24"/>`; // ساعة بسيطة
+                        break;
+                    case 5: // متوسط
+                        shirtColor = "#f43f5e"; pantsColor = "#1e293b"; eyeExpr = happyFace;
+                        accessoriesHTML = `
+                            <circle cx="65" cy="70" r="3" fill="#fbbf24"/>
+                            <path d="M30 20 Q 50 10 70 20 Q 50 25 30 20" fill="#3b82f6"/> <!-- كاب -->
+                        `;
+                        break;
+                    case 6: // غني قليلا
+                        shirtColor = "#a855f7"; pantsColor = "#0f172a"; eyeExpr = coolFace;
+                        accessoriesHTML = `
+                            <path d="M38 35 h24 v6 h-24 z" fill="#111827" rx="2"/> <!-- نظارات -->
+                            <line x1="50" y1="60" x2="50" y2="80" stroke="#fbbf24" stroke-width="2"/> <!-- سحاب أو حزام -->
+                        `;
+                        break;
+                    case 7: // غني متوسط
+                        shirtColor = "#ffffff"; pantsColor = "#000000"; eyeExpr = happyFace;
+                        accessoriesHTML = `
+                            <path d="M35 60 L 50 80 L 65 60" fill="#1e293b"/> <!-- بدلة مفتوحة -->
+                            <path d="M48 60 L 52 60 L 50 70 Z" fill="#ef4444"/> <!-- ربطة عنق -->
+                        `;
+                        break;
+                    case 8: // غني
+                        shirtColor = "#000000"; pantsColor = "#000000"; eyeExpr = coolFace;
+                        accessoriesHTML = `
+                            <path d="M35 60 L 50 75 L 65 60 Z" fill="#ffffff"/> <!-- قميص داخلي -->
+                            <path d="M48 60 L 52 60 L 50 70 Z" fill="#000000"/> <!-- ربطة -->
+                            <path d="M30 25 L 30 10 L 70 10 L 70 25 Z" fill="#111827"/> <!-- قبعة رسمية -->
+                            <path d="M25 25 L 75 25 L 75 28 L 25 28 Z" fill="#111827"/>
+                            <circle cx="45" cy="65" r="2" fill="#fbbf24"/> <circle cx="55" cy="65" r="2" fill="#fbbf24"/> <!-- أزرار ذهبية -->
+                        `;
+                        break;
+                    case 9: // غني جدا
+                        shirtColor = "#1e1b4b"; pantsColor = "#000000"; eyeExpr = happyFace;
+                        accessoriesHTML = `
+                            <path d="M20 60 Q 15 80 20 95 L 80 95 Q 85 80 80 60 Z" fill="#dc2626" opacity="0.9"/> <!-- عباءة حمراء -->
+                            <path d="M35 15 L 42 5 L 50 15 L 58 5 L 65 15 L 65 25 L 35 25 Z" fill="#fbbf24"/> <!-- تاج -->
+                            <circle cx="42" cy="12" r="2" fill="#ef4444"/> <circle cx="50" cy="18" r="2" fill="#3b82f6"/> <circle cx="58" cy="12" r="2" fill="#22c55e"/>
+                            <path d="M40 60 Q 50 70 60 60" stroke="#fbbf24" stroke-width="3" fill="none"/> <!-- قلادة ذهبية -->
+                        `;
+                        break;
+                    case 10: // غني جدا جدا
+                        shirtColor = "#172554"; pantsColor = "#000000"; eyeExpr = happyFace;
+                        auraHTML = `<circle cx="50" cy="50" r="45" fill="#fef08a" opacity="0.3" filter="blur(4px)"/><circle cx="50" cy="50" r="35" fill="#fbbf24" opacity="0.4" filter="blur(2px)"/>`;
+                        accessoriesHTML = `
+                            <path d="M15 55 Q 10 80 15 100 L 85 100 Q 90 80 85 55 Z" fill="#7f1d1d" stroke="#fbbf24" stroke-width="2"/> <!-- عباءة فخمة -->
+                            <path d="M30 15 L 40 0 L 50 10 L 60 0 L 70 15 L 70 25 L 30 25 Z" fill="#fbbf24"/> <!-- تاج كبير -->
+                            <circle cx="40" cy="10" r="3" fill="#ef4444"/> <circle cx="50" cy="15" r="3" fill="#8b5cf6"/> <circle cx="60" cy="10" r="3" fill="#ef4444"/>
+                            <path d="M40 60 L 50 75 L 60 60" stroke="#fbbf24" stroke-width="4" fill="none"/> <!-- قلادة كبيرة -->
+                            <polygon points="50,68 53,75 50,82 47,75" fill="#06b6d4"/> <!-- جوهرة القلادة -->
+                            <line x1="80" y1="40" x2="80" y2="100" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/> <!-- عصا ذهبية -->
+                            <circle cx="80" cy="40" r="6" fill="#06b6d4"/> <!-- جوهرة العصا -->
+                            <!-- شرارات ذهبية -->
+                            <path d="M 10 30 L 15 35 M 15 30 L 10 35" stroke="#fbbf24" stroke-width="2"/>
+                            <path d="M 85 20 L 90 25 M 90 20 L 85 25" stroke="#fbbf24" stroke-width="2"/>
+                        `;
+                        break;
                 }
 
-                if(daysSinceLastMsg >= 1 && daysSinceLastMsg < 3) {
-                    UI.showMessage("انقذوني راح ارجع فقير تكلمو على اي شي نميمة او غيبة المهم تتكلمون", 5000);
-                } else {
-                    UI.showMessage("هلو اني طرفكم الثالث الشيطان😂.. لا لا اشاقة اني الستريك اذا ما تتكلمون كل يوم ارجع فقير حياتي معتمدة عليك", 6000);
-                }
+                // الهيكل الأساسي للجسم
+                return `
+                <svg class="w-full h-full pet-animate ${level >= 9 ? 'pet-glow-gold' : ''}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    ${auraHTML}
+                    <!-- القدمين -->
+                    <line x1="42" y1="80" x2="42" y2="95" stroke="${skinColor}" stroke-width="6" stroke-linecap="round"/>
+                    <line x1="58" y1="80" x2="58" y2="95" stroke="${skinColor}" stroke-width="6" stroke-linecap="round"/>
+                    <!-- اليدين -->
+                    <line x1="35" y1="65" x2="25" y2="75" stroke="${skinColor}" stroke-width="5" stroke-linecap="round"/>
+                    <line x1="65" y1="65" x2="75" y2="75" stroke="${skinColor}" stroke-width="5" stroke-linecap="round"/>
+                    <!-- البنطال -->
+                    <rect x="37" y="75" width="26" height="10" rx="3" fill="${pantsColor}"/>
+                    <!-- الجسم / القميص -->
+                    <rect x="33" y="55" width="34" height="22" rx="6" fill="${shirtColor}"/>
+                    <!-- الرأس -->
+                    <rect x="25" y="20" width="50" height="40" rx="20" fill="${skinColor}"/>
+                    <!-- ملامح الوجه -->
+                    ${eyeExpr}
+                    <!-- الخدود -->
+                    <circle cx="33" cy="45" r="4" fill="#f87171" opacity="0.4"/>
+                    <circle cx="67" cy="45" r="4" fill="#f87171" opacity="0.4"/>
+                    <!-- الاكسسوارات -->
+                    ${accessoriesHTML}
+                </svg>
+                `;
             },
+
+// المتغير العام لتتبع حالة النافذة المنبثقة
+
+
+// المطلب 6: دالة عرض الكائن المطور (Xylo Pet)
+updateChatPet: (msgs) => {
+    const container = document.getElementById('chat-pet-container');
+    if(!msgs || msgs.length === 0) {
+        container.innerHTML = ''; 
+        // إخفاء النافذة إذا كانت موجودة
+        const existingPopup = document.getElementById('pet-popup-overlay');
+        if(existingPopup) existingPopup.remove();
+        return;
+    }
+
+    // حساب عدد الرسائل المتبادلة في هذه المحادثة (الستريك)
+    const totalMsgs = msgs.length;
+    const lastMsg = msgs[msgs.length - 1];
+    const daysSinceLastMsg = (Date.now() - lastMsg.timestamp) / (1000 * 60 * 60 * 24);
+    
+    // تحديد المستوى من 1 إلى 10
+    let level = 1;
+    
+    if(daysSinceLastMsg >= 3) {
+        level = 1;
+    } else {
+        if (totalMsgs >= 1000) level = 10;
+        else if (totalMsgs >= 500) level = 9;
+        else if (totalMsgs >= 300) level = 8;
+        else if (totalMsgs >= 150) level = 7;
+        else if (totalMsgs >= 80) level = 6;
+        else if (totalMsgs >= 40) level = 5;
+        else if (totalMsgs >= 20) level = 4;
+        else if (totalMsgs >= 10) level = 3;
+        else if (totalMsgs >= 5) level = 2;
+    }
+
+    // تحديد نص الرسالة
+    let popupMessage = "";
+    if (daysSinceLastMsg >= 1 && daysSinceLastMsg < 3) {
+        popupMessage = "🚨 انقذوني!\nراح ارجع فقير تكلمو على اي شي...\nنميمة او غيبة المهم تتكلمون 😭";
+    } else if (daysSinceLastMsg >= 3) {
+        popupMessage = "💔 للأسف رجعت فقير...\nما تكلمتو وياي 3 ايام 😢";
+    } else {
+        popupMessage = "  هلو اني طرفكم الثالث الشيطان 😂!\nلا لا اشاقة اني الستريك اذا ما تتكلمون\n كل يوم ارجع فقير 💔 معتمد عليك... ";
+    }
+
+    // تخزين الرسالة في خاصية الكائن
+    container.setAttribute('data-pet-message', popupMessage);
+    container.setAttribute('data-pet-level', level);
+
+    // توليد الـ HTML للكائن فقط (بدون رسالة)
+    container.innerHTML = App.getPetCharacterSVG(level);
+
+    // إزالة أي نافذة منبثقة قديمة
+    const existingPopup = document.getElementById('pet-popup-overlay');
+    if(existingPopup) existingPopup.remove();
+
+    // إضافة حدث الضغط على الكائن
+    container.onclick = (e) => {
+        e.stopPropagation();
+        App.showPetPopup(popupMessage);
+    };
+},
+
+// دالة عرض النافذة المنبثقة في وسط الشاشة
+showPetPopup: (message) => {
+    // إذا كانت النافذة ظاهرة بالفعل، نخفيها
+    if(window.petPopupVisible) {
+        App.hidePetPopup();
+        return;
+    }
+
+    // إزالة أي نافذة موجودة
+    const existingPopup = document.getElementById('pet-popup-overlay');
+    if(existingPopup) existingPopup.remove();
+
+    // إنشاء النافذة المنبثقة
+    const overlay = document.createElement('div');
+    overlay.id = 'pet-popup-overlay';
+    overlay.className = 'pet-popup-overlay';
+    
+    const content = document.createElement('div');
+    content.className = 'pet-popup-content';
+    content.textContent = message;
+    
+    overlay.appendChild(content);
+    document.body.appendChild(overlay);
+
+    // إظهار النافذة بعد إضافتها للـ DOM
+    setTimeout(() => {
+        overlay.classList.add('show');
+        content.classList.add('show');
+    }, 10);
+
+    window.petPopupVisible = true;
+
+    // إضافة حدث الضغط على الـ overlay للإخفاء
+    overlay.onclick = (e) => {
+        // إذا تم الضغط على الـ overlay نفسه (وليس على المحتوى)
+        if (e.target === overlay) {
+            App.hidePetPopup();
+        }
+    };
+},
+
+// دالة إخفاء النافذة المنبثقة
+hidePetPopup: () => {
+    const overlay = document.getElementById('pet-popup-overlay');
+    if(overlay) {
+        overlay.classList.remove('show');
+        setTimeout(() => {
+            overlay.remove();
+        }, 300);
+    }
+    window.petPopupVisible = false;
+},
 
             isFriend: (uid1, uid2) => {
                 return Memory.friends.some(f => 
@@ -1538,42 +1754,16 @@
                 if(!lastActive) return false;
                 return (Date.now() - lastActive) < (5 * 60 * 1000);
             },
-            
-            // المطلب 3: جعل الروابط قابلة للنقر وتوجيهها
-            parseLinksAndMentions: (text) => {
-                if(!text) return '';
-                let escaped = escapeHTML(text);
-                
-                // 1. استخراج الروابط وتحويلها
-                const urlRegex = /(https?:\/\/[^\s]+)/g;
-                escaped = escaped.replace(urlRegex, (url) => {
-                    try {
-                        const urlObj = new URL(url);
-                        const postId = urlObj.searchParams.get('post');
-                        const profileUsername = urlObj.searchParams.get('profile');
-
-                        if(postId) {
-                            return `<span class="app-link cursor-pointer" onclick="event.stopPropagation(); App.openSinglePost('${postId}')">عرض المنشور</span>`;
-                        } else if (profileUsername) {
-                            return `<span class="app-link cursor-pointer" onclick="event.stopPropagation(); UI.openProfileByUsername('${profileUsername}')">عرض الحساب</span>`;
-                        }
-                    } catch(e) {}
-                    
-                    return `<a href="${url}" target="_blank" rel="noopener noreferrer" class="app-link" onclick="event.stopPropagation();">${url}</a>`;
-                });
-
-                // 2. استخراج المنشن
-                escaped = escaped.replace(/@([\w_.]+)/g, (match, username) => {
+            parseMentions: (text) => {
+                const escaped = escapeHTML(text);
+                return escaped.replace(/@([\w_.]+)/g, (match, username) => {
                     const exists = Object.values(Memory.users).find(u => u.username === username);
                     if(exists) {
-                        return `<span class="app-link cursor-pointer" onclick="event.stopPropagation(); UI.openProfileByUsername('${username}')">${match}</span>`;
+                        return `<span class="text-blue-500 font-bold cursor-pointer hover:underline" onclick="event.stopPropagation(); UI.openProfileByUsername('${username}')">${match}</span>`;
                     }
                     return match; 
                 });
-
-                return escaped;
             },
-
             notifyMentions: async (text, type, linkId) => {
                 const matches = text.match(/@([\w_.]+)/g);
                 if(!matches) return;
@@ -1610,7 +1800,7 @@
                     const isLiked = post.likes && post.likes.includes(currentUser.uid);
                     const likesCount = post.likes ? post.likes.length : 0;
                     const commentsCount = Memory.comments.filter(c => c.postId === post.id).length;
-                    const parsedText = App.parseLinksAndMentions(post.text);
+                    const parsedText = App.parseMentions(post.text);
 
                     const postEl = document.createElement('div');
                     postEl.className = 'theme-card rounded-2xl shadow-sm border overflow-hidden mb-3';
@@ -1702,50 +1892,24 @@
                 }
             },
 
-            // المطلب 5: نسخ رابط الحساب الشخصي
-            shareProfile: (username) => {
-                const shareUrl = window.location.origin + window.location.pathname + '?profile=' + username;
-                if (navigator.share) {
-                    try { navigator.share({ title: 'حساب زايلو', url: shareUrl }); } catch (err) {}
-                } else {
-                    const tempInput = document.createElement("input");
-                    tempInput.value = shareUrl;
-                    document.body.appendChild(tempInput);
-                    tempInput.select();
-                    try { document.execCommand("copy"); UI.showMessage("تم نسخ رابط الحساب!"); } 
-                    catch (err) {}
-                    document.body.removeChild(tempInput);
-                }
-            },
-
-            // المطلب 4: جلب المنشور المحذوف او المخفي من الداتا بيس ان لم يتوفر بلميموري
-            openSinglePost: async (postId) => {
-                let post = Memory.posts.find(p => p.id === postId);
+            openSinglePost: (postId) => {
+                const post = Memory.posts.find(p => p.id === postId);
                 const container = document.getElementById('single-post-container');
-                container.innerHTML = '<div class="text-center py-20"><i class="ph ph-spinner-gap animate-spin text-3xl mx-auto mb-2 text-blue-500 block"></i>جاري التحميل...</div>';
-                UI.openModal('single-post-modal');
-
-                if(!post) {
-                    try {
-                        const postDoc = await getDoc(doc(db, POSTS_PATH, postId));
-                        if(postDoc.exists()) {
-                            post = {id: postDoc.id, ...postDoc.data()};
-                        }
-                    } catch(e) {}
-                }
                 
                 if(!post || App.isBlocked(post.authorId)) {
                     container.innerHTML = '<div class="text-center py-20 opacity-60">المنشور غير متوفر أو تم حذفه</div>';
+                    UI.openModal('single-post-modal');
                     return;
                 }
 
                 const author = Memory.users[post.authorId];
                 if(!author || (author.isPrivate && author.uid !== currentUser.uid && !App.isFriend(currentUser.uid, author.uid))) {
                     container.innerHTML = '<div class="text-center py-20 opacity-60">هذا المنشور خاص ولا تملك صلاحية الوصول إليه</div>';
+                    UI.openModal('single-post-modal');
                     return;
                 }
 
-                const parsedText = App.parseLinksAndMentions(post.text);
+                const parsedText = App.parseMentions(post.text);
                 const likesCount = post.likes ? post.likes.length : 0;
                 
                 container.innerHTML = `
@@ -1766,6 +1930,7 @@
                         </div>
                     </div>
                 `;
+                UI.openModal('single-post-modal');
             },
 
             // --- رندر التعليقات ---
@@ -1786,7 +1951,7 @@
                 postComments.forEach(c => {
                     const author = Memory.users[c.authorId];
                     if(!author || App.isBlocked(author.uid)) return;
-                    const parsedText = App.parseLinksAndMentions(c.text);
+                    const parsedText = App.parseMentions(c.text);
 
                     const el = document.createElement('div');
                     el.className = 'flex gap-3 items-start';
@@ -1877,7 +2042,7 @@
                 document.getElementById('nv-avatar').src = author.photo || App.getDefaultAvatar();
                 document.getElementById('nv-name').innerText = author.name;
                 document.getElementById('nv-time').innerText = App.timeAgo(note.timestamp);
-                document.getElementById('nv-text').innerHTML = App.parseLinksAndMentions(note.text);
+                document.getElementById('nv-text').innerHTML = App.parseMentions(note.text);
                 
                 window.noteViewAuthorId = author.uid;
                 window.noteViewId = note.id;
@@ -2279,18 +2444,16 @@
                 const sentReqId = hasSentReq ? Memory.requests.find(r => r.from === currentUser.uid && r.to === uid).id : null;
                 const isBlocked = App.isBlocked(uid);
 
-                // المطلب 1 و 5 : التعديل وإضافة الرابط 
                 if (isMe) {
-                    actionContainer.innerHTML = ``; // إزالة زر تعديل الحساب
+                    actionContainer.innerHTML = `<button onclick="UI.openModal('edit-profile-modal')" class="bg-gray-100 text-gray-800 px-6 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-2"><i class="ph-fill ph-pencil-simple"></i> تعديل الحساب</button>`;
                 } else if (isBlocked) {
                     actionContainer.innerHTML = `<button onclick="App.unblockUser('${uid}')" class="bg-gray-200 text-gray-800 px-6 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-2"><i class="ph-fill ph-lock-key-open"></i> إلغاء الحظر</button>`;
                 } else {
                     let actionHtml = '';
                     if (isFriend) {
                         actionHtml = `
-                            <button onclick="UI.closeModal('profile-modal'); UI.openModal('chat-modal', '${uid}')" class="bg-blue-600 text-white px-5 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-1.5"><i class="ph-fill ph-chat-circle-text text-lg"></i> مراسلة</button>
-                            <button onclick="App.shareProfile('${u.username}')" class="bg-blue-50 text-blue-600 px-5 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-1.5"><i class="ph-fill ph-link text-lg"></i> رابط الحساب</button>
-                            <button onclick="App.showChatOptions('${uid}')" class="bg-gray-100 text-gray-800 px-4 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm"><i class="ph-fill ph-dots-three text-lg"></i></button>
+                            <button onclick="UI.closeModal('profile-modal'); UI.openModal('chat-modal', '${uid}')" class="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-2"><i class="ph-fill ph-chat-circle-text"></i> مراسلة</button>
+                            <button onclick="App.showChatOptions('${uid}')" class="bg-gray-100 text-gray-800 px-4 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm"><i class="ph-fill ph-user-minus"></i></button>
                         `;
                     } else if (hasReceivedReq) {
                         actionHtml = `
@@ -2348,6 +2511,7 @@
                 }
             },
 
+            // المطلب 8: خيارات الرسالة ستايل تليكرام
             showMessageOptions: (msgId, isMe, text, isPinned) => {
                 const content = document.getElementById('action-modal-content');
                 content.innerHTML = `
@@ -2578,6 +2742,7 @@
                 
                 msgs = msgs.filter(m => !(m.deletedFor && m.deletedFor.includes(currentUser.uid)));
 
+                // تحديث شخصية الستريك
                 App.updateChatPet(msgs);
 
                 const pinnedMsg = msgs.find(m => m.pinned);
@@ -2698,12 +2863,10 @@
                         reactionHtml = `<div class="reaction-badge ${isMe ? '-left-2' : '-right-2'}">${reactValues[0]}</div>`;
                     }
 
-                    const parsedMsgText = App.parseLinksAndMentions(m.text);
-
                     el.innerHTML = `
                         ${pinIconHTML}
                         ${replyHtml}
-                        <p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parsedMsgText}</p>
+                        <p class="text-[15px] leading-relaxed whitespace-pre-wrap">${escapeHTML(m.text)}</p>
                         <span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">
                             ${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                             ${tickHtml}
