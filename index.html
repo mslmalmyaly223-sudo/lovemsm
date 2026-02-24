@@ -6,7 +6,8 @@
     <title>زايلو - Xylo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <!-- إضافة خط Cairo الفخم للغة العربية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap" rel="stylesheet">
     
     <style>
         /* إعدادات التطبيق الأساسية */
@@ -78,26 +79,49 @@
         #splash-screen {
             background-color: #0a192f; 
         }
+
+        /* انميشن الدودة لدخول حرف Z */
+        @keyframes wormSlide {
+            0% { transform: translateX(100vw) scaleX(2.5) scaleY(0.4); opacity: 0; }
+            40% { transform: translateX(20vw) scaleX(0.6) scaleY(1.4); opacity: 1; }
+            70% { transform: translateX(-5vw) scaleX(1.2) scaleY(0.8); }
+            100% { transform: translateX(0) scaleX(1) scaleY(1); opacity: 1; }
+        }
+
+        /* انميشن التوهج المستمر */
         @keyframes glow-sync {
-            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3); transform: scale(0.95) translateX(25px); opacity: 0; }
-            50% { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.6); transform: scale(1.05) translateX(-5px); opacity: 1; }
-            100% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.5); transform: scale(1) translateX(-15px); opacity: 1; }
+            0% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.4); transform: scale(1); }
+            100% { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 215, 0, 0.8), 0 0 75px rgba(255, 215, 0, 0.6); transform: scale(1.05); }
         }
-        /* المطلب 1: انميشن الحرف Z لليمين */
+
+        /* انميشن ظهور النص */
+        @keyframes fadeUpText {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        /* تنسيق الحرف Z الجديد */
         .elegant-z {
-            font-family: 'Great Vibes', cursive;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-weight: 900;
             color: #ffd700; 
-            font-size: 10rem;
+            font-size: 8rem;
             line-height: 1;
-            /* تم إضافة التوجيه لليمين في الـ Keyframes أعلاه وفي الـ Margin */
-            margin-right: -25px; 
-            animation: glow-sync 2s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate; /* يستمر التوهج حتى اكتمال التحميل */
-            margin-bottom: -10px;
+            margin-bottom: 5px;
+            display: inline-block;
+            /* تطبيق انميشن الدودة ثم التوهج */
+            animation: wormSlide 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards,
+                       glow-sync 2s 1.2s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate;
         }
+
+        /* تنسيق كلمة زايلو بخط Cairo الفخم */
         .elegant-text {
+            font-family: 'Cairo', sans-serif;
             color: #ffd700;
-            animation: glow-sync 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            opacity: 0;
+            animation: fadeUpText 0.8s 1s forwards;
         }
 
         .modal-slide-in { animation: slideIn 0.35s forwards cubic-bezier(0.175, 0.885, 0.32, 1.1); }
@@ -204,18 +228,18 @@
 </head>
 <body class="h-screen w-screen flex flex-col antialiased pb-safe theme-bg">
 
-    <!-- 1. شاشة البداية -->
+    <!-- 1. شاشة البداية المحدثة -->
     <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
-        <div class="splash-content">
+        <div class="splash-content flex flex-col items-center justify-center">
             <div class="elegant-z">Z</div>
-            <h1 class="text-5xl font-black elegant-text mt-2">زايلو</h1>
+            <h1 class="text-6xl font-black elegant-text mt-2">زايلو</h1>
         </div>
     </div>
 
     <!-- 2. قسم المصادقة -->
     <div id="auth-screen" class="hidden fixed inset-0 z-50 bg-white overflow-y-auto hide-scrollbar smooth-scroll">
         <div class="min-h-screen flex flex-col items-center justify-center p-6">
-            <h1 class="text-6xl font-black xylo-brand mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">زايلو</h1>
+            <h1 class="text-6xl font-black xylo-brand mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600" style="font-family: 'Cairo', sans-serif;">زايلو</h1>
             
             <div id="login-form" class="w-full max-w-sm space-y-4">
                 <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">تسجيل الدخول</h2>
@@ -235,17 +259,6 @@
                 <input type="password" id="reg-password" placeholder="كلمة السر" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
                 <button onclick="Auth.register()" class="btn-tap w-full bg-xylo text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30">إنشاء حساب مباشرة</button>
                 
-                <div class="relative flex py-4 items-center">
-                    <div class="flex-grow border-t border-gray-300"></div>
-                    <span class="flex-shrink-0 mx-4 text-gray-400 text-sm">أو</span>
-                    <div class="flex-grow border-t border-gray-300"></div>
-                </div>
-
-                <!-- زر تسجيل جوجل -->
-                <button onclick="Auth.loginWithGoogle()" class="btn-tap w-full bg-white border border-gray-300 text-[#3c4043] font-bold py-3 rounded-full flex items-center justify-center gap-3 shadow-sm hover:bg-gray-50 transition-colors">
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="abcRioButtonSvg"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
-                    تسجيل بحساب كوكل
-                </button>
                 <button onclick="UI.switchAuth('login')" class="w-full text-center text-blue-600 font-semibold mt-4 p-2 btn-tap">لدي حساب بالفعل</button>
             </div>
 
@@ -282,7 +295,7 @@
     <div id="main-app" class="hidden flex-1 flex flex-col h-screen w-full relative">
         
         <header class="theme-nav px-4 py-3 flex justify-between items-center z-20 relative shadow-sm border-b">
-            <h1 class="text-2xl font-black text-blue-600 tracking-tighter" style="letter-spacing: 1px;">زايلو</h1>
+            <h1 class="text-3xl font-black text-blue-600" style="font-family: 'Cairo', sans-serif;">زايلو</h1>
             <div class="flex gap-3">
                 <button onclick="UI.openModal('search-modal')" class="w-10 h-10 rounded-full theme-card flex items-center justify-center btn-tap border">
                     <i class="ph ph-magnifying-glass text-xl"></i>
@@ -775,8 +788,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        // المطلب 9: استخدام signInWithRedirect لحل مشاكل Webview
-        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // تم إزالة وظائف GoogleAuthProvider
+        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, deleteDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig;
@@ -797,7 +810,6 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
 
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'xylo-app-123';
 
@@ -1121,33 +1133,6 @@
             init: async () => {
                 UI.showScreen('splash-screen');
 
-                // المطلب 9: التقاط نتيجة التحويل في حال كان قد تم تحويله لجوجل
-                try {
-                    const redirectResult = await getRedirectResult(auth);
-                    if (redirectResult && redirectResult.user) {
-                        const user = redirectResult.user;
-                        const userDoc = await getDoc(doc(db, USERS_PATH, user.uid));
-                        if (!userDoc.exists()) {
-                            await setDoc(doc(db, USERS_PATH, user.uid), {
-                                uid: user.uid,
-                                name: user.displayName || 'مستخدم زايلو',
-                                email: user.email,
-                                photo: user.photoURL || App.getDefaultAvatar(),
-                                username: 'user_' + Math.floor(Math.random() * 100000),
-                                bio: 'مرحباً، أنا أستخدم تطبيق زايلو!',
-                                allowRequests: true,
-                                isPrivate: false,
-                                friendsVisibility: 'all',
-                                messagePrivacy: 'all',
-                                lastActive: Date.now(),
-                                lastUsernameChange: 0,
-                                blockedUsers: [],
-                                mentionsCount: {}
-                            });
-                        }
-                    }
-                } catch(e) { console.error("Redirect Error: ", e); }
-
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     try { await signInWithCustomToken(auth, __initial_auth_token); } catch(e){}
                 } 
@@ -1199,23 +1184,6 @@
                     UI.showScreen('setup-profile-screen');
                 } catch (error) {
                     UI.showMessage('حدث خطأ، ربما البريد مستخدم مسبقاً أو الرمز ضعيف');
-                }
-            },
-            // المطلب 9: تصحيح تسجيل الدخول بكوكل للتوافق مع WebView
-            loginWithGoogle: async () => {
-                try {
-                    UI.showMessage('جاري الاتصال بجوجل...');
-                    await signInWithPopup(auth, googleProvider);
-                    // إذا نجح المنبثق لا نفعل شيئا إضافيا، سيقوم onAuthStateChanged بالباقي
-                } catch (error) {
-                    console.error(error);
-                    // إذا تم حظر النافذة أو نحن في WebView، نستخدم التحويل المباشر Redirect
-                    if(error.code === 'auth/popup-blocked' || error.code === 'auth/unauthorized-domain' || error.message.includes('popup')) {
-                        UI.showMessage('جاري التحويل المباشر لإكمال التسجيل...');
-                        await signInWithRedirect(auth, googleProvider);
-                    } else {
-                        UI.showMessage('فشل تسجيل الدخول: ' + error.message);
-                    }
                 }
             },
             login: async () => {
