@@ -34,12 +34,13 @@
             --text-color: #1f2937;
             --nav-bg: #ffffff;
             --card-bg: #ffffff;
-            --chat-bg: #e0f2fe; /* سمائي افتراضي */
-            --bubble-me-bg: #22c55e; /* أخضر */
+            --chat-bg: #e0f2fe;
+            --bubble-me-bg: #22c55e;
             --bubble-me-text: #ffffff;
             --bubble-other-bg: #ffffff;
             --bubble-other-text: #1f2937;
             --border-color: #f3f4f6;
+            --vh: 1vh; /* للمطلب 3: ارتفاع الكيبورد */
         }
         
         body.dark-theme {
@@ -47,10 +48,10 @@
             --text-color: #f9fafb;
             --nav-bg: #1f2937;
             --card-bg: #1f2937;
-            --chat-bg: #030712; /* أسود للوضع الليلي */
-            --bubble-me-bg: #2563eb; /* أزرق */
+            --chat-bg: #030712;
+            --bubble-me-bg: #2563eb;
             --bubble-me-text: #ffffff;
-            --bubble-other-bg: #374151; /* أبيض/رمادي */
+            --bubble-other-bg: #374151;
             --bubble-other-text: #f9fafb;
             --border-color: #374151;
         }
@@ -73,27 +74,24 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* شاشة البداية المعدلة (المطلب 6) */
+        /* شاشة البداية المحدثة */
         #splash-screen {
             background-color: #0a192f; 
         }
         @keyframes glow-sync {
-            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3); transform: scale(0.95); opacity: 0; }
-            50% { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.6); transform: scale(1.05); opacity: 1; }
-            100% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.5); transform: scale(1); opacity: 1; }
+            0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3); transform: scale(0.95) translateX(25px); opacity: 0; }
+            50% { text-shadow: 0 0 20px rgba(255, 215, 0, 1), 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.6); transform: scale(1.05) translateX(-5px); opacity: 1; }
+            100% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.5); transform: scale(1) translateX(-15px); opacity: 1; }
         }
-        .splash-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+        /* المطلب 1: انميشن الحرف Z لليمين */
         .elegant-z {
             font-family: 'Great Vibes', cursive;
             color: #ffd700; 
             font-size: 10rem;
             line-height: 1;
-            animation: glow-sync 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            /* تم إضافة التوجيه لليمين في الـ Keyframes أعلاه وفي الـ Margin */
+            margin-right: -25px; 
+            animation: glow-sync 2s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate; /* يستمر التوهج حتى اكتمال التحميل */
             margin-bottom: -10px;
         }
         .elegant-text {
@@ -145,19 +143,63 @@
         }
         @keyframes pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
 
-        /* الأصدقاء شبكة */
         .friends-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
         }
         
-        /* تأثير النبض للملاحظات */
         .story-ring {
             padding: 2px;
             background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
             border-radius: 50%;
         }
+
+        /* المطلب 3: تعديل ارتفاع نافذة المحادثة للتوافق مع الكيبورد */
+        #chat-modal {
+            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
+        }
+
+        /* المطلب 8: قائمة التلكرام */
+        .telegram-menu {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            overflow: hidden;
+            width: 240px;
+            transform-origin: center bottom;
+            animation: popTelegram 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards;
+        }
+        body.dark-theme .telegram-menu {
+            background: rgba(30, 41, 59, 0.85);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        @keyframes popTelegram { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* المطلب 6: انميشن الكائن */
+        @keyframes floatPet {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        .pet-animate { animation: floatPet 3s ease-in-out infinite; }
+        .pet-glow { filter: drop-shadow(0 0 8px rgba(255,215,0,0.6)); }
+
+        /* المطلب 5: انميشن الكتابة الحية */
+        @keyframes blinkCursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .typing-cursor::after {
+            content: '|';
+            animation: blinkCursor 1s infinite;
+            margin-right: 2px;
+        }
+
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col antialiased pb-safe theme-bg">
@@ -199,7 +241,7 @@
                     <div class="flex-grow border-t border-gray-300"></div>
                 </div>
 
-                <!-- المطلب 4 و 5: زر كوكل معدل -->
+                <!-- زر تسجيل جوجل -->
                 <button onclick="Auth.loginWithGoogle()" class="btn-tap w-full bg-white border border-gray-300 text-[#3c4043] font-bold py-3 rounded-full flex items-center justify-center gap-3 shadow-sm hover:bg-gray-50 transition-colors">
                     <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="18px" height="18px" viewBox="0 0 48 48" class="abcRioButtonSvg"><g><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path><path fill="none" d="M0 0h48v48H0z"></path></g></svg>
                     تسجيل بحساب كوكل
@@ -298,12 +340,10 @@
                 </div>
             </div>
 
-            <!-- القسم الثالث: الأصدقاء والملاحظات (قصص) -->
+            <!-- القسم الثالث: الأصدقاء والملاحظات -->
             <div id="tab-notes" class="hidden p-2 space-y-3 flex flex-col h-full">
-                <!-- شريط الملاحظات (المطلب 10: كأنها ستوري) -->
                 <div class="theme-card rounded-xl shadow-sm p-4 shrink-0 border">
                     <div class="flex overflow-x-auto smooth-scroll hide-scrollbar gap-4 pb-2 pt-2 items-start" id="notes-container" style="scroll-snap-type: x mandatory;">
-                        <!-- زر أنت -->
                         <div class="inline-flex flex-col items-center relative cursor-pointer shrink-0 btn-tap w-16" onclick="App.checkAndCreateNote()" style="scroll-snap-align: start;">
                             <div class="relative">
                                 <img id="current-user-avatar-note" class="w-16 h-16 rounded-full object-cover border-2 border-transparent p-0.5" style="border-color: var(--bg-color);">
@@ -313,7 +353,6 @@
                             </div>
                             <span class="text-[11px] font-bold mt-1 w-full text-center truncate theme-text">أنت</span>
                         </div>
-                        <!-- ملاحظات أخرى ستضاف هنا عبر JS -->
                     </div>
                 </div>
 
@@ -352,7 +391,6 @@
                 </div>
 
                 <div class="space-y-3">
-                    <!-- زر الوضع الليلي -->
                     <div class="w-full theme-card p-4 rounded-xl shadow-sm border flex items-center justify-between">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center"><i class="ph-fill ph-moon text-xl"></i></div>
@@ -396,7 +434,6 @@
         <span id="msg-box-text">رسالة</span>
     </div>
 
-    <!-- نوافذ التطبيق المنبثقة (البحث، الإنشاء، الخ) -->
     <!-- نافذة البحث -->
     <div id="search-modal" class="hidden fixed inset-0 theme-bg z-[70] flex flex-col modal-slide-in">
         <div class="p-4 theme-card border-b flex items-center gap-3">
@@ -442,7 +479,7 @@
         </div>
     </div>
 
-    <!-- المطلب 10: عرض الملاحظة وإدارتها والمشاهدات -->
+    <!-- الملاحظات عرض -->
     <div id="note-view-modal" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col modal-slide-in">
         <div class="p-4 flex items-center gap-3 absolute top-0 w-full z-10 bg-gradient-to-b from-black/80 to-transparent">
             <img id="nv-avatar" class="w-10 h-10 rounded-full border border-gray-600 object-cover cursor-pointer btn-tap" onclick="App.viewProfileFromNote()">
@@ -453,9 +490,7 @@
                 <span id="nv-time" class="text-gray-300 text-[10px]">...</span>
             </div>
             
-            <!-- زر 3 نقاط لصاحب الملاحظة فقط -->
             <button id="nv-options-btn" class="hidden w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center btn-tap"><i class="ph ph-dots-three-vertical text-xl"></i></button>
-            
             <button onclick="UI.closeModal('note-view-modal')" class="w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center btn-tap"><i class="ph ph-x text-lg"></i></button>
         </div>
         
@@ -463,14 +498,12 @@
             <div id="nv-text" class="text-white text-3xl font-black text-center leading-relaxed whitespace-pre-wrap">...</div>
         </div>
 
-        <!-- قسم التفاعل / المشاهدات بالأسفل -->
         <div id="note-bottom-section" class="p-4 w-full flex flex-col gap-3 z-10 bg-gradient-to-t from-black/80 to-transparent pb-safe relative">
-            <!-- للرد (لغير المالك) -->
             <div id="note-reply-section" class="hidden flex gap-3 items-center w-full">
                 <input type="text" id="note-reply-input" placeholder="إرسال رسالة..." class="flex-1 bg-white/10 text-white placeholder-white/50 border border-white/20 rounded-full px-5 py-3 outline-none text-sm focus:bg-white/20 transition-colors backdrop-blur-sm">
-                <button onclick="App.sendNoteReply()" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center btn-tap shadow-lg shrink-0"><i class="ph-fill ph-paper-plane-right text-xl"></i></button>
+                <!-- المطلب 4: منع فقدان التركيز عند الارسال -->
+                <button onmousedown="event.preventDefault(); App.sendNoteReply();" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center btn-tap shadow-lg shrink-0"><i class="ph-fill ph-paper-plane-right text-xl"></i></button>
             </div>
-            <!-- المشاهدات (للمالك فقط) -->
             <div id="note-viewers-section" class="hidden flex flex-col items-center w-full">
                 <button onclick="App.showNoteViewers()" class="flex flex-col items-center gap-1 text-white opacity-80 hover:opacity-100 transition-opacity btn-tap p-2">
                     <i class="ph ph-eye text-2xl"></i>
@@ -519,7 +552,7 @@
             <div class="p-3 border-t flex gap-2 items-center theme-card pb-safe z-10">
                 <img id="comment-my-avatar" src="" class="w-9 h-9 rounded-full object-cover">
                 <input type="text" id="comment-input" placeholder="اضف تعليقاً... (استخدم @)" class="flex-1 theme-bg border rounded-full px-4 py-2.5 outline-none text-sm transition-colors">
-                <button onclick="App.addComment()" class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center btn-tap shrink-0 shadow-md"><i class="ph-fill ph-paper-plane-right"></i></button>
+                <button onmousedown="event.preventDefault(); App.addComment();" class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center btn-tap shrink-0 shadow-md"><i class="ph-fill ph-paper-plane-right"></i></button>
             </div>
         </div>
     </div>
@@ -644,16 +677,14 @@
         </div>
     </div>
 
-    <!-- المطلب 15: ملف شخصي بتصميم مشابه لتلكرام/فيسبوك -->
+    <!-- الملف الشخصي -->
     <div id="profile-modal" class="hidden fixed inset-0 theme-bg z-[80] flex flex-col modal-slide-in">
         <div class="p-4 border-b flex items-center gap-3 bg-opacity-80 backdrop-blur-md absolute w-full top-0 z-20 text-white" id="vp-header-bg">
             <button onclick="UI.closeModal('profile-modal')" class="p-2 bg-black/30 rounded-full btn-tap text-white"><i class="ph ph-arrow-right text-lg"></i></button>
             <span id="vp-header-name" class="font-bold text-lg">الملف الشخصي</span>
         </div>
         <div class="flex-1 overflow-y-auto smooth-scroll pb-10 relative">
-            <!-- الغلاف المشابه لتلكرام -->
             <div class="h-64 bg-gradient-to-tr from-blue-600 to-indigo-800 relative flex items-end justify-center pb-4 pt-16" id="vp-cover">
-                <!-- الصورة في المنتصف كالتلكرام تقريباً -->
                 <div class="absolute -bottom-16 flex flex-col items-center">
                     <img id="vp-image" src="" class="w-32 h-32 rounded-full border-4 border-white object-cover bg-white shadow-xl">
                 </div>
@@ -664,25 +695,22 @@
                 <p id="vp-username" class="text-gray-500 text-sm mt-1 font-medium">@...</p>
                 <p id="vp-bio" class="mt-4 opacity-80 leading-relaxed text-center max-w-sm mx-auto">...</p>
                 
-                <!-- أزرار الإجراءات (المراسلة، الإضافة) -->
                 <div class="flex justify-center mt-6 gap-3" id="vp-action-container"></div>
             </div>
 
-            <!-- شبكة الأصدقاء المشابهة لفيسبوك -->
             <div class="mt-8 px-4">
                 <div class="flex justify-between items-end mb-4">
                     <h3 class="font-bold text-xl theme-text">الأصدقاء</h3>
                     <span class="text-gray-500 font-bold" id="vp-friends-count-text">0</span>
                 </div>
                 <div class="friends-grid" id="vp-friends-grid">
-                    <!-- يملأ برمجياً -->
                 </div>
             </div>
             
         </div>
     </div>
 
-    <!-- المطلب 1: نافذة المحادثة وخلفياتها + المطلب 7 و 8 و 9 و 11 و 12 -->
+    <!-- نافذة المحادثة المحدثة بالمطالب 3, 4, 5, 6, 7 -->
     <div id="chat-modal" class="hidden fixed inset-0 theme-bg z-[90] flex flex-col modal-slide-in">
         <!-- هيدر المحادثة -->
         <div class="theme-card p-3 border-b flex items-center justify-between shadow-sm z-20">
@@ -692,23 +720,27 @@
                     <img id="chat-user-img" src="" class="w-11 h-11 rounded-full object-cover">
                     <span id="chat-online-dot" class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full hidden"></span>
                 </div>
-                <div class="flex-1 overflow-hidden min-w-0" onclick="UI.openModal('profile-modal', window.currentChatUserId)">
+                <div class="flex-1 overflow-hidden min-w-0 cursor-pointer" onclick="UI.openModal('profile-modal', window.currentChatUserId)">
                     <h3 id="chat-user-name" class="font-bold leading-tight truncate">...</h3>
                     <p id="chat-user-status" class="text-[11px] opacity-60 truncate mt-0.5">...</p>
                 </div>
             </div>
-            <!-- تم إزالة Xylo Pet (المطلب 7 في النسخة السابقة، تم إزالته بالكامل بناء على التبسيط وإزالة الإضافات المعقدة إن لم تطلب صراحة، لكن سأبقيها لأنها لم تلغى بالطلبات. لحظة، لا يوجد طلب لحذفه، لكنه يخص المميز؟ لا. سأتركه كونه جزء من التطبيق إلا إذا أردنا توفير مساحة. سأتركه.) -->
-            <!-- بناء على طلب "احذف كل شيء يخص الاشتراك المميز"، Pet ليس مميز. سأتركه كما هو. -->
+            <!-- المطلب 6: حاوية كائن المحادثة (Pet) بالعكس من مكان الاسم -->
+            <div id="chat-pet-container" class="w-10 h-10 flex items-center justify-center relative shrink-0">
+                <!-- سيتم وضع الكائن هنا بواسطة جافاسكربت -->
+            </div>
         </div>
         
-        <!-- الحاوية المخصصة للمحادثة (المطلب 1: السماء والليلي) -->
         <div id="chat-background" class="flex-1 overflow-hidden flex flex-col relative chat-container-bg">
             <div id="chat-messages-container" class="flex-1 overflow-y-auto smooth-scroll p-4 space-y-4 flex flex-col relative z-10 pb-4 overflow-x-hidden">
                 <!-- الرسائل -->
+                <!-- المطلب 5: فقاعة الكتابة الحية -->
+                <div id="live-typing-bubble" class="hidden self-start max-w-[80%] rounded-2xl rounded-bl-sm p-3 shadow-sm bubble-other opacity-80 mt-auto typing-cursor text-sm transition-opacity">
+                    ...
+                </div>
             </div>
         </div>
 
-        <!-- حالة الرد (المطلب 9) -->
         <div id="replying-to-container" class="hidden theme-card border-t px-4 py-2 flex items-center justify-between shadow-[0_-2px_10px_rgba(0,0,0,0.02)] z-10 relative">
             <div class="flex flex-col border-r-4 border-blue-500 pr-3">
                 <span class="text-xs font-bold text-blue-600" id="reply-to-name">الرد على...</span>
@@ -718,18 +750,16 @@
         </div>
 
         <div class="p-3 theme-card border-t flex gap-2 items-end pb-safe z-20 relative">
-            <textarea id="chat-input" placeholder="الرسالة..." class="flex-1 theme-bg border border-transparent rounded-3xl px-5 py-3 outline-none resize-none max-h-28 hide-scrollbar text-[15px] transition-colors theme-text focus:border-blue-500" rows="1" oninput="this.style.height = '';this.style.height = Math.min(this.scrollHeight, 112) + 'px'"></textarea>
-            <button onclick="App.sendMessage()" class="w-12 h-12 bg-blue-600 hover:bg-blue-700 transition-colors text-white rounded-full flex items-center justify-center shrink-0 btn-tap shadow-md mb-0.5"><i class="ph-fill ph-paper-plane-right text-xl"></i></button>
+            <textarea id="chat-input" placeholder="الرسالة..." class="flex-1 theme-bg border border-transparent rounded-3xl px-5 py-3 outline-none resize-none max-h-28 hide-scrollbar text-[15px] transition-colors theme-text focus:border-blue-500" rows="1" oninput="this.style.height = '';this.style.height = Math.min(this.scrollHeight, 112) + 'px'; App.handleTyping(this.value);"></textarea>
+            <!-- المطلب 4: منع النزول بعد الضغط على إرسال باستخدام preventDefault -->
+            <button onmousedown="event.preventDefault(); App.sendMessage();" ontouchstart="event.preventDefault(); App.sendMessage();" class="w-12 h-12 bg-blue-600 hover:bg-blue-700 transition-colors text-white rounded-full flex items-center justify-center shrink-0 btn-tap shadow-md mb-0.5"><i class="ph-fill ph-paper-plane-right text-xl pointer-events-none"></i></button>
         </div>
     </div>
 
-    <!-- قائمة الخيارات المنبثقة العامة (المطلب 11 و 12) -->
-    <div id="action-modal" class="hidden fixed inset-0 bg-black/50 z-[100] flex items-end justify-center">
-        <div class="theme-card w-full rounded-t-3xl p-4 modal-slide-in shadow-[0_-10px_40px_rgba(0,0,0,0.2)] pb-safe relative">
-            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-6"></div>
-            <div id="action-modal-content" class="space-y-2">
-            </div>
-            <button onclick="UI.closeModal('action-modal')" class="w-full theme-bg border font-bold py-4 rounded-2xl mt-4 btn-tap">إلغاء</button>
+    <!-- المطلب 8: قائمة الخيارات المنبثقة بشكل يحاكي Telegram -->
+    <div id="action-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('action-modal')">
+        <div id="action-modal-content" class="telegram-menu flex flex-col text-sm font-semibold theme-text">
+            <!-- سيتم إضافة الأزرار من خلال جافاسكربت -->
         </div>
     </div>
 
@@ -745,7 +775,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // المطلب 9: استخدام signInWithRedirect لحل مشاكل Webview
+        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, deleteDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig;
@@ -778,6 +809,7 @@
         const MESSAGES_PATH = `artifacts/${appId}/public/data/messages`;
         const NOTES_PATH = `artifacts/${appId}/public/data/notes`;
         const NOTIFS_PATH = `artifacts/${appId}/public/data/notifications`;
+        const TYPING_PATH = `artifacts/${appId}/public/data/typing`; // المطلب 5
 
         window.Memory = {
             users: {}, posts: [], comments: [], requests: [], friends: [], messages: [], notes: [], notifications: []
@@ -789,6 +821,20 @@
         window.currentManageNoteId = null;
         window.noteViewAuthorId = null; 
         window.replyingToMessage = null; 
+
+        // المطلب 3: إصلاح ارتفاع الشاشة فوق الكيبورد
+        if(window.visualViewport) {
+            window.visualViewport.addEventListener('resize', () => {
+                document.documentElement.style.setProperty('--vh', `${window.visualViewport.height * 0.01}px`);
+                const chatModal = document.getElementById('chat-modal');
+                if(!chatModal.classList.contains('hidden')) {
+                    const container = document.getElementById('chat-messages-container');
+                    if(container) container.scrollTop = container.scrollHeight;
+                }
+            });
+            // Initial set
+            document.documentElement.style.setProperty('--vh', `${window.visualViewport.height * 0.01}px`);
+        }
 
         const escapeHTML = (str) => {
             if(!str) return '';
@@ -1002,7 +1048,8 @@
             openModal: (modalId, data = null) => {
                 const modal = document.getElementById(modalId);
                 modal.classList.remove('hidden');
-                if (modal.firstElementChild.classList.contains('modal-slide-in') || modal.firstElementChild.classList.contains('modal-slide-out')) {
+                // لا نطبق انميشن الدخول لقائمة الاكشن لكي نترك الانميشن الخاص بها
+                if (modal.firstElementChild && (modal.firstElementChild.classList.contains('modal-slide-in') || modal.firstElementChild.classList.contains('modal-slide-out'))) {
                     modal.firstElementChild.classList.remove('modal-slide-out');
                     modal.firstElementChild.classList.add('modal-slide-in');
                 }
@@ -1048,7 +1095,7 @@
             },
             closeModal: (modalId) => {
                 const modal = document.getElementById(modalId);
-                if (modal.firstElementChild.classList.contains('modal-slide-in')) {
+                if (modal.firstElementChild && modal.firstElementChild.classList.contains('modal-slide-in')) {
                     modal.firstElementChild.classList.remove('modal-slide-in');
                     modal.firstElementChild.classList.add('modal-slide-out');
                     setTimeout(() => { modal.classList.add('hidden'); }, 300);
@@ -1074,13 +1121,36 @@
             init: async () => {
                 UI.showScreen('splash-screen');
 
+                // المطلب 9: التقاط نتيجة التحويل في حال كان قد تم تحويله لجوجل
+                try {
+                    const redirectResult = await getRedirectResult(auth);
+                    if (redirectResult && redirectResult.user) {
+                        const user = redirectResult.user;
+                        const userDoc = await getDoc(doc(db, USERS_PATH, user.uid));
+                        if (!userDoc.exists()) {
+                            await setDoc(doc(db, USERS_PATH, user.uid), {
+                                uid: user.uid,
+                                name: user.displayName || 'مستخدم زايلو',
+                                email: user.email,
+                                photo: user.photoURL || App.getDefaultAvatar(),
+                                username: 'user_' + Math.floor(Math.random() * 100000),
+                                bio: 'مرحباً، أنا أستخدم تطبيق زايلو!',
+                                allowRequests: true,
+                                isPrivate: false,
+                                friendsVisibility: 'all',
+                                messagePrivacy: 'all',
+                                lastActive: Date.now(),
+                                lastUsernameChange: 0,
+                                blockedUsers: [],
+                                mentionsCount: {}
+                            });
+                        }
+                    }
+                } catch(e) { console.error("Redirect Error: ", e); }
+
                 if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                     try { await signInWithCustomToken(auth, __initial_auth_token); } catch(e){}
-                } else if (!auth.currentUser) {
-                    setTimeout(() => {
-                        if(!auth.currentUser) UI.showScreen('auth-screen');
-                    }, 3000); 
-                }
+                } 
 
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
@@ -1098,19 +1168,21 @@
                                 if(themeToggle) themeToggle.checked = true;
                             }
 
-                            setTimeout(() => { App.startCore(); }, 1500); 
+                            // المطلب 2: تزامن الشاشة البداية، بمجرد التحميل نظهر التطبيق مباشرة وتختفي شاشة Z
+                            setTimeout(() => { App.startCore(); }, 500); 
                             
                             const urlParams = new URLSearchParams(window.location.search);
                             const postIdParam = urlParams.get('post');
                             if(postIdParam) {
-                                setTimeout(() => App.openSinglePost(postIdParam), 2500);
+                                setTimeout(() => App.openSinglePost(postIdParam), 1000);
                             }
                         } else {
-                            setTimeout(() => { UI.showScreen('setup-profile-screen'); }, 1500);
+                            setTimeout(() => { UI.showScreen('setup-profile-screen'); }, 500);
                         }
                     } else {
+                        // المطلب 2: انميشن ثانيتين لغير المسجل
                         window.currentUser = null;
-                        setTimeout(() => { UI.showScreen('auth-screen'); }, 3000);
+                        setTimeout(() => { UI.showScreen('auth-screen'); }, 2000);
                     }
                 });
             },
@@ -1129,37 +1201,18 @@
                     UI.showMessage('حدث خطأ، ربما البريد مستخدم مسبقاً أو الرمز ضعيف');
                 }
             },
-            // المطلب 4 و 5: تصحيح تسجيل الدخول بكوكل
+            // المطلب 9: تصحيح تسجيل الدخول بكوكل للتوافق مع WebView
             loginWithGoogle: async () => {
                 try {
-                    UI.showMessage('جاري التحويل لكوكل...');
-                    const result = await signInWithPopup(auth, googleProvider);
-                    if(!result) return; 
-
-                    const user = result.user;
-                    const userDoc = await getDoc(doc(db, USERS_PATH, user.uid));
-                    if (!userDoc.exists()) {
-                        await setDoc(doc(db, USERS_PATH, user.uid), {
-                            uid: user.uid,
-                            name: user.displayName || 'مستخدم زايلو',
-                            email: user.email,
-                            photo: user.photoURL || App.getDefaultAvatar(),
-                            username: 'user_' + Math.floor(Math.random() * 100000),
-                            bio: 'مرحباً، أنا أستخدم تطبيق زايلو!',
-                            allowRequests: true,
-                            isPrivate: false,
-                            friendsVisibility: 'all',
-                            messagePrivacy: 'all',
-                            lastActive: Date.now(),
-                            lastUsernameChange: 0,
-                            blockedUsers: [],
-                            mentionsCount: {}
-                        });
-                    }
+                    UI.showMessage('جاري الاتصال بجوجل...');
+                    await signInWithPopup(auth, googleProvider);
+                    // إذا نجح المنبثق لا نفعل شيئا إضافيا، سيقوم onAuthStateChanged بالباقي
                 } catch (error) {
                     console.error(error);
-                    if(error.code === 'auth/popup-blocked' || error.code === 'auth/unauthorized-domain') {
-                        UI.showMessage('تم حظر النافذة أو النطاق غير مصرح به في Firebase. يرجى المراجعة.');
+                    // إذا تم حظر النافذة أو نحن في WebView، نستخدم التحويل المباشر Redirect
+                    if(error.code === 'auth/popup-blocked' || error.code === 'auth/unauthorized-domain' || error.message.includes('popup')) {
+                        UI.showMessage('جاري التحويل المباشر لإكمال التسجيل...');
+                        await signInWithRedirect(auth, googleProvider);
                     } else {
                         UI.showMessage('فشل تسجيل الدخول: ' + error.message);
                     }
@@ -1280,7 +1333,6 @@
                 PullToRefresh.init();
                 setInterval(App.updateLastActive, 60000);
                 
-                // التأكد من حالة زر الثيم
                 const themeToggle = document.getElementById('theme-toggle');
                 if(themeToggle) themeToggle.checked = document.body.classList.contains('dark-theme');
             },
@@ -1354,7 +1406,6 @@
                     Memory.messages = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     App.renderChats();
                     if(window.currentChatUserId) {
-                        // المطلب 13: سرعة علامات القراءة، إذا كنت داخل المحادثة اجعل رسائله مقروءة فوراً
                         const unreadInChat = snap.docs.filter(d => d.data().senderId === window.currentChatUserId && !d.data().read && d.data().participants.includes(currentUser.uid));
                         if(unreadInChat.length > 0) {
                             unreadInChat.forEach(d => updateDoc(d.ref, {read: true}));
@@ -1363,11 +1414,74 @@
                     }
                 }, errHandler);
 
+                // المطلب 5: الاستماع للكتابة الحية
+                onSnapshot(collection(db, TYPING_PATH), (snap) => {
+                    if(!window.currentChatUserId) return;
+                    // نبحث عن وثيقة حيث الطرف الآخر هو من يكتب لي
+                    const typingDoc = snap.docs.find(d => d.id === `${window.currentChatUserId}_${currentUser.uid}`);
+                    const bubble = document.getElementById('live-typing-bubble');
+                    if(typingDoc && typingDoc.data().text) {
+                        // إذا كانت الكتابة منذ أقل من 5 ثواني
+                        if(Date.now() - typingDoc.data().timestamp < 5000) {
+                            bubble.innerText = typingDoc.data().text;
+                            bubble.classList.remove('hidden');
+                            // التمرير للأسفل لرؤية الكتابة
+                            const container = document.getElementById('chat-messages-container');
+                            container.scrollTop = container.scrollHeight;
+                            return;
+                        }
+                    }
+                    bubble.classList.add('hidden');
+                }, errHandler);
+
                 onSnapshot(collection(db, NOTIFS_PATH), (snap) => {
                     Memory.notifications = snap.docs.map(d => ({id: d.id, ...d.data()}))
                                             .filter(n => n.to === currentUser.uid);
                     App.renderNotifications();
                 }, errHandler);
+            },
+
+            // المطلب 5: دالة تحديث حالة الكتابة الحية في القاعدة
+            handleTyping: async (text) => {
+                const otherUid = window.currentChatUserId;
+                if(!otherUid || !currentUser) return;
+                try {
+                    await setDoc(doc(db, TYPING_PATH, `${currentUser.uid}_${otherUid}`), {
+                        text: text,
+                        timestamp: Date.now()
+                    });
+                } catch(e){}
+            },
+
+            // المطلب 6: دالة عرض الكائن المطور (Xylo Pet)
+            updateChatPet: (msgs) => {
+                const container = document.getElementById('chat-pet-container');
+                if(!msgs || msgs.length === 0) {
+                    container.innerHTML = ''; return;
+                }
+                const lastMsg = msgs[msgs.length - 1];
+                const daysSinceLastMsg = (Date.now() - lastMsg.timestamp) / (1000 * 60 * 60 * 24);
+                
+                // إذا مر 3 أيام، يعود للمستوى الأول
+                let level = 1;
+                if(daysSinceLastMsg <= 3) {
+                    if(msgs.length > 50) level = 3;
+                    else if(msgs.length > 10) level = 2;
+                }
+
+                let svgContent = '';
+                if(level === 1) {
+                    // كائن لطيف بسيط
+                    svgContent = `<svg class="w-8 h-8 pet-animate" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="#60A5FA"/><path d="M35 45 Q 40 40 45 45" stroke="white" stroke-width="4" stroke-linecap="round"/><path d="M55 45 Q 60 40 65 45" stroke="white" stroke-width="4" stroke-linecap="round"/><path d="M45 60 Q 50 65 55 60" stroke="white" stroke-width="4" stroke-linecap="round"/></svg>`;
+                } else if (level === 2) {
+                    // كائن أكبر قليلا مع نظارات
+                    svgContent = `<svg class="w-9 h-9 pet-animate pet-glow" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="45" fill="#3B82F6"/><circle cx="35" cy="45" r="10" fill="white"/><circle cx="65" cy="45" r="10" fill="white"/><circle cx="35" cy="45" r="4" fill="#1E3A8A"/><circle cx="65" cy="45" r="4" fill="#1E3A8A"/><path d="M45 45 L 55 45" stroke="white" stroke-width="3"/><path d="M40 70 Q 50 80 60 70" stroke="white" stroke-width="5" stroke-linecap="round"/></svg>`;
+                } else {
+                    // كائن متطور يرتدي تاج
+                    svgContent = `<svg class="w-10 h-10 pet-animate pet-glow" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M20 30 L 30 10 L 50 25 L 70 10 L 80 30 Z" fill="#FBBF24"/><circle cx="50" cy="55" r="45" fill="#2563EB"/><circle cx="35" cy="50" r="12" fill="white"/><circle cx="65" cy="50" r="12" fill="white"/><circle cx="35" cy="50" r="6" fill="#1E3A8A"/><circle cx="37" cy="48" r="2" fill="white"/><circle cx="65" cy="50" r="6" fill="#1E3A8A"/><circle cx="67" cy="48" r="2" fill="white"/><path d="M40 75 Q 50 85 60 75" stroke="white" stroke-width="6" stroke-linecap="round"/><path d="M10 50 L 20 50 M 80 50 L 90 50 M 15 35 L 22 42 M 85 35 L 78 42" stroke="#60A5FA" stroke-width="3" stroke-linecap="round"/></svg>`;
+                }
+                
+                container.innerHTML = svgContent;
             },
 
             isFriend: (uid1, uid2) => {
@@ -1611,11 +1725,14 @@
             },
 
             addComment: async () => {
-                const text = document.getElementById('comment-input').value.trim();
+                const inputEl = document.getElementById('comment-input');
+                const text = inputEl.value.trim();
                 const postId = window.currentPostIdForComment;
                 if(!text || !postId) return;
                 
-                document.getElementById('comment-input').value = '';
+                inputEl.value = '';
+                // إبقاء التركيز للمطلب 4
+                inputEl.focus(); 
                 
                 await addDoc(collection(db, COMMENTS_PATH), {
                     postId: postId, authorId: currentUser.uid, text: text, timestamp: Date.now()
@@ -1628,7 +1745,7 @@
                 App.notifyMentions(text, 'تعليق', postId);
             },
 
-            // --- الملاحظات (المطلب 10: قصص / ستوري) ---
+            // --- الملاحظات (قصص / ستوري) ---
             renderNotes: () => {
                 const container = document.getElementById('notes-container');
                 const myBtnContainer = container.firstElementChild.outerHTML;
@@ -1644,7 +1761,6 @@
                 const myPlusIcon = myBtnEl.querySelector('#my-note-plus-icon');
                 
                 if(myActiveNote) {
-                    // لدي ملاحظة (حلقة زرقاء بدل البلس)
                     myAvatar.parentElement.classList.add('story-ring');
                     myAvatar.classList.replace('border-transparent', 'border-white');
                     myPlusIcon.classList.add('hidden');
@@ -1666,7 +1782,6 @@
                     el.style.scrollSnapAlign = 'start';
                     const shortName = author.name.split(' ')[0];
                     
-                    // إخفاء النص واستخدام إطار ستوري
                     el.innerHTML = `
                         <div class="relative story-ring">
                             <img src="${author.photo || App.getDefaultAvatar()}" class="w-16 h-16 rounded-full object-cover border-2 shadow-sm" style="border-color: var(--bg-color);">
@@ -1687,7 +1802,6 @@
                 window.noteViewAuthorId = author.uid;
                 window.noteViewId = note.id;
                 
-                // إضافة مشاهدة إذا لم تكن لصاحبها
                 if(author.uid !== currentUser.uid) {
                     let viewers = note.viewers || [];
                     if(!viewers.includes(currentUser.uid)) {
@@ -1701,7 +1815,6 @@
                     document.getElementById('nv-options-btn').classList.add('hidden');
                     document.getElementById('note-reply-input').value = '';
                 } else {
-                    // ملاحظتي: عرض المشاهدات والـ 3 نقاط
                     document.getElementById('note-reply-section').classList.add('hidden');
                     document.getElementById('note-reply-section').classList.remove('flex');
                     document.getElementById('note-viewers-section').classList.remove('hidden');
@@ -1710,7 +1823,6 @@
                     
                     document.getElementById('note-viewers-count').innerText = (note.viewers || []).length;
                     
-                    // 3 نقاط لفتح الإدارة (تعديل/حذف)
                     document.getElementById('nv-options-btn').onclick = () => {
                         App.openManageNote(note.id, note.text);
                         UI.closeModal('note-view-modal');
@@ -1753,17 +1865,17 @@
                 }
             },
             sendNoteReply: async () => {
-                const text = document.getElementById('note-reply-input').value.trim();
+                const inputEl = document.getElementById('note-reply-input');
+                const text = inputEl.value.trim();
                 if(!text || !window.noteViewAuthorId) return;
                 
                 const note = Memory.notes.find(n => n.id === window.noteViewId);
                 if(!note) return;
-
-                // المطلب 9: إضافة معرف الملاحظة للرد ليكون شكله جميل في الخاص (مثل Telegram reply)
-                // بدلاً من إدراج النص صراحة، نستخدم نظام الـ replyToId بشكل مخصص للملاحظات أو نحفظ نصها.
-                // لحفظ التوافق، سندمجها كنص مميز إذا لم نرد تعديل بنية الرسائل كثيراً، 
-                // أو الأفضل: نضع noteId و noteText في الرسالة ليتم عرضها كـ Reply
                 
+                // ترك التركيز لمنع نزول الكيبورد المطلب 4
+                inputEl.value = '';
+                inputEl.focus();
+
                 await addDoc(collection(db, MESSAGES_PATH), {
                     participants: [currentUser.uid, window.noteViewAuthorId],
                     senderId: currentUser.uid,
@@ -1771,7 +1883,7 @@
                     timestamp: Date.now(),
                     read: false,
                     isNoteReply: true,
-                    replyNoteText: note.text // حفظ نص الملاحظة كمرجع للرد
+                    replyNoteText: note.text 
                 });
 
                 UI.showMessage('تم إرسال الرد للخاص');
@@ -1780,7 +1892,7 @@
 
             checkAndCreateNote: () => {
                 const myActiveNote = Memory.notes.find(n => n.authorId === currentUser.uid);
-                if(myActiveNote) App.viewNoteFull(myActiveNote, currentUser); // فتح الملاحظة بدل التعديل المباشر (المطلب 10)
+                if(myActiveNote) App.viewNoteFull(myActiveNote, currentUser); 
                 else UI.openModal('create-note-modal');
             },
 
@@ -1925,7 +2037,6 @@
                 }
             },
 
-            // --- نظام الصداقة والمحظورين ---
             sendFriendRequest: async (toUid) => {
                 await addDoc(collection(db, REQUESTS_PATH), {
                     from: currentUser.uid, to: toUid, timestamp: Date.now()
@@ -2063,7 +2174,7 @@
                 });
             },
 
-            // --- المطلب 15: عرض الملف الشخصي المحسن (مثل تلكرام وفيسبوك) ---
+            // --- الملف الشخصي  ---
             renderUserProfile: (uid) => {
                 const u = Memory.users[uid];
                 if(!u) return;
@@ -2074,7 +2185,6 @@
                 document.getElementById('vp-bio').innerText = u.bio || '';
                 document.getElementById('vp-image').src = u.photo || App.getDefaultAvatar();
                 
-                // لون كفر عشوائي ثابت لكل مستخدم ليعطي جمالية
                 const colors = ['from-blue-600 to-indigo-800', 'from-purple-600 to-pink-600', 'from-green-500 to-teal-700', 'from-orange-500 to-red-600'];
                 const colorIdx = u.uid.charCodeAt(0) % colors.length;
                 document.getElementById('vp-cover').className = `h-64 bg-gradient-to-tr ${colors[colorIdx]} relative flex items-end justify-center pb-4 pt-16`;
@@ -2121,7 +2231,6 @@
                     actionContainer.innerHTML = actionHtml;
                 }
 
-                // قسم الأصدقاء بنظام الشبكة (فيسبوك ستايل)
                 const friendsGrid = document.getElementById('vp-friends-grid');
                 friendsGrid.innerHTML = '';
                 
@@ -2135,7 +2244,6 @@
                     document.getElementById('vp-friends-count-text').innerText = userFriendsIds.length;
 
                     if(userFriendsIds.length > 0) {
-                        // عرض أول 6 أصدقاء كعينة في الملف 
                         const friendsToShow = userFriendsIds.slice(0, 6);
                         friendsToShow.forEach(fid => {
                             const friend = Memory.users[fid];
@@ -2159,24 +2267,23 @@
                 }
             },
 
-            // --- خيارات الرسالة (المطلب 11 و 12) ---
+            // المطلب 8: خيارات الرسالة ستايل تليكرام
             showMessageOptions: (msgId, isMe, text, isPinned) => {
                 const content = document.getElementById('action-modal-content');
                 content.innerHTML = `
-                    <div class="text-center font-bold text-lg mb-4 theme-text border-b pb-2" style="border-color: var(--border-color);">خيارات الرسالة</div>
-                    <button onclick="App.copyText('${escapeHTML(text).replace(/'/g, "\\'")}')" class="w-full theme-card hover:opacity-80 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border mb-2">
-                        <i class="ph-fill ph-copy text-xl"></i> نسخ النص
+                    <button onclick="App.copyText('${escapeHTML(text).replace(/'/g, "\\'")}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
+                        <span>نسخ النص</span> <i class="ph-fill ph-copy text-lg text-gray-500"></i>
                     </button>
-                    <button onclick="App.togglePinMessage('${msgId}', ${isPinned})" class="w-full bg-blue-50 text-blue-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-blue-100 mb-2">
-                        <i class="ph-fill ${isPinned ? 'ph-push-pin-slash' : 'ph-push-pin'} text-xl"></i> ${isPinned ? 'إلغاء التثبيت' : 'تثبيت الرسالة'}
+                    <button onclick="App.togglePinMessage('${msgId}', ${isPinned})" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap text-blue-600">
+                        <span>${isPinned ? 'إلغاء التثبيت' : 'تثبيت'}</span> <i class="ph-fill ${isPinned ? 'ph-push-pin-slash' : 'ph-push-pin'} text-lg"></i>
                     </button>
                     ${isMe ? `
-                    <button onclick="App.deleteMessage('${msgId}', 'all')" class="w-full bg-red-50 text-red-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-red-100 mb-2">
-                        <i class="ph-fill ph-trash text-xl"></i> حذف للجميع
+                    <button onclick="App.deleteMessage('${msgId}', 'all')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-red-50 btn-tap text-red-500">
+                        <span>حذف للجميع</span> <i class="ph-fill ph-trash text-lg"></i>
                     </button>
                     ` : ''}
-                    <button onclick="App.deleteMessage('${msgId}', 'me')" class="w-full bg-orange-50 text-orange-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-orange-100">
-                        <i class="ph-fill ph-trash-simple text-xl"></i> حذف من عندي
+                    <button onclick="App.deleteMessage('${msgId}', 'me')" class="w-full flex justify-between items-center p-4 hover:bg-orange-50 btn-tap text-orange-500">
+                        <span>حذف من عندي</span> <i class="ph-fill ph-trash-simple text-lg"></i>
                     </button>
                 `;
                 UI.openModal('action-modal');
@@ -2203,13 +2310,11 @@
                 }
                 UI.closeModal('action-modal');
             },
-            // التفاعل بالقلب (المطلب 8)
             reactToMessage: async (msgId, reactionEmoji = '❤️') => {
                 const msg = Memory.messages.find(m => m.id === msgId);
                 if(!msg) return;
                 const currentReactions = msg.reactions || {};
                 
-                // Toggle reaction
                 if(currentReactions[currentUser.uid] === reactionEmoji) {
                     delete currentReactions[currentUser.uid];
                 } else {
@@ -2223,17 +2328,16 @@
                 const isMyFriend = App.isFriend(currentUser.uid, otherUid);
                 const content = document.getElementById('action-modal-content');
                 content.innerHTML = `
-                    <div class="text-center font-bold text-lg mb-4 theme-text border-b pb-2" style="border-color: var(--border-color);">خيارات المحادثة</div>
                     ${isMyFriend ? `
-                    <button onclick="App.unfriend('${otherUid}')" class="w-full theme-bg border theme-text font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap mb-2">
-                        <i class="ph-fill ph-user-minus text-xl"></i> إزالة من الأصدقاء
+                    <button onclick="App.unfriend('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
+                        <span>إزالة من الأصدقاء</span> <i class="ph-fill ph-user-minus text-lg text-gray-500"></i>
                     </button>
                     ` : ''}
-                    <button onclick="App.blockUser('${otherUid}')" class="w-full bg-orange-50 text-orange-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-orange-100 mb-2">
-                        <i class="ph-fill ph-prohibit text-xl"></i> حظر المستخدم
+                    <button onclick="App.blockUser('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-orange-50 btn-tap text-orange-500">
+                        <span>حظر المستخدم</span> <i class="ph-fill ph-prohibit text-lg"></i>
                     </button>
-                    <button onclick="App.deleteChatHistory('${otherUid}')" class="w-full bg-red-50 text-red-600 font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-red-100">
-                        <i class="ph-fill ph-trash text-xl"></i> حذف المحادثة
+                    <button onclick="App.deleteChatHistory('${otherUid}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-500">
+                        <span>حذف المحادثة</span> <i class="ph-fill ph-trash text-lg"></i>
                     </button>
                 `;
                 UI.openModal('action-modal');
@@ -2313,7 +2417,6 @@
                         tickHtml = lastMsg.read ? '<i class="ph-fill ph-checks text-blue-500 text-[13px] ml-1"></i>' : '<i class="ph ph-check opacity-50 text-[13px] ml-1"></i>';
                     }
 
-                    // للرد على الملاحظات في واجهة المحادثات الرئيسية
                     let msgPreview = lastMsg.isNoteReply ? `[رد على ملاحظة] ${lastMsg.text}` : lastMsg.text;
 
                     el.innerHTML = `
@@ -2369,7 +2472,6 @@
                 document.getElementById('chat-user-status').innerText = isOnline ? 'نشط الآن' : `آخر ظهور ${App.timeAgo(u.lastActive)}`;
             },
 
-            // وضع الرد
             setReplyMode: (msgId, text, senderName) => {
                 window.replyingToMessage = msgId;
                 document.getElementById('reply-to-name').innerText = `الرد على ${senderName}`;
@@ -2387,6 +2489,8 @@
                 if(!otherUid) return;
 
                 const container = document.getElementById('chat-messages-container');
+                // حفظ وجود فقاعة الكتابة الحية
+                const typingBubble = document.getElementById('live-typing-bubble');
                 container.innerHTML = '';
 
                 let msgs = Memory.messages
@@ -2395,7 +2499,9 @@
                 
                 msgs = msgs.filter(m => !(m.deletedFor && m.deletedFor.includes(currentUser.uid)));
 
-                // عرض المثبت (المطلب 11)
+                // المطلب 6: تحديث كائن المحادثة
+                App.updateChatPet(msgs);
+
                 const pinnedMsg = msgs.find(m => m.pinned);
                 if(pinnedMsg) {
                     const pinEl = document.createElement('div');
@@ -2413,6 +2519,7 @@
 
                 if(msgs.length === 0) {
                     container.innerHTML += '<div class="text-center opacity-50 py-10 mt-auto theme-text">بدء محادثة جديدة 👋</div>';
+                    container.appendChild(typingBubble);
                     return;
                 }
 
@@ -2424,13 +2531,10 @@
                     const el = document.createElement('div');
                     el.className = `max-w-[80%] rounded-2xl p-3 shadow-sm relative break-words ${isMe ? 'bubble-me rounded-br-sm' : 'bubble-other rounded-bl-sm'}`;
                     
-                    // رمز التثبيت على الرسالة نفسها
                     const pinIconHTML = m.pinned ? '<i class="ph-fill ph-push-pin opacity-50 text-[10px] absolute top-1 left-2"></i>' : '';
 
-                    // المطلب 8 و 12: خيارات الرسالة والتفاعل
                     let tapCount = 0;
                     let tapTimer;
-                    let pressTimer;
                     
                     const handleTap = (e) => {
                         tapCount++;
@@ -2446,50 +2550,55 @@
                         }
                     };
 
-                    const handleLongPressStart = () => {
-                        pressTimer = setTimeout(() => {
-                            clearTimeout(tapTimer); tapCount = 0;
-                            App.showMessageOptions(m.id, isMe, m.text, m.pinned);
-                        }, 500);
-                    };
-                    const handleLongPressEnd = () => clearTimeout(pressTimer);
+                    el.onclick = handleTap; // قائمة الإعدادات تظهر فقط عند الضغط على نفس الرسالة
 
-                    el.onclick = handleTap;
-                    el.onmousedown = el.ontouchstart = handleLongPressStart;
-                    el.onmouseup = el.ontouchend = el.onmouseleave = el.ontouchmove = handleLongPressEnd;
-
-                    // المطلب 7: السحب السلس للرد (نطبقه على الحاوية الكاملة row للسهولة)
-                    let startX = 0; let currentX = 0;
+                    // المطلب 7: معالجة السحب (Swipe) الصارم أفقيًا فقط وتجاهل لمسات الجوانب للرد
+                    let startX = 0, startY = 0, currentX = 0;
+                    let isSwiping = false;
                     const replyIcon = document.createElement('i');
                     replyIcon.className = `ph-fill ph-reply reply-icon-indicator ${isMe ? '-left-8' : '-right-8'}`;
-                    
                     row.appendChild(replyIcon);
 
-                    row.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, {passive: true});
-                    row.addEventListener('touchmove', (e) => {
-                        currentX = e.touches[0].clientX;
-                        let diff = currentX - startX;
-                        if((isMe && diff < 0) || (!isMe && diff > 0)) {
-                            let translate = Math.abs(diff) > 70 ? 70 * Math.sign(diff) : diff;
-                            row.style.transform = `translateX(${translate}px)`;
-                            replyIcon.style.opacity = Math.abs(translate) / 70;
-                        }
+                    row.addEventListener('touchstart', (e) => { 
+                        startX = e.touches[0].clientX; 
+                        startY = e.touches[0].clientY;
+                        isSwiping = false;
                     }, {passive: true});
+
+                    row.addEventListener('touchmove', (e) => {
+                        if(!startX || !startY) return;
+                        currentX = e.touches[0].clientX;
+                        let currentY = e.touches[0].clientY;
+                        let diffX = currentX - startX;
+                        let diffY = currentY - startY;
+
+                        // التحقق من أن السحب أفقي بحت لتفادي أخطاء التمرير للأسفل/الأعلى
+                        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
+                            isSwiping = true;
+                            if((isMe && diffX < 0) || (!isMe && diffX > 0)) {
+                                if(e.cancelable) e.preventDefault();
+                                let translate = Math.abs(diffX) > 70 ? 70 * Math.sign(diffX) : diffX;
+                                row.style.transform = `translateX(${translate}px)`;
+                                replyIcon.style.opacity = Math.abs(translate) / 70;
+                            }
+                        }
+                    }, {passive: false});
+
                     row.addEventListener('touchend', (e) => {
+                        if(!isSwiping) { startX = 0; startY = 0; return; }
                         row.style.transform = `translateX(0)`;
                         replyIcon.style.opacity = 0;
-                        let diff = currentX - startX;
-                        if (Math.abs(diff) > 50 && ((isMe && diff < 0) || (!isMe && diff > 0))) {
+                        let diffX = currentX - startX;
+                        // يجب سحب مسافة جيدة لتفعيل الرد
+                        if (Math.abs(diffX) > 50 && ((isMe && diffX < 0) || (!isMe && diffX > 0))) {
                             const senderName = isMe ? 'نفسك' : Memory.users[m.senderId].name;
                             App.setReplyMode(m.id, m.text, senderName);
                         }
-                        startX = 0; currentX = 0;
+                        startX = 0; startY = 0; isSwiping = false;
                     });
 
-                    // علامات القراءة
                     const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-200"></i>' : '<i class="ph ph-check opacity-70"></i>') : '';
                     
-                    // تضمين الرد (المطلب 9)
                     let replyHtml = '';
                     if(m.replyToId) {
                         const repliedMsg = Memory.messages.find(msg => msg.id === m.replyToId);
@@ -2508,7 +2617,6 @@
                             </div>`;
                     }
 
-                    // عرض التفاعلات
                     let reactionHtml = '';
                     if(m.reactions && Object.keys(m.reactions).length > 0) {
                         const reactValues = Object.values(m.reactions);
@@ -2530,18 +2638,25 @@
                     container.appendChild(row);
                 });
 
+                // إرجاع فقاعة الكتابة الحية لأسفل المحادثة
+                container.appendChild(typingBubble);
                 container.scrollTop = container.scrollHeight;
             },
 
             sendMessage: async () => {
                 const otherUid = window.currentChatUserId;
-                const text = document.getElementById('chat-input').value.trim();
+                const inputEl = document.getElementById('chat-input');
+                const text = inputEl.value.trim();
                 if(!text || !otherUid) return;
 
-                const inputEl = document.getElementById('chat-input');
+                // المطلب 4: ترك التركيز على الحقل
                 inputEl.value = '';
                 inputEl.style.height = ''; 
+                inputEl.focus(); 
                 
+                // تنظيف مسار الكتابة الحية
+                try { await deleteDoc(doc(db, TYPING_PATH, `${currentUser.uid}_${otherUid}`)); } catch(e){}
+
                 const payload = {
                     participants: [currentUser.uid, otherUid],
                     senderId: currentUser.uid,
@@ -2556,7 +2671,7 @@
                 }
                 
                 await addDoc(collection(db, MESSAGES_PATH), payload);
-                App.renderMessages(); // Optimistic
+                App.renderMessages(); 
             },
 
             // --- الإشعارات ---
@@ -2577,9 +2692,8 @@
             showNotifOptions: (notifId) => {
                 const content = document.getElementById('action-modal-content');
                 content.innerHTML = `
-                    <div class="text-center font-bold text-lg mb-4 theme-text border-b pb-2" style="border-color: var(--border-color);">خيارات الإشعار</div>
-                    <button onclick="App.deleteNotification('${notifId}')" class="w-full bg-red-50 text-red-600 font-bold py-4 rounded-2xl flex items-center justify-center gap-2 btn-tap border border-red-100">
-                        <i class="ph-fill ph-trash text-xl"></i> حذف الإشعار
+                    <button onclick="App.deleteNotification('${notifId}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-red-50 btn-tap text-red-500">
+                        <span>حذف الإشعار</span> <i class="ph-fill ph-trash text-lg"></i>
                     </button>
                 `;
                 UI.openModal('action-modal');
