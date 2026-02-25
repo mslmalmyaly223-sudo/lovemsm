@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>زايلو - Xylo</title>
+    <title>زايلو - Zailo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
-    <!-- إضافة خط Cairo الفخم للغة العربية -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap" rel="stylesheet">
     
     <style>
-        /* إعدادات التطبيق الأساسية */
         html, body {
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
@@ -29,7 +27,6 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* متغيرات الألوان للوضع الليلي والنهاري */
         :root {
             --bg-color: #f3f4f6;
             --text-color: #1f2937;
@@ -41,7 +38,7 @@
             --bubble-other-bg: #ffffff;
             --bubble-other-text: #1f2937;
             --border-color: #f3f4f6;
-            --vh: 1vh; /* للمطلب 3: ارتفاع الكيبورد */
+            --vh: 1vh;
         }
         
         body.dark-theme {
@@ -75,12 +72,8 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* شاشة البداية المحدثة */
-        #splash-screen {
-            background-color: #0a192f; 
-        }
+        #splash-screen { background-color: #0a192f; }
 
-        /* انميشن الدودة لدخول حرف Z */
         @keyframes wormSlide {
             0% { transform: translateX(100vw) scaleX(2.5) scaleY(0.4); opacity: 0; }
             40% { transform: translateX(20vw) scaleX(0.6) scaleY(1.4); opacity: 1; }
@@ -88,19 +81,16 @@
             100% { transform: translateX(0) scaleX(1) scaleY(1); opacity: 1; }
         }
 
-        /* انميشن التوهج المستمر */
         @keyframes glow-sync {
             0% { text-shadow: 0 0 15px rgba(255, 215, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.4); transform: scale(1); }
             100% { text-shadow: 0 0 25px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 215, 0, 0.8), 0 0 75px rgba(255, 215, 0, 0.6); transform: scale(1.05); }
         }
 
-        /* انميشن ظهور النص */
         @keyframes fadeUpText {
             0% { transform: translateY(20px); opacity: 0; }
             100% { transform: translateY(0); opacity: 1; }
         }
 
-        /* تنسيق الحرف Z الجديد */
         .elegant-z {
             font-family: 'Segoe UI', system-ui, sans-serif;
             font-weight: 900;
@@ -109,12 +99,10 @@
             line-height: 1;
             margin-bottom: 5px;
             display: inline-block;
-            /* تطبيق انميشن الدودة ثم التوهج */
             animation: wormSlide 1.2s cubic-bezier(0.25, 1, 0.5, 1) forwards,
                        glow-sync 2s 1.2s cubic-bezier(0.25, 1, 0.5, 1) infinite alternate;
         }
 
-        /* تنسيق كلمة زايلو بخط Cairo الفخم */
         .elegant-text {
             font-family: 'Cairo', sans-serif;
             color: #ffd700;
@@ -149,7 +137,6 @@
             box-shadow: 0 -5px 20px rgba(0,0,0,0.1); max-height: 200px; overflow-y: auto; z-index: 200; display: none;
         }
 
-        /* سحب الرسالة */
         .msg-row { transition: transform 0.2s ease-out; touch-action: pan-y; width: 100%; position: relative; }
         .reply-icon-indicator {
             position: absolute; top: 50%; transform: translateY(-50%);
@@ -159,7 +146,6 @@
         .sub-tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; font-weight: bold; }
         .sub-tab-inactive { border-bottom: 2px solid transparent; color: #6b7280; font-weight: normal; }
 
-        /* التفاعل بالقلب */
         .reaction-badge {
             position: absolute; bottom: -8px; 
             background: rgba(255,255,255,0.9); border-radius: 50%; padding: 2px; font-size: 14px;
@@ -177,15 +163,17 @@
             padding: 2px;
             background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899);
             border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        .story-ring.viewed {
+            background: #9ca3af;
         }
 
-        /* المطلب 3: تعديل ارتفاع نافذة المحادثة للتوافق مع الكيبورد */
         #chat-modal {
             height: 100vh;
             height: calc(var(--vh, 1vh) * 100);
         }
 
-        /* المطلب 8: قائمة التلكرام */
         .telegram-menu {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
@@ -204,7 +192,6 @@
         }
         @keyframes popTelegram { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* ستايلات الكائن الجديد ورسائله */
         @keyframes floatPet {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-4px) rotate(2deg); }
@@ -219,85 +206,82 @@
         }
         .pet-glow-gold { filter: drop-shadow(0 0 12px rgba(255,215,0,0.8)); }
         
-        /* نافذة منبثقة في وسط الشاشة */
-.pet-popup-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(3px);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
+        .pet-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
 
-.pet-popup-overlay.show {
-    opacity: 1;
-    visibility: visible;
-}
+        .pet-popup-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
 
-.pet-popup-content {
-    background: linear-gradient(135deg, #fff8e7, #ffecd6);
-    color: #1f2937;
-    padding: 30px 25px;
-    border-radius: 40px;
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 1.6;
-    max-width: 85%;
-    width: 350px;
-    text-align: center;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.3), 0 0 0 3px rgba(255,215,0,0.4);
-    transform: scale(0.8);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 1px solid rgba(255,215,0,0.5);
-    word-break: break-word;
-    white-space: pre-wrap;
-    position: relative;
-    animation: floatPopup 3s ease-in-out infinite;
-}
+        .pet-popup-content {
+            background: linear-gradient(135deg, #fff8e7, #ffecd6);
+            color: #1f2937;
+            padding: 30px 25px;
+            border-radius: 40px;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.6;
+            max-width: 85%;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3), 0 0 0 3px rgba(255,215,0,0.4);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,215,0,0.5);
+            word-break: break-word;
+            white-space: pre-wrap;
+            position: relative;
+            animation: floatPopup 3s ease-in-out infinite;
+        }
 
-.pet-popup-content.show {
-    transform: scale(1);
-}
+        .pet-popup-content.show {
+            transform: scale(1);
+        }
 
-@keyframes floatPopup {
-    0%, 100% { transform: translateY(0px) scale(1); }
-    50% { transform: translateY(-10px) scale(1.02); }
-}
+        @keyframes floatPopup {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-10px) scale(1.02); }
+        }
 
-.pet-popup-content::before {
-    content: '✨';
-    position: absolute;
-    top: -15px;
-    left: 20px;
-    font-size: 30px;
-    filter: drop-shadow(0 5px 5px rgba(255,215,0,0.5));
-}
+        .pet-popup-content::before {
+            content: '✨';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            font-size: 30px;
+            filter: drop-shadow(0 5px 5px rgba(255,215,0,0.5));
+        }
 
-.pet-popup-content::after {
-    content: '💬';
-    position: absolute;
-    bottom: -15px;
-    right: 20px;
-    font-size: 30px;
-    filter: drop-shadow(0 5px 5px rgba(255,215,0,0.5));
-}
+        .pet-popup-content::after {
+            content: '💬';
+            position: absolute;
+            bottom: -15px;
+            right: 20px;
+            font-size: 30px;
+            filter: drop-shadow(0 5px 5px rgba(255,215,0,0.5));
+        }
 
-/* للوضع الليلي */
-body.dark-theme .pet-popup-content {
-    background: linear-gradient(135deg, #2d3748, #1a2634);
-    color: #f9fafb;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 3px rgba(255,215,0,0.3);
-}
+        body.dark-theme .pet-popup-content {
+            background: linear-gradient(135deg, #2d3748, #1a2634);
+            color: #f9fafb;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 3px rgba(255,215,0,0.3);
+        }
 
-        /* المطلب 5: انميشن الكتابة الحية */
         @keyframes blinkCursor {
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
@@ -308,13 +292,266 @@ body.dark-theme .pet-popup-content {
             margin-right: 2px;
         }
         
+        .link-internal {
+            color: #2563eb;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            text-decoration-style: dotted;
+        }
+        body.dark-theme .link-internal {
+            color: #4ade80;
+        }
         
+        .link-external {
+            color: #2563eb;
+            font-weight: 600;
+            cursor: default;
+        }
+        body.dark-theme .link-external {
+            color: #4ade80;
+        }
+        
+        .selectable-text {
+            -webkit-user-select: all;
+            user-select: all;
+        }
+        
+        .pin-popup {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 300px;
+            animation: pinPopup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        body.dark-theme .pin-popup {
+            background: rgba(30, 41, 59, 0.95);
+        }
+        @keyframes pinPopup {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .pin-option {
+            transition: all 0.2s;
+        }
+        .pin-option:active {
+            transform: scale(0.95);
+        }
+        
+        .pin-love {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 8px;
+        }
+        
+        .pin-normal {
+            background: #9ca3af;
+            color: white;
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 8px;
+        }
+        
+        .highlight-message {
+            animation: highlight 2s ease-in-out;
+            border: 2px solid #3b82f6 !important;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        body.dark-theme .highlight-message {
+            border: 2px solid #4ade80 !important;
+            box-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+        }
+        @keyframes highlight {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); background-color: rgba(59, 130, 246, 0.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .profile-link-btn {
+            background: #f3f4f6;
+            color: #1f2937;
+            border-radius: 9999px;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        body.dark-theme .profile-link-btn {
+            background: #374151;
+            color: #f9fafb;
+        }
+        .profile-link-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .delete-popup {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 320px;
+            animation: pinPopup 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        body.dark-theme .delete-popup {
+            background: rgba(30, 41, 59, 0.95);
+        }
+        
+        #badge-requests {
+            display: none;
+            position: absolute;
+            top: 2px;
+            right: 20px;
+            width: 10px;
+            height: 10px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+        
+        .gender-option {
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .gender-option.selected {
+            border-color: #3b82f6;
+            background-color: rgba(59, 130, 246, 0.1);
+            transform: scale(1.05);
+        }
 
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            padding-top: 60px;
+            color: white;
+        }
+
+        .profile-avatar-large {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin-bottom: 10px;
+        }
+
+        .action-button {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            padding: 12px 24px;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .action-button:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.3);
+        }
+
+        .mute-badge {
+            background: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 11px;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .create-post-container {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 10px;
+        }
+
+        .create-post-textarea {
+            width: 100%;
+            min-height: 150px;
+            background: var(--bg-color);
+            border: none;
+            border-radius: 15px;
+            padding: 15px;
+            color: var(--text-color);
+            font-size: 16px;
+            resize: none;
+            outline: none;
+        }
+
+        .create-note-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .create-note-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid white;
+            margin: 20px auto;
+        }
+
+        .create-note-textarea {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            min-height: 120px;
+            resize: none;
+            outline: none;
+            width: 100%;
+        }
+        .create-note-textarea::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .load-more-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 10px 20px;
+            margin: 10px auto;
+            display: block;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .load-more-btn:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col antialiased pb-safe theme-bg">
 
-    <!-- 1. شاشة البداية المحدثة -->
+    <!-- 1. شاشة البداية -->
     <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="splash-content flex flex-col items-center justify-center">
             <div class="elegant-z">Z</div>
@@ -358,12 +595,12 @@ body.dark-theme .pet-popup-content {
         </div>
     </div>
 
-    <!-- 3. إعداد الصورة الشخصية -->
+    <!-- 3. إعداد الصورة الشخصية مع اختيار الجنس -->
     <div id="setup-profile-screen" class="hidden fixed inset-0 z-[60] bg-white flex flex-col items-center justify-center p-6 smooth-scroll">
         <h2 class="text-3xl font-bold mb-2 text-center text-gray-800">اختيار صورة للحساب</h2>
-        <p class="text-gray-500 mb-8 text-center">اجعل حسابك مميزاً بإضافة صورة شخصية</p>
+        <p class="text-gray-500 mb-4 text-center">اجعل حسابك مميزاً بإضافة صورة شخصية</p>
         
-        <label for="profile-upload" class="relative cursor-pointer mb-8 btn-tap inline-block">
+        <label for="profile-upload" class="relative cursor-pointer mb-4 btn-tap inline-block">
             <div id="profile-preview-container" class="w-40 h-40 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-4 border-dashed border-blue-400 shadow-inner">
                 <i class="ph ph-camera text-5xl text-gray-400"></i>
                 <img id="profile-preview-img" class="hidden w-full h-full object-cover">
@@ -373,6 +610,21 @@ body.dark-theme .pet-popup-content {
             </div>
             <input type="file" id="profile-upload" accept="image/*" class="hidden" onchange="Auth.handleImageUpload(event)">
         </label>
+
+        <div class="w-full max-w-xs mb-6">
+            <p class="text-center text-gray-700 font-bold mb-3">اختر جنسك</p>
+            <div class="flex gap-4 justify-center">
+                <div id="gender-male" class="gender-option flex flex-col items-center p-4 rounded-2xl bg-gray-100 cursor-pointer btn-tap" onclick="App.selectGender('male')">
+                    <i class="ph-fill ph-gender-male text-4xl text-blue-600"></i>
+                    <span class="font-bold mt-1">ولد</span>
+                </div>
+                <div id="gender-female" class="gender-option flex flex-col items-center p-4 rounded-2xl bg-gray-100 cursor-pointer btn-tap" onclick="App.selectGender('female')">
+                    <i class="ph-fill ph-gender-female text-4xl text-pink-600"></i>
+                    <span class="font-bold mt-1">بنت</span>
+                </div>
+            </div>
+            <p id="gender-error" class="text-red-500 text-xs text-center mt-2 hidden">يرجى اختيار الجنس</p>
+        </div>
 
         <button onclick="Auth.completeProfileSetup()" class="btn-tap w-full max-w-xs bg-xylo text-white font-bold py-4 rounded-xl shadow-lg">التالي</button>
     </div>
@@ -457,7 +709,10 @@ body.dark-theme .pet-popup-content {
 
                 <div class="theme-card rounded-xl shadow-sm flex-1 flex flex-col overflow-hidden border">
                     <div class="flex border-b" style="border-color: var(--border-color);">
-                        <button onclick="App.switchFriendsSubTab('requests')" id="subtab-requests" class="flex-1 py-3 text-center text-sm font-bold sub-tab-active btn-tap transition-colors">الطلبات</button>
+                        <button onclick="App.switchFriendsSubTab('requests')" id="subtab-requests" class="flex-1 py-3 text-center text-sm font-bold sub-tab-active btn-tap transition-colors relative">
+                            الطلبات
+                            <span id="badge-requests-subtab" class="hidden absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
                         <button onclick="App.switchFriendsSubTab('friends')" id="subtab-friends" class="flex-1 py-3 text-center text-sm font-bold sub-tab-inactive btn-tap transition-colors">الأصدقاء</button>
                         <button onclick="App.switchFriendsSubTab('suggestions')" id="subtab-suggestions" class="flex-1 py-3 text-center text-sm font-bold sub-tab-inactive btn-tap transition-colors">اقتراحات</button>
                     </div>
@@ -552,31 +807,36 @@ body.dark-theme .pet-popup-content {
 
     <div id="mentions-dropdown" class="smooth-scroll border-t-2 border-blue-500 theme-card"></div>
 
-    <!-- نافذة إنشاء منشور -->
-    <div id="create-post-modal" class="hidden fixed inset-0 theme-bg z-[70] flex flex-col modal-slide-in relative">
-        <div class="p-4 border-b flex items-center justify-between theme-card shadow-sm z-10">
-            <button onclick="UI.closeModal('create-post-modal')" class="p-2 font-bold btn-tap rounded-lg">إلغاء</button>
-            <span class="font-bold text-lg">إنشاء منشور</span>
-            <button onclick="App.createPost()" class="bg-blue-600 text-white px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">نشر</button>
-        </div>
-        <div class="p-4 flex gap-3 flex-1 overflow-y-auto smooth-scroll relative">
-            <img id="create-post-avatar" src="" class="w-12 h-12 rounded-full object-cover border border-gray-100">
-            <textarea id="post-text-input" placeholder="بم تفكر؟ استخدم @ لذكر صديق" class="flex-1 resize-none outline-none text-lg pt-2 hide-scrollbar bg-transparent theme-text" rows="10"></textarea>
-        </div>
-    </div>
+    <!-- نافذة إنشاء منشور (معدلة - 14) -->
+    <div id="create-post-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+        <div class="theme-card rounded-3xl w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative border">
+            <div class="p-4 border-b flex items-center justify-between z-10">
+                <button onclick="UI.closeModal('create-post-modal')" class="p-2 font-bold text-gray-500 btn-tap rounded-lg">إلغاء</button>
+                <span class="font-bold text-lg">إنشاء منشور</span>
+                <button onclick="App.createPost()" class="bg-blue-600 text-white px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">نشر</button>
+            </div>
+            <div class="p-5 flex flex-col items-center">
+                <img id="create-post-avatar" src="" class="w-14 h-14 rounded-full object-cover border border-gray-100 mb-4 shadow-sm">
+                <textarea id="post-text-input" placeholder="بم تفكر؟ استخدم @ لذكر صديق" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 text-center font-semibold text-lg outline-none resize-none theme-text min-h-[120px]" rows="4"></textarea>
+            </div>
+        </div>
+    </div>
 
-    <!-- نافذة إنشاء ملاحظة -->
-    <div id="create-note-modal" class="hidden fixed inset-0 z-[70] flex flex-col modal-slide-in relative" style="background-color: #1f2937;">
-        <div class="p-4 flex items-center justify-between absolute w-full top-0 z-10 border-none">
-            <button onclick="UI.closeModal('create-note-modal')" class="p-2 text-white font-bold btn-tap drop-shadow-md">إلغاء</button>
-            <button onclick="App.createNote()" class="bg-white text-gray-900 px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">مشاركة</button>
-        </div>
-        <div class="flex-1 p-8 flex flex-col items-center justify-center relative">
-            <img id="create-note-preview-avatar" src="" class="w-20 h-20 rounded-full border-4 border-gray-700 mb-6 object-cover shadow-lg">
-            <textarea id="note-text-input" placeholder="اكتب ملاحظة لـ 24 ساعة... (استخدم @)" class="w-full bg-transparent text-white text-center text-3xl outline-none resize-none placeholder-white/30 font-bold" rows="3" maxlength="60"></textarea>
-            <p class="text-white/50 text-xs mt-4">الحد الأقصى 60 حرفاً</p>
-        </div>
-    </div>
+    <!-- نافذة إنشاء ملاحظة (معدلة - 14) -->
+    <div id="create-note-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
+        <div class="w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative rounded-3xl" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <div class="p-4 flex items-center justify-between w-full">
+                <button onclick="UI.closeModal('create-note-modal')" class="p-2 text-white font-bold btn-tap drop-shadow-md">إلغاء</button>
+                <span class="font-bold text-white text-lg">ملاحظة جديدة</span>
+                <button onclick="App.createNote()" class="bg-white text-purple-700 px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">مشاركة</button>
+            </div>
+            <div class="p-6 flex flex-col items-center justify-center">
+                <img id="create-note-preview-avatar" src="" class="w-20 h-20 rounded-full border-4 border-white shadow-lg mb-6">
+                <textarea id="note-text-input" placeholder="اكتب ملاحظة لـ 24 ساعة..." class="w-full bg-transparent border-none text-white text-2xl font-bold text-center outline-none resize-none placeholder-white/60" rows="3" maxlength="60"></textarea>
+                <p class="text-white/50 text-xs mt-2">الحد الأقصى 60 حرفاً</p>
+            </div>
+        </div>
+    </div>
 
     <!-- الملاحظات عرض -->
     <div id="note-view-modal" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col modal-slide-in">
@@ -600,7 +860,6 @@ body.dark-theme .pet-popup-content {
         <div id="note-bottom-section" class="p-4 w-full flex flex-col gap-3 z-10 bg-gradient-to-t from-black/80 to-transparent pb-safe relative">
             <div id="note-reply-section" class="hidden flex gap-3 items-center w-full">
                 <input type="text" id="note-reply-input" placeholder="إرسال رسالة..." class="flex-1 bg-white/10 text-white placeholder-white/50 border border-white/20 rounded-full px-5 py-3 outline-none text-sm focus:bg-white/20 transition-colors backdrop-blur-sm">
-                <!-- المطلب 4: منع فقدان التركيز عند الارسال -->
                 <button onmousedown="event.preventDefault(); App.sendNoteReply();" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center btn-tap shadow-lg shrink-0"><i class="ph-fill ph-paper-plane-right text-xl"></i></button>
             </div>
             <div id="note-viewers-section" class="hidden flex flex-col items-center w-full">
@@ -656,7 +915,7 @@ body.dark-theme .pet-popup-content {
         </div>
     </div>
 
-    <!-- نافذة تعديل الملف الشخصي -->
+    <!-- نافذة تعديل الملف الشخصي (معدلة - 8 و 9) -->
     <div id="edit-profile-modal" class="hidden fixed inset-0 theme-bg z-[70] flex flex-col modal-slide-in">
         <div class="p-4 border-b flex items-center gap-3 shadow-sm theme-card z-10">
             <button onclick="UI.closeModal('edit-profile-modal')" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
@@ -681,14 +940,28 @@ body.dark-theme .pet-popup-content {
                     <input type="text" id="edit-username" class="w-full bg-transparent border-b border-gray-300 py-2 outline-none focus:border-blue-600 dir-ltr text-left font-mono text-lg transition-colors disabled:opacity-50 theme-text" oninput="this.value = this.value.replace(/[^a-zA-Z0-9_.]/g, '')">
                 </div>
                 <div>
-                    <label class="text-xs font-bold opacity-60 block mb-1">النبذة (Bio)</label>
-                    <textarea id="edit-bio" class="w-full bg-transparent border-b border-gray-300 py-2 outline-none focus:border-blue-600 resize-none transition-colors theme-text" rows="3"></textarea>
+                    <label class="text-xs font-bold opacity-60 block mb-1">النبذة</label>
+                    <textarea id="edit-bio" class="w-full bg-transparent border-b border-gray-300 py-2 outline-none focus:border-blue-600 resize-none transition-colors theme-text" rows="3" placeholder="اكتب نبذة عن نفسك..."></textarea>
+                </div>
+                <!-- إضافة اختيار الجنس - تعديل 8 -->
+                <div>
+                    <label class="text-xs font-bold opacity-60 block mb-3">الجنس (يمكن التعديل كل 60 يوم)</label>
+                    <div class="flex gap-4">
+                        <div id="edit-gender-male" class="gender-option flex-1 flex flex-col items-center p-3 rounded-2xl bg-gray-100 cursor-pointer btn-tap" onclick="App.selectEditGender('male')">
+                            <i class="ph-fill ph-gender-male text-3xl text-blue-600"></i>
+                            <span class="font-bold mt-1 text-sm">ولد</span>
+                        </div>
+                        <div id="edit-gender-female" class="gender-option flex-1 flex flex-col items-center p-3 rounded-2xl bg-gray-100 cursor-pointer btn-tap" onclick="App.selectEditGender('female')">
+                            <i class="ph-fill ph-gender-female text-3xl text-pink-600"></i>
+                            <span class="font-bold mt-1 text-sm">بنت</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- نافذة الخصوصية -->
+    <!-- نافذة الخصوصية (معدلة - 6 و 7) -->
     <div id="privacy-modal" class="hidden fixed inset-0 theme-bg z-[70] flex flex-col modal-slide-in">
         <div class="theme-card p-4 border-b flex items-center gap-3 shadow-sm">
             <button onclick="UI.closeModal('privacy-modal')" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
@@ -715,6 +988,16 @@ body.dark-theme .pet-popup-content {
                     <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                 </label>
             </div>
+            <div class="theme-card p-4 rounded-2xl shadow-sm flex justify-between items-center border">
+                <div>
+                    <h4 class="font-bold">الظهور في الاقتراحات</h4>
+                    <p class="text-xs opacity-60 mt-0.5">إظهار حسابك في اقتراحات الأصدقاء</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="priv-show-suggestions" class="sr-only peer" onchange="App.updatePrivacy('showInSuggestions', this.checked)">
+                    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                </label>
+            </div>
             <div class="theme-card p-4 rounded-2xl shadow-sm space-y-3 border">
                 <h4 class="font-bold border-b pb-2">من يمكنه رؤية أصدقائي</h4>
                 <select id="priv-friends-vis" class="w-full theme-bg p-3 rounded-xl outline-none border focus:border-blue-500 theme-text" onchange="App.updatePrivacy('friendsVisibility', this.value)">
@@ -728,7 +1011,7 @@ body.dark-theme .pet-popup-content {
                 <select id="priv-msgs" class="w-full theme-bg p-3 rounded-xl outline-none border focus:border-blue-500 theme-text" onchange="App.updatePrivacy('messagePrivacy', this.value)">
                     <option value="all">الجميع</option>
                     <option value="friends">الأصدقاء فقط</option>
-                    <option value="closed">مغلق (لا أحد)</option>
+                    <option value="only_me">أنا فقط</option>
                 </select>
             </div>
         </div>
@@ -776,45 +1059,125 @@ body.dark-theme .pet-popup-content {
         </div>
     </div>
 
-    <!-- الملف الشخصي -->
-    <div id="profile-modal" class="hidden fixed inset-0 theme-bg z-[80] flex flex-col modal-slide-in">
-        <div class="p-4 border-b flex items-center gap-3 bg-opacity-80 backdrop-blur-md absolute w-full top-0 z-20 text-white" id="vp-header-bg">
-            <button onclick="UI.closeModal('profile-modal')" class="p-2 bg-black/30 rounded-full btn-tap text-white"><i class="ph ph-arrow-right text-lg"></i></button>
-            <span id="vp-header-name" class="font-bold text-lg">الملف الشخصي</span>
+    <!-- الملف الشخصي (معدل - 13) -->
+    <div id="profile-modal" class="hidden fixed inset-0 bg-gray-50 dark:bg-gray-900 z-[110] flex flex-col modal-slide-in">
+        
+        <div class="p-3 border-b flex items-center gap-3 theme-card shadow-sm sticky top-0 z-30">
+            <button onclick="UI.closeModal('profile-modal')" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
+            <span class="font-bold text-lg flex-1">الملف الشخصي</span>
         </div>
-        <div class="flex-1 overflow-y-auto smooth-scroll pb-10 relative">
-            <div class="h-64 bg-gradient-to-tr from-blue-600 to-indigo-800 relative flex items-end justify-center pb-4 pt-16" id="vp-cover">
-                <div class="absolute -bottom-16 flex flex-col items-center">
-                    <img id="vp-image" src="" class="w-32 h-32 rounded-full border-4 border-white object-cover bg-white shadow-xl">
-                </div>
-            </div>
-            
-            <div class="px-4 mt-20 text-center">
-                <h2 id="vp-name" class="text-3xl font-black leading-tight theme-text">...</h2>
-                <p id="vp-username" class="text-gray-500 text-sm mt-1 font-medium">@...</p>
-                <p id="vp-bio" class="mt-4 opacity-80 leading-relaxed text-center max-w-sm mx-auto">...</p>
-                
-                <div class="flex justify-center mt-6 gap-3" id="vp-action-container"></div>
-            </div>
 
-            <div class="mt-8 px-4">
-                <div class="flex justify-between items-end mb-4">
-                    <h3 class="font-bold text-xl theme-text">الأصدقاء</h3>
-                    <span class="text-gray-500 font-bold" id="vp-friends-count-text">0</span>
+        <div class="flex-1 overflow-y-auto smooth-scroll pb-10 relative">
+            <div class="flex flex-col items-center pt-6">
+                <img id="vp-image" src="" class="w-24 h-24 rounded-full object-cover shadow-sm border-2 border-white dark:border-gray-800">
+                <h2 id="vp-name" class="text-xl font-bold text-gray-900 dark:text-white mt-3">...</h2>
+                <p id="vp-last-seen" class="text-gray-500 dark:text-gray-400 text-xs mt-1">آخر ظهور ...</p>
+            </div>
+            
+            <div class="flex justify-center gap-2.5 mt-5 px-4" id="vp-action-container">
                 </div>
-                <div class="friends-grid" id="vp-friends-grid">
+
+            <div class="mt-6 w-full">
+                <div class="bg-white dark:bg-gray-800 p-4 shadow-sm border-y border-gray-100 dark:border-gray-700 w-full text-center flex flex-col gap-3">
+                    <div class="pb-3 border-b border-gray-100 dark:border-gray-700">
+                        <p class="text-[10px] text-gray-400 mb-1.5">النبذة</p>
+                        <p id="vp-bio" class="text-gray-800 dark:text-gray-200 text-[14px] font-medium whitespace-pre-wrap leading-relaxed inline-block">...</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-gray-400 mb-1.5">اسم المستخدم</p>
+                        <p id="vp-username" class="text-gray-800 dark:text-gray-200 text-[14px] font-bold dir-ltr inline-block text-blue-600">@...</p>
+                    </div>
                 </div>
             </div>
             
+            <div class="px-4 mt-6">
+               
+                
+                <!-- الأصدقاء -->
+                <div class="mt-6">
+                    <div class="flex justify-between items-end mb-4">
+                        <h3 class="font-bold text-xl theme-text">الأصدقاء</h3>
+                        <span class="text-gray-500 font-bold" id="vp-friends-count-text">0</span>
+                    </div>
+                    <div class="friends-grid" id="vp-friends-grid"></div>
+                </div>
+                
+                <!-- منشورات المستخدم (سيتم إضافتها لاحقاً) -->
+                <div class="mt-8" id="vp-posts-container">
+                    <h3 class="font-bold text-xl theme-text mb-4">المنشورات</h3>
+                    <div class="text-center opacity-50 py-4">لا توجد منشورات</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- نافذة المحادثة المحدثة -->
+    <!-- نافذة تثبيت المحادثة -->
+    <div id="pin-chat-popup" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[150] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('pin-chat-popup')">
+        <div class="pin-popup overflow-hidden">
+            <div class="p-4 border-b text-center">
+                <h3 class="font-bold text-lg">تثبيت المحادثة</h3>
+            </div>
+            <div class="p-4 flex flex-col gap-3">
+                <button onclick="App.pinChat('love'); UI.closeModal('pin-chat-popup')" class="pin-option w-full bg-red-50 text-red-600 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+                    <span>تثبيت (الحب 🌚♥)</span>
+                    <i class="ph-fill ph-heart text-xl"></i>
+                </button>
+                <button onclick="App.pinChat('normal'); UI.closeModal('pin-chat-popup')" class="pin-option w-full bg-gray-100 text-gray-700 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+                    <span>تثبيت (شخص عادي 🙄)</span>
+                    <i class="ph-fill ph-push-pin text-xl"></i>
+                </button>
+                <button onclick="App.unpinChat(); UI.closeModal('pin-chat-popup')" class="pin-option w-full bg-gray-200 text-gray-800 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+                    <span>إلغاء التثبيت</span>
+                    <i class="ph-fill ph-push-pin-slash text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة حذف المحادثة -->
+    <div id="delete-chat-popup" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[150] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('delete-chat-popup')">
+        <div class="delete-popup overflow-hidden">
+            <div class="p-4 border-b text-center">
+                <h3 class="font-bold text-lg">حذف المحادثة</h3>
+            </div>
+            <div class="p-4 flex flex-col gap-3">
+                <button onclick="App.deleteChatHistory('me'); UI.closeModal('delete-chat-popup')" class="pin-option w-full bg-orange-50 text-orange-600 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+                    <span>حذف لدي فقط</span>
+                    <i class="ph-fill ph-trash text-xl"></i>
+                </button>
+                <button onclick="App.deleteChatHistory('everyone'); UI.closeModal('delete-chat-popup')" class="pin-option w-full bg-red-50 text-red-600 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+                    <span>حذف عند الجميع</span>
+                    <i class="ph-fill ph-trash-simple text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة كتم المحادثة (جديدة) -->
+    <div id="mute-chat-popup" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[150] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('mute-chat-popup')">
+        <div class="pin-popup overflow-hidden">
+            <div class="p-4 border-b text-center">
+                <h3 class="font-bold text-lg">كتم المحادثة</h3>
+            </div>
+            <div class="p-4 flex flex-col gap-3">
+                <button onclick="App.muteChat(1); UI.closeModal('mute-chat-popup')" class="pin-option w-full bg-gray-100 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+                    <span>لمدة ساعة</span>
+                </button>
+                <button onclick="App.muteChat(24); UI.closeModal('mute-chat-popup')" class="pin-option w-full bg-gray-100 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+                    <span>لمدة 24 ساعة</span>
+                </button>
+                <button onclick="App.muteChat(0); UI.closeModal('mute-chat-popup')" class="pin-option w-full bg-gray-200 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+                    <span>إلغاء الكتم</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة المحادثة (معدلة - 2 و 11) -->
     <div id="chat-modal" class="hidden fixed inset-0 theme-bg z-[90] flex flex-col modal-slide-in">
-        <!-- هيدر المحادثة -->
         <div class="theme-card p-3 border-b flex items-center justify-between shadow-sm z-20 relative">
-            <div class="flex items-center gap-3">
-                <button onclick="UI.closeModal('chat-modal')" class="p-2 theme-bg border rounded-full btn-tap shrink-0"><i class="ph ph-arrow-right text-lg"></i></button>
+            <div class="flex items-center gap-3 flex-1">
+                <button onclick="UI.closeModal('chat-modal')" class="p-2 theme-bg border rounded-full btn-tap shrink-0" id="chat-back-button"><i class="ph ph-arrow-right text-lg"></i></button>
                 <div class="relative cursor-pointer shrink-0" onclick="UI.openModal('profile-modal', window.currentChatUserId)">
                     <img id="chat-user-img" src="" class="w-11 h-11 rounded-full object-cover">
                     <span id="chat-online-dot" class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full hidden"></span>
@@ -825,21 +1188,19 @@ body.dark-theme .pet-popup-content {
                 </div>
             </div>
             
-            <!-- حاوية الكائن المطور مع رسالة منبثقة -->
-            <div id="chat-pet-container" class="w-12 h-12 flex items-center justify-center relative shrink-0 cursor-pointer btn-tap">
-                <!-- سيتم وضع الكائن ورسائله هنا بواسطة جافاسكربت -->
+            <div class="flex items-center gap-2">
+                <button onclick="App.toggleMuteChat()" class="w-9 h-9 rounded-full theme-bg border flex items-center justify-center btn-tap relative" id="chat-mute-btn">
+                    <i class="ph ph-bell-simple-z text-lg"></i>
+                </button>
+                <div id="chat-pet-container" class="w-12 h-12 flex items-center justify-center relative shrink-0 cursor-pointer btn-tap"></div>
             </div>
         </div>
         
         <div id="chat-background" class="flex-1 overflow-hidden flex flex-col relative chat-container-bg">
-            <div id="chat-messages-container" class="flex-1 overflow-y-auto smooth-scroll p-4 space-y-4 flex flex-col relative z-10 pb-4 overflow-x-hidden">
-                <!-- الرسائل -->
-                <!-- المطلب 5: فقاعة الكتابة الحية -->
-                <div id="live-typing-bubble" class="hidden self-start max-w-[80%] rounded-2xl rounded-bl-sm p-3 shadow-sm bubble-other opacity-80 mt-auto typing-cursor text-sm transition-opacity">
-                    ...
-                </div>
+            <div id="chat-messages-container" class="flex-1 overflow-y-auto smooth-scroll p-4 flex flex-col relative z-10 pb-4 overflow-x-hidden">
+                <button id="load-more-messages" class="load-more-btn hidden mt-2 mb-6" onclick="App.loadMoreMessages()">عرض الرسائل السابقة</button>
             </div>
-        </div>
+        </div>
 
         <div id="replying-to-container" class="hidden theme-card border-t px-4 py-2 flex items-center justify-between shadow-[0_-2px_10px_rgba(0,0,0,0.02)] z-10 relative">
             <div class="flex flex-col border-r-4 border-blue-500 pr-3">
@@ -855,27 +1216,24 @@ body.dark-theme .pet-popup-content {
         </div>
     </div>
 
-    <!-- المطلب 8: قائمة الخيارات المنبثقة بشكل يحاكي Telegram -->
+    <!-- قائمة الخيارات المنبثقة -->
     <div id="action-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('action-modal')">
-        <div id="action-modal-content" class="telegram-menu flex flex-col text-sm font-semibold theme-text">
-            <!-- سيتم إضافة الأزرار من خلال جافاسكربت -->
-        </div>
+        <div id="action-modal-content" class="telegram-menu flex flex-col text-sm font-semibold theme-text"></div>
     </div>
 
-    <!-- عرض منشور مفرد -->
+    <!-- عرض منشور مفرد (معدل - 10) -->
     <div id="single-post-modal" class="hidden fixed inset-0 theme-bg z-[85] flex flex-col modal-slide-in">
         <div class="p-4 border-b flex items-center gap-3 theme-card shadow-sm sticky top-0 z-10">
             <button onclick="UI.closeModal('single-post-modal')" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
             <span class="font-bold text-lg">عرض المنشور</span>
         </div>
-        <div class="flex-1 overflow-y-auto smooth-scroll p-2" id="single-post-container">
-        </div>
+        <div class="flex-1 overflow-y-auto smooth-scroll p-2" id="single-post-container"></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, deleteDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, deleteDoc, arrayUnion, query, orderBy, limit, startAfter, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig;
         if (typeof __firebase_config !== 'undefined') {
@@ -907,9 +1265,11 @@ body.dark-theme .pet-popup-content {
         const NOTES_PATH = `artifacts/${appId}/public/data/notes`;
         const NOTIFS_PATH = `artifacts/${appId}/public/data/notifications`;
         const TYPING_PATH = `artifacts/${appId}/public/data/typing`; 
+        const PINS_PATH = `artifacts/${appId}/public/data/pins`;
+        const MUTES_PATH = `artifacts/${appId}/public/data/mutes`;
 
         window.Memory = {
-            users: {}, posts: [], comments: [], requests: [], friends: [], messages: [], notes: [], notifications: []
+            users: {}, posts: [], comments: [], requests: [], friends: [], messages: [], notes: [], notifications: [], pins: [], mutes: []
         };
 
         window.currentUser = null;
@@ -918,6 +1278,13 @@ body.dark-theme .pet-popup-content {
         window.currentManageNoteId = null;
         window.noteViewAuthorId = null; 
         window.replyingToMessage = null; 
+        window.selectedGender = null;
+        window.selectedEditGender = null;
+        window.messagesLimit = 25;
+        window.lastVisibleMessage = null;
+        window.hasMoreMessages = true;
+        window.currentMessagePage = 0;
+        window.allMessages = [];
 
         if(window.visualViewport) {
             window.visualViewport.addEventListener('resize', () => {
@@ -938,7 +1305,46 @@ body.dark-theme .pet-popup-content {
             }[tag] || tag));
         };
 
-        // السحب للتحديث
+        // تعديل 10: تحويل الروابط الداخلية إلى نصوص
+        const parseTextWithLinks = (text, isMessage = false) => {
+            if(!text) return '';
+            const escaped = escapeHTML(text);
+            
+            // نمط للروابط بشكل عام
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            
+            let parsed = escaped.replace(urlRegex, (url) => {
+                // التحقق إذا كان رابط لتطبيق زايلو (يحتوي على ?post= أو ?user=)
+                try {
+                    const urlObj = new URL(url);
+                    const postParam = urlObj.searchParams.get('post');
+                    const userParam = urlObj.searchParams.get('user');
+                    
+                    if(postParam) {
+                        return `<span class="link-internal" onclick="event.stopPropagation(); App.openSinglePost('${postParam}')">عرض المنشور</span>`;
+                    } else if (userParam) {
+                        return `<span class="link-internal" onclick="event.stopPropagation(); UI.openProfileByUsername('${userParam}')">عرض الحساب</span>`;
+                    }
+                } catch(e) {
+                    // رابط غير صالح
+                }
+                
+                // رابط خارجي - قابل للنسخ بالضغط المطول
+                return `<span class="link-external selectable-text" title="اضغط مطولاً للنسخ">${url}</span>`;
+            });
+            
+            // تمييز المنشن
+            parsed = parsed.replace(/@([\w_.]+)/g, (match, username) => {
+                const exists = Object.values(Memory.users).find(u => u.username === username);
+                if(exists) {
+                    return `<span class="link-internal" onclick="event.stopPropagation(); UI.openProfileByUsername('${username}')">${match}</span>`;
+                }
+                return match; 
+            });
+            
+            return parsed;
+        };
+
         window.PullToRefresh = {
             startY: 0, isPulling: false, spinner: null, container: null,
             init: () => {
@@ -1154,7 +1560,7 @@ body.dark-theme .pet-popup-content {
                     window.currentChatUserId = data;
                     App.cancelReply(); 
                     App.renderChatInfo(data);
-                    App.renderMessages();
+                    App.loadMessages(); // تحميل أول 25 رسالة
                     App.markChatAsRead(data); 
                 } else if (modalId === 'comments-modal' && data) {
                     window.currentPostIdForComment = data;
@@ -1175,9 +1581,20 @@ body.dark-theme .pet-popup-content {
                     } else {
                         usernameInput.disabled = false;
                     }
+                    
+                    // تعيين الجنس في التعديل
+                    window.selectedEditGender = currentUser.gender || 'male';
+                    document.getElementById('edit-gender-male').classList.remove('selected');
+                    document.getElementById('edit-gender-female').classList.remove('selected');
+                    if(currentUser.gender === 'male') {
+                        document.getElementById('edit-gender-male').classList.add('selected');
+                    } else {
+                        document.getElementById('edit-gender-female').classList.add('selected');
+                    }
                 } else if (modalId === 'privacy-modal') {
                     document.getElementById('priv-requests').checked = currentUser.allowRequests !== false;
                     document.getElementById('priv-private').checked = currentUser.isPrivate === true;
+                    document.getElementById('priv-show-suggestions').checked = currentUser.showInSuggestions !== false;
                     document.getElementById('priv-friends-vis').value = currentUser.friendsVisibility || 'all';
                     document.getElementById('priv-msgs').value = currentUser.messagePrivacy || 'all';
                 } else if (modalId === 'create-note-modal') {
@@ -1202,6 +1619,7 @@ body.dark-theme .pet-popup-content {
                 if(u) {
                     UI.closeModal('comments-modal');
                     UI.closeModal('note-view-modal');
+                    UI.closeModal('single-post-modal');
                     UI.openModal('profile-modal', u.uid);
                 } else {
                     UI.showMessage('المستخدم غير موجود');
@@ -1226,6 +1644,7 @@ body.dark-theme .pet-popup-content {
                             window.currentUser = userDoc.data();
                             if(!window.currentUser.blockedUsers) window.currentUser.blockedUsers = [];
                             if(!window.currentUser.mentionsCount) window.currentUser.mentionsCount = {};
+                            if(window.currentUser.showInSuggestions === undefined) window.currentUser.showInSuggestions = true; // تعديل 7: معطل افتراضياً يظهر
                             
                             const savedTheme = localStorage.getItem('xylo-theme');
                             if(savedTheme === 'dark') {
@@ -1238,8 +1657,11 @@ body.dark-theme .pet-popup-content {
                             
                             const urlParams = new URLSearchParams(window.location.search);
                             const postIdParam = urlParams.get('post');
+                            const userParam = urlParams.get('user');
                             if(postIdParam) {
                                 setTimeout(() => App.openSinglePost(postIdParam), 1000);
+                            } else if (userParam) {
+                                setTimeout(() => UI.openProfileByUsername(userParam), 1000);
                             }
                         } else {
                             setTimeout(() => { UI.showScreen('setup-profile-screen'); }, 500);
@@ -1330,6 +1752,12 @@ body.dark-theme .pet-popup-content {
             },
             completeProfileSetup: async () => {
                 if(!window.tempRegData && !auth.currentUser) return;
+                
+                if(!window.selectedGender) {
+                    document.getElementById('gender-error').classList.remove('hidden');
+                    return;
+                }
+                
                 UI.showMessage('جاري حفظ الحساب...');
                 const uid = window.tempRegData ? window.tempRegData.uid : auth.currentUser.uid;
                 const name = window.tempRegData ? window.tempRegData.name : 'مستخدم';
@@ -1341,15 +1769,18 @@ body.dark-theme .pet-popup-content {
                     email: email,
                     photo: tempPhotoBase64 || App.getDefaultAvatar(),
                     username: 'user_' + Math.floor(Math.random() * 1000000),
-                    bio: 'مرحباً، أنا أستخدم تطبيق زايلو!',
+                    bio: '',
                     allowRequests: true,
                     isPrivate: false,
+                    showInSuggestions: true,
                     friendsVisibility: 'all',
                     messagePrivacy: 'all',
                     lastActive: Date.now(),
                     lastUsernameChange: 0,
+                    lastGenderChange: 0,
                     blockedUsers: [],
-                    mentionsCount: {}
+                    mentionsCount: {},
+                    gender: window.selectedGender
                 };
 
                 await setDoc(doc(db, USERS_PATH, uid), userData);
@@ -1361,6 +1792,36 @@ body.dark-theme .pet-popup-content {
         window.App = {
             getDefaultAvatar: () => "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239ca3af'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>",
             
+            selectGender: (gender) => {
+                window.selectedGender = gender;
+                document.getElementById('gender-error').classList.add('hidden');
+                document.getElementById('gender-male').classList.remove('selected');
+                document.getElementById('gender-female').classList.remove('selected');
+                if(gender === 'male') {
+                    document.getElementById('gender-male').classList.add('selected');
+                } else {
+                    document.getElementById('gender-female').classList.add('selected');
+                }
+            },
+
+            selectEditGender: (gender) => {
+                const sixtyDaysInMs = 60 * 24 * 60 * 60 * 1000;
+                const lastChange = currentUser.lastGenderChange || 0;
+                if (Date.now() - lastChange < sixtyDaysInMs && gender !== currentUser.gender) {
+                    UI.showMessage('يمكنك تغيير الجنس مرة واحدة كل 60 يوم');
+                    return;
+                }
+                
+                window.selectedEditGender = gender;
+                document.getElementById('edit-gender-male').classList.remove('selected');
+                document.getElementById('edit-gender-female').classList.remove('selected');
+                if(gender === 'male') {
+                    document.getElementById('edit-gender-male').classList.add('selected');
+                } else {
+                    document.getElementById('edit-gender-female').classList.add('selected');
+                }
+            },
+
             toggleTheme: (isDark) => {
                 if(isDark) {
                     document.body.classList.add('dark-theme');
@@ -1431,14 +1892,24 @@ body.dark-theme .pet-popup-content {
                 }, errHandler);
 
                 onSnapshot(collection(db, REQUESTS_PATH), (snap) => {
-                    Memory.requests = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                    App.renderFriendsTab('requests'); 
-                }, errHandler);
+                    Memory.requests = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    App.renderFriendsTab('requests'); 
+                    
+                    // تحديث النقطة الحمراء
+                    const myRequests = Memory.requests.filter(r => r.to === currentUser.uid);
+                    const badgeSubtab = document.getElementById('badge-requests-subtab');
+                    if(myRequests.length > 0) {
+                        badgeSubtab.classList.remove('hidden');
+                    } else {
+                        badgeSubtab.classList.add('hidden');
+                    }
+                }, errHandler);
 
                 onSnapshot(collection(db, FRIENDS_PATH), (snap) => {
                     Memory.friends = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     App.renderNotes();
                     App.renderFriendsTab('friends'); 
+                    App.renderFriendsTab('suggestions'); 
                 }, errHandler);
 
                 onSnapshot(collection(db, NOTES_PATH), (snap) => {
@@ -1457,7 +1928,8 @@ body.dark-theme .pet-popup-content {
                         if(unreadInChat.length > 0) {
                             unreadInChat.forEach(d => updateDoc(d.ref, {read: true}));
                         }
-                        App.renderMessages();
+                        // إعادة تحميل الرسائل بدون فقدان التمرير
+                        App.renderMessages(false);
                     }
                 }, errHandler);
 
@@ -1482,6 +1954,16 @@ body.dark-theme .pet-popup-content {
                                             .filter(n => n.to === currentUser.uid);
                     App.renderNotifications();
                 }, errHandler);
+
+                onSnapshot(collection(db, PINS_PATH), (snap) => {
+                    Memory.pins = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    App.renderChats();
+                }, errHandler);
+
+                onSnapshot(collection(db, MUTES_PATH), (snap) => {
+                    Memory.mutes = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    App.renderChats();
+                }, errHandler);
             },
 
             handleTyping: async (text) => {
@@ -1495,240 +1977,173 @@ body.dark-theme .pet-popup-content {
                 } catch(e){}
             },
 
-            // تصميم الشخصية (الستريك) برمجياً مع تفاصيل عالية بناءً على المستوى
             getPetCharacterSVG: (level) => {
-                // الألوان والخصائص المتغيرة حسب المستوى
-                let skinColor = "#fca5a5"; // لون البشرة الافتراضي
+                let skinColor = "#fca5a5";
                 let shirtColor, pantsColor, eyeExpr, mouthExpr, accessoriesHTML, auraHTML;
                 
-                // تحديد شكل العيون والفم
                 const sadFace = `<circle cx="42" cy="38" r="3" fill="#1f2937"/><circle cx="58" cy="38" r="3" fill="#1f2937"/><path d="M45 55 Q 50 50 55 55" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
                 const neutralFace = `<circle cx="42" cy="38" r="3" fill="#1f2937"/><circle cx="58" cy="38" r="3" fill="#1f2937"/><path d="M45 52 L 55 52" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
                 const happyFace = `<circle cx="42" cy="38" r="3.5" fill="#1f2937"/><circle cx="58" cy="38" r="3.5" fill="#1f2937"/><path d="M44 50 Q 50 58 56 50" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
-                const coolFace = `<path d="M 38 36 L 46 38 L 38 40 Z" fill="#1f2937"/><path d="M 62 36 L 54 38 L 62 40 Z" fill="#1f2937"/><path d="M43 52 Q 50 56 57 50" stroke="#1f2937" stroke-width="2" fill="none" stroke-linecap="round"/>`; // نظارات شمسية مبسطة
+                const coolFace = `<path d="M 38 36 L 46 38 L 38 40 Z" fill="#1f2937"/><path d="M 62 36 L 54 38 L 62 40 Z" fill="#1f2937"/><path d="M43 52 Q 50 56 57 50" stroke="#1f2937" stroke-width="2" fill="none" stroke-linecap="round"/>`;
                 
                 auraHTML = "";
                 accessoriesHTML = "";
                 
                 switch(level) {
-                    case 1: // فقير جدا
+                    case 1:
                         shirtColor = "#78716c"; pantsColor = "#57534e"; eyeExpr = sadFace;
-                        accessoriesHTML = `
-                            <path d="M40 65 L48 65 L45 72 Z" fill="#a8a29e" opacity="0.6"/> <!-- رقعة -->
-                            <line x1="42" y1="67" x2="46" y2="70" stroke="#444" stroke-width="1"/>
-                        `;
+                        accessoriesHTML = `<path d="M40 65 L48 65 L45 72 Z" fill="#a8a29e" opacity="0.6"/><line x1="42" y1="67" x2="46" y2="70" stroke="#444" stroke-width="1"/>`;
                         break;
-                    case 2: // فقير
+                    case 2:
                         shirtColor = "#a8a29e"; pantsColor = "#78716c"; eyeExpr = neutralFace;
                         break;
-                    case 3: // فقير قليلا
+                    case 3:
                         shirtColor = "#60a5fa"; pantsColor = "#475569"; eyeExpr = happyFace;
                         break;
-                    case 4: // متوسط قليلا
+                    case 4:
                         shirtColor = "#34d399"; pantsColor = "#334155"; eyeExpr = happyFace;
-                        accessoriesHTML = `<circle cx="65" cy="70" r="3" fill="#fbbf24"/>`; // ساعة بسيطة
+                        accessoriesHTML = `<circle cx="65" cy="70" r="3" fill="#fbbf24"/>`;
                         break;
-                    case 5: // متوسط
+                    case 5:
                         shirtColor = "#f43f5e"; pantsColor = "#1e293b"; eyeExpr = happyFace;
-                        accessoriesHTML = `
-                            <circle cx="65" cy="70" r="3" fill="#fbbf24"/>
-                            <path d="M30 20 Q 50 10 70 20 Q 50 25 30 20" fill="#3b82f6"/> <!-- كاب -->
-                        `;
+                        accessoriesHTML = `<circle cx="65" cy="70" r="3" fill="#fbbf24"/><path d="M30 20 Q 50 10 70 20 Q 50 25 30 20" fill="#3b82f6"/>`;
                         break;
-                    case 6: // غني قليلا
+                    case 6:
                         shirtColor = "#a855f7"; pantsColor = "#0f172a"; eyeExpr = coolFace;
-                        accessoriesHTML = `
-                            <path d="M38 35 h24 v6 h-24 z" fill="#111827" rx="2"/> <!-- نظارات -->
-                            <line x1="50" y1="60" x2="50" y2="80" stroke="#fbbf24" stroke-width="2"/> <!-- سحاب أو حزام -->
-                        `;
+                        accessoriesHTML = `<path d="M38 35 h24 v6 h-24 z" fill="#111827" rx="2"/><line x1="50" y1="60" x2="50" y2="80" stroke="#fbbf24" stroke-width="2"/>`;
                         break;
-                    case 7: // غني متوسط
+                    case 7:
                         shirtColor = "#ffffff"; pantsColor = "#000000"; eyeExpr = happyFace;
-                        accessoriesHTML = `
-                            <path d="M35 60 L 50 80 L 65 60" fill="#1e293b"/> <!-- بدلة مفتوحة -->
-                            <path d="M48 60 L 52 60 L 50 70 Z" fill="#ef4444"/> <!-- ربطة عنق -->
-                        `;
+                        accessoriesHTML = `<path d="M35 60 L 50 80 L 65 60" fill="#1e293b"/><path d="M48 60 L 52 60 L 50 70 Z" fill="#ef4444"/>`;
                         break;
-                    case 8: // غني
+                    case 8:
                         shirtColor = "#000000"; pantsColor = "#000000"; eyeExpr = coolFace;
-                        accessoriesHTML = `
-                            <path d="M35 60 L 50 75 L 65 60 Z" fill="#ffffff"/> <!-- قميص داخلي -->
-                            <path d="M48 60 L 52 60 L 50 70 Z" fill="#000000"/> <!-- ربطة -->
-                            <path d="M30 25 L 30 10 L 70 10 L 70 25 Z" fill="#111827"/> <!-- قبعة رسمية -->
-                            <path d="M25 25 L 75 25 L 75 28 L 25 28 Z" fill="#111827"/>
-                            <circle cx="45" cy="65" r="2" fill="#fbbf24"/> <circle cx="55" cy="65" r="2" fill="#fbbf24"/> <!-- أزرار ذهبية -->
-                        `;
+                        accessoriesHTML = `<path d="M35 60 L 50 75 L 65 60 Z" fill="#ffffff"/><path d="M48 60 L 52 60 L 50 70 Z" fill="#000000"/><path d="M30 25 L 30 10 L 70 10 L 70 25 Z" fill="#111827"/><path d="M25 25 L 75 25 L 75 28 L 25 28 Z" fill="#111827"/><circle cx="45" cy="65" r="2" fill="#fbbf24"/><circle cx="55" cy="65" r="2" fill="#fbbf24"/>`;
                         break;
-                    case 9: // غني جدا
+                    case 9:
                         shirtColor = "#1e1b4b"; pantsColor = "#000000"; eyeExpr = happyFace;
-                        accessoriesHTML = `
-                            <path d="M20 60 Q 15 80 20 95 L 80 95 Q 85 80 80 60 Z" fill="#dc2626" opacity="0.9"/> <!-- عباءة حمراء -->
-                            <path d="M35 15 L 42 5 L 50 15 L 58 5 L 65 15 L 65 25 L 35 25 Z" fill="#fbbf24"/> <!-- تاج -->
-                            <circle cx="42" cy="12" r="2" fill="#ef4444"/> <circle cx="50" cy="18" r="2" fill="#3b82f6"/> <circle cx="58" cy="12" r="2" fill="#22c55e"/>
-                            <path d="M40 60 Q 50 70 60 60" stroke="#fbbf24" stroke-width="3" fill="none"/> <!-- قلادة ذهبية -->
-                        `;
+                        accessoriesHTML = `<path d="M20 60 Q 15 80 20 95 L 80 95 Q 85 80 80 60 Z" fill="#dc2626" opacity="0.9"/><path d="M35 15 L 42 5 L 50 15 L 58 5 L 65 15 L 65 25 L 35 25 Z" fill="#fbbf24"/><circle cx="42" cy="12" r="2" fill="#ef4444"/><circle cx="50" cy="18" r="2" fill="#3b82f6"/><circle cx="58" cy="12" r="2" fill="#22c55e"/><path d="M40 60 Q 50 70 60 60" stroke="#fbbf24" stroke-width="3" fill="none"/>`;
                         break;
-                    case 10: // غني جدا جدا
+                    case 10:
                         shirtColor = "#172554"; pantsColor = "#000000"; eyeExpr = happyFace;
                         auraHTML = `<circle cx="50" cy="50" r="45" fill="#fef08a" opacity="0.3" filter="blur(4px)"/><circle cx="50" cy="50" r="35" fill="#fbbf24" opacity="0.4" filter="blur(2px)"/>`;
-                        accessoriesHTML = `
-                            <path d="M15 55 Q 10 80 15 100 L 85 100 Q 90 80 85 55 Z" fill="#7f1d1d" stroke="#fbbf24" stroke-width="2"/> <!-- عباءة فخمة -->
-                            <path d="M30 15 L 40 0 L 50 10 L 60 0 L 70 15 L 70 25 L 30 25 Z" fill="#fbbf24"/> <!-- تاج كبير -->
-                            <circle cx="40" cy="10" r="3" fill="#ef4444"/> <circle cx="50" cy="15" r="3" fill="#8b5cf6"/> <circle cx="60" cy="10" r="3" fill="#ef4444"/>
-                            <path d="M40 60 L 50 75 L 60 60" stroke="#fbbf24" stroke-width="4" fill="none"/> <!-- قلادة كبيرة -->
-                            <polygon points="50,68 53,75 50,82 47,75" fill="#06b6d4"/> <!-- جوهرة القلادة -->
-                            <line x1="80" y1="40" x2="80" y2="100" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/> <!-- عصا ذهبية -->
-                            <circle cx="80" cy="40" r="6" fill="#06b6d4"/> <!-- جوهرة العصا -->
-                            <!-- شرارات ذهبية -->
-                            <path d="M 10 30 L 15 35 M 15 30 L 10 35" stroke="#fbbf24" stroke-width="2"/>
-                            <path d="M 85 20 L 90 25 M 90 20 L 85 25" stroke="#fbbf24" stroke-width="2"/>
-                        `;
+                        accessoriesHTML = `<path d="M15 55 Q 10 80 15 100 L 85 100 Q 90 80 85 55 Z" fill="#7f1d1d" stroke="#fbbf24" stroke-width="2"/><path d="M30 15 L 40 0 L 50 10 L 60 0 L 70 15 L 70 25 L 30 25 Z" fill="#fbbf24"/><circle cx="40" cy="10" r="3" fill="#ef4444"/><circle cx="50" cy="15" r="3" fill="#8b5cf6"/><circle cx="60" cy="10" r="3" fill="#ef4444"/><path d="M40 60 L 50 75 L 60 60" stroke="#fbbf24" stroke-width="4" fill="none"/><polygon points="50,68 53,75 50,82 47,75" fill="#06b6d4"/><line x1="80" y1="40" x2="80" y2="100" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/><circle cx="80" cy="40" r="6" fill="#06b6d4"/><path d="M 10 30 L 15 35 M 15 30 L 10 35" stroke="#fbbf24" stroke-width="2"/><path d="M 85 20 L 90 25 M 90 20 L 85 25" stroke="#fbbf24" stroke-width="2"/>`;
                         break;
                 }
 
-                // الهيكل الأساسي للجسم
                 return `
                 <svg class="w-full h-full pet-animate ${level >= 9 ? 'pet-glow-gold' : ''}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
                     ${auraHTML}
-                    <!-- القدمين -->
                     <line x1="42" y1="80" x2="42" y2="95" stroke="${skinColor}" stroke-width="6" stroke-linecap="round"/>
                     <line x1="58" y1="80" x2="58" y2="95" stroke="${skinColor}" stroke-width="6" stroke-linecap="round"/>
-                    <!-- اليدين -->
                     <line x1="35" y1="65" x2="25" y2="75" stroke="${skinColor}" stroke-width="5" stroke-linecap="round"/>
                     <line x1="65" y1="65" x2="75" y2="75" stroke="${skinColor}" stroke-width="5" stroke-linecap="round"/>
-                    <!-- البنطال -->
                     <rect x="37" y="75" width="26" height="10" rx="3" fill="${pantsColor}"/>
-                    <!-- الجسم / القميص -->
                     <rect x="33" y="55" width="34" height="22" rx="6" fill="${shirtColor}"/>
-                    <!-- الرأس -->
                     <rect x="25" y="20" width="50" height="40" rx="20" fill="${skinColor}"/>
-                    <!-- ملامح الوجه -->
                     ${eyeExpr}
-                    <!-- الخدود -->
                     <circle cx="33" cy="45" r="4" fill="#f87171" opacity="0.4"/>
                     <circle cx="67" cy="45" r="4" fill="#f87171" opacity="0.4"/>
-                    <!-- الاكسسوارات -->
                     ${accessoriesHTML}
                 </svg>
                 `;
             },
 
-// المتغير العام لتتبع حالة النافذة المنبثقة
+            updateChatPet: (msgs) => {
+                const container = document.getElementById('chat-pet-container');
+                if(!msgs || msgs.length === 0) {
+                    container.innerHTML = ''; 
+                    const existingPopup = document.getElementById('pet-popup-overlay');
+                    if(existingPopup) existingPopup.remove();
+                    return;
+                }
 
+                const totalMsgs = msgs.length;
+                const lastMsg = msgs[msgs.length - 1];
+                const daysSinceLastMsg = (Date.now() - lastMsg.timestamp) / (1000 * 60 * 60 * 24);
+                
+                let level = 1;
+                
+                if(daysSinceLastMsg >= 3) {
+                    level = 1;
+                } else {
+                    if (totalMsgs >= 1000) level = 10;
+                    else if (totalMsgs >= 500) level = 9;
+                    else if (totalMsgs >= 300) level = 8;
+                    else if (totalMsgs >= 150) level = 7;
+                    else if (totalMsgs >= 80) level = 6;
+                    else if (totalMsgs >= 40) level = 5;
+                    else if (totalMsgs >= 20) level = 4;
+                    else if (totalMsgs >= 10) level = 3;
+                    else if (totalMsgs >= 5) level = 2;
+                }
 
-// المطلب 6: دالة عرض الكائن المطور (Xylo Pet)
-updateChatPet: (msgs) => {
-    const container = document.getElementById('chat-pet-container');
-    if(!msgs || msgs.length === 0) {
-        container.innerHTML = ''; 
-        // إخفاء النافذة إذا كانت موجودة
-        const existingPopup = document.getElementById('pet-popup-overlay');
-        if(existingPopup) existingPopup.remove();
-        return;
-    }
+                let popupMessage = "";
+                if (daysSinceLastMsg >= 1 && daysSinceLastMsg < 3) {
+                    popupMessage = "🚨 انقذوني!\nراح ارجع فقير تكلمو على اي شي...\nنميمة او غيبة المهم تتكلمون 😭";
+                } else if (daysSinceLastMsg >= 3) {
+                    popupMessage = "💔 للأسف رجعت فقير...\nما تكلمتو وياي 3 ايام 😢";
+                } else {
+                    popupMessage = "  هلو اني طرفكم الثالث الشيطان 😂!\nلا لا اشاقة اني الستريك اذا ما تتكلمون\n كل يوم ارجع فقير 💔 معتمد عليك... ";
+                }
 
-    // حساب عدد الرسائل المتبادلة في هذه المحادثة (الستريك)
-    const totalMsgs = msgs.length;
-    const lastMsg = msgs[msgs.length - 1];
-    const daysSinceLastMsg = (Date.now() - lastMsg.timestamp) / (1000 * 60 * 60 * 24);
-    
-    // تحديد المستوى من 1 إلى 10
-    let level = 1;
-    
-    if(daysSinceLastMsg >= 3) {
-        level = 1;
-    } else {
-        if (totalMsgs >= 1000) level = 10;
-        else if (totalMsgs >= 500) level = 9;
-        else if (totalMsgs >= 300) level = 8;
-        else if (totalMsgs >= 150) level = 7;
-        else if (totalMsgs >= 80) level = 6;
-        else if (totalMsgs >= 40) level = 5;
-        else if (totalMsgs >= 20) level = 4;
-        else if (totalMsgs >= 10) level = 3;
-        else if (totalMsgs >= 5) level = 2;
-    }
+                container.setAttribute('data-pet-message', popupMessage);
+                container.setAttribute('data-pet-level', level);
+                container.innerHTML = App.getPetCharacterSVG(level);
 
-    // تحديد نص الرسالة
-    let popupMessage = "";
-    if (daysSinceLastMsg >= 1 && daysSinceLastMsg < 3) {
-        popupMessage = "🚨 انقذوني!\nراح ارجع فقير تكلمو على اي شي...\nنميمة او غيبة المهم تتكلمون 😭";
-    } else if (daysSinceLastMsg >= 3) {
-        popupMessage = "💔 للأسف رجعت فقير...\nما تكلمتو وياي 3 ايام 😢";
-    } else {
-        popupMessage = "  هلو اني طرفكم الثالث الشيطان 😂!\nلا لا اشاقة اني الستريك اذا ما تتكلمون\n كل يوم ارجع فقير 💔 معتمد عليك... ";
-    }
+                const existingPopup = document.getElementById('pet-popup-overlay');
+                if(existingPopup) existingPopup.remove();
 
-    // تخزين الرسالة في خاصية الكائن
-    container.setAttribute('data-pet-message', popupMessage);
-    container.setAttribute('data-pet-level', level);
+                container.onclick = (e) => {
+                    e.stopPropagation();
+                    App.showPetPopup(popupMessage);
+                };
+            },
 
-    // توليد الـ HTML للكائن فقط (بدون رسالة)
-    container.innerHTML = App.getPetCharacterSVG(level);
+            showPetPopup: (message) => {
+                if(window.petPopupVisible) {
+                    App.hidePetPopup();
+                    return;
+                }
 
-    // إزالة أي نافذة منبثقة قديمة
-    const existingPopup = document.getElementById('pet-popup-overlay');
-    if(existingPopup) existingPopup.remove();
+                const existingPopup = document.getElementById('pet-popup-overlay');
+                if(existingPopup) existingPopup.remove();
 
-    // إضافة حدث الضغط على الكائن
-    container.onclick = (e) => {
-        e.stopPropagation();
-        App.showPetPopup(popupMessage);
-    };
-},
+                const overlay = document.createElement('div');
+                overlay.id = 'pet-popup-overlay';
+                overlay.className = 'pet-popup-overlay';
+                
+                const content = document.createElement('div');
+                content.className = 'pet-popup-content';
+                content.textContent = message;
+                
+                overlay.appendChild(content);
+                document.body.appendChild(overlay);
 
-// دالة عرض النافذة المنبثقة في وسط الشاشة
-showPetPopup: (message) => {
-    // إذا كانت النافذة ظاهرة بالفعل، نخفيها
-    if(window.petPopupVisible) {
-        App.hidePetPopup();
-        return;
-    }
+                setTimeout(() => {
+                    overlay.classList.add('show');
+                    content.classList.add('show');
+                }, 10);
 
-    // إزالة أي نافذة موجودة
-    const existingPopup = document.getElementById('pet-popup-overlay');
-    if(existingPopup) existingPopup.remove();
+                window.petPopupVisible = true;
 
-    // إنشاء النافذة المنبثقة
-    const overlay = document.createElement('div');
-    overlay.id = 'pet-popup-overlay';
-    overlay.className = 'pet-popup-overlay';
-    
-    const content = document.createElement('div');
-    content.className = 'pet-popup-content';
-    content.textContent = message;
-    
-    overlay.appendChild(content);
-    document.body.appendChild(overlay);
+                overlay.onclick = (e) => {
+                    if (e.target === overlay) {
+                        App.hidePetPopup();
+                    }
+                };
+            },
 
-    // إظهار النافذة بعد إضافتها للـ DOM
-    setTimeout(() => {
-        overlay.classList.add('show');
-        content.classList.add('show');
-    }, 10);
-
-    window.petPopupVisible = true;
-
-    // إضافة حدث الضغط على الـ overlay للإخفاء
-    overlay.onclick = (e) => {
-        // إذا تم الضغط على الـ overlay نفسه (وليس على المحتوى)
-        if (e.target === overlay) {
-            App.hidePetPopup();
-        }
-    };
-},
-
-// دالة إخفاء النافذة المنبثقة
-hidePetPopup: () => {
-    const overlay = document.getElementById('pet-popup-overlay');
-    if(overlay) {
-        overlay.classList.remove('show');
-        setTimeout(() => {
-            overlay.remove();
-        }, 300);
-    }
-    window.petPopupVisible = false;
-},
+            hidePetPopup: () => {
+                const overlay = document.getElementById('pet-popup-overlay');
+                if(overlay) {
+                    overlay.classList.remove('show');
+                    setTimeout(() => {
+                        overlay.remove();
+                    }, 300);
+                }
+                window.petPopupVisible = false;
+            },
 
             isFriend: (uid1, uid2) => {
                 return Memory.friends.some(f => 
@@ -1738,6 +2153,12 @@ hidePetPopup: () => {
             },
             isBlocked: (uid) => {
                 return currentUser.blockedUsers?.includes(uid);
+            },
+            isMuted: (otherUid) => {
+                const mute = Memory.mutes.find(m => 
+                    m.userId === currentUser.uid && m.chatId === otherUid && m.until > Date.now()
+                );
+                return !!mute;
             },
             timeAgo: (timestamp) => {
                 if(!timestamp) return 'غير معروف';
@@ -1755,14 +2176,7 @@ hidePetPopup: () => {
                 return (Date.now() - lastActive) < (5 * 60 * 1000);
             },
             parseMentions: (text) => {
-                const escaped = escapeHTML(text);
-                return escaped.replace(/@([\w_.]+)/g, (match, username) => {
-                    const exists = Object.values(Memory.users).find(u => u.username === username);
-                    if(exists) {
-                        return `<span class="text-blue-500 font-bold cursor-pointer hover:underline" onclick="event.stopPropagation(); UI.openProfileByUsername('${username}')">${match}</span>`;
-                    }
-                    return match; 
-                });
+                return parseTextWithLinks(text);
             },
             notifyMentions: async (text, type, linkId) => {
                 const matches = text.match(/@([\w_.]+)/g);
@@ -1783,7 +2197,6 @@ hidePetPopup: () => {
                 await updateDoc(doc(db, USERS_PATH, currentUser.uid), { mentionsCount: counts });
             },
 
-            // --- رندر الرئيسية ---
             renderFeed: () => {
                 const container = document.getElementById('feed-container');
                 container.innerHTML = '';
@@ -1882,13 +2295,17 @@ hidePetPopup: () => {
                 if (navigator.share) {
                     try { await navigator.share({ title: 'تطبيق زايلو', url: shareUrl }); } catch (err) {}
                 } else {
-                    const tempInput = document.createElement("input");
-                    tempInput.value = shareUrl;
-                    document.body.appendChild(tempInput);
-                    tempInput.select();
-                    try { document.execCommand("copy"); UI.showMessage("تم نسخ الرابط!"); } 
-                    catch (err) { UI.showMessage("تعذر النسخ"); }
-                    document.body.removeChild(tempInput);
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        UI.showMessage("تم نسخ الرابط!");
+                    }).catch(() => {
+                        const tempInput = document.createElement("input");
+                        tempInput.value = shareUrl;
+                        document.body.appendChild(tempInput);
+                        tempInput.select();
+                        document.execCommand("copy");
+                        document.body.removeChild(tempInput);
+                        UI.showMessage("تم نسخ الرابط!");
+                    });
                 }
             },
 
@@ -1896,14 +2313,26 @@ hidePetPopup: () => {
                 const post = Memory.posts.find(p => p.id === postId);
                 const container = document.getElementById('single-post-container');
                 
-                if(!post || App.isBlocked(post.authorId)) {
-                    container.innerHTML = '<div class="text-center py-20 opacity-60">المنشور غير متوفر أو تم حذفه</div>';
+                if(!post) {
+                    container.innerHTML = '<div class="text-center py-20 opacity-60">المنشور غير موجود</div>';
+                    UI.openModal('single-post-modal');
+                    return;
+                }
+                
+                if(App.isBlocked(post.authorId)) {
+                    container.innerHTML = '<div class="text-center py-20 opacity-60">لا يمكنك رؤية هذا المنشور</div>';
                     UI.openModal('single-post-modal');
                     return;
                 }
 
                 const author = Memory.users[post.authorId];
-                if(!author || (author.isPrivate && author.uid !== currentUser.uid && !App.isFriend(currentUser.uid, author.uid))) {
+                if(!author) {
+                    container.innerHTML = '<div class="text-center py-20 opacity-60">صاحب المنشور غير موجود</div>';
+                    UI.openModal('single-post-modal');
+                    return;
+                }
+                
+                if(author.isPrivate && author.uid !== currentUser.uid && !App.isFriend(currentUser.uid, author.uid)) {
                     container.innerHTML = '<div class="text-center py-20 opacity-60">هذا المنشور خاص ولا تملك صلاحية الوصول إليه</div>';
                     UI.openModal('single-post-modal');
                     return;
@@ -1933,7 +2362,6 @@ hidePetPopup: () => {
                 UI.openModal('single-post-modal');
             },
 
-            // --- رندر التعليقات ---
             renderComments: () => {
                 if(!window.currentPostIdForComment) return;
                 const container = document.getElementById('comments-list');
@@ -1990,7 +2418,6 @@ hidePetPopup: () => {
                 App.notifyMentions(text, 'تعليق', postId);
             },
 
-            // --- الملاحظات (قصص / ستوري) ---
             renderNotes: () => {
                 const container = document.getElementById('notes-container');
                 const myBtnContainer = container.firstElementChild.outerHTML;
@@ -2007,6 +2434,9 @@ hidePetPopup: () => {
                 
                 if(myActiveNote) {
                     myAvatar.parentElement.classList.add('story-ring');
+                    if(myActiveNote.viewers && myActiveNote.viewers.includes(currentUser.uid)) {
+                        myAvatar.parentElement.classList.add('viewed');
+                    }
                     myAvatar.classList.replace('border-transparent', 'border-white');
                     myPlusIcon.classList.add('hidden');
                     myBtnEl.onclick = () => App.viewNoteFull(myActiveNote, currentUser);
@@ -2028,13 +2458,19 @@ hidePetPopup: () => {
                     const shortName = author.name.split(' ')[0];
                     
                     el.innerHTML = `
-                        <div class="relative story-ring">
+                        <div class="relative story-ring ${note.viewers && note.viewers.includes(currentUser.uid) ? 'viewed' : ''}">
                             <img src="${author.photo || App.getDefaultAvatar()}" class="w-16 h-16 rounded-full object-cover border-2 shadow-sm" style="border-color: var(--bg-color);">
                         </div>
                         <span class="text-[11px] font-bold mt-1 w-full text-center truncate theme-text">${shortName}</span>
                     `;
                     el.onclick = () => { App.viewNoteFull(note, author); };
-                    container.appendChild(el);
+                    
+                    // ترتيب: التي لم تشاهدها أولاً
+                    if(note.viewers && note.viewers.includes(currentUser.uid)) {
+                        container.appendChild(el);
+                    } else {
+                        container.insertBefore(el, container.children[1]);
+                    }
                 });
             },
             
@@ -2174,8 +2610,6 @@ hidePetPopup: () => {
                 UI.showMessage('تم حذف الملاحظة');
             },
 
-
-            // --- تقسيم الأصدقاء ---
             switchFriendsSubTab: (tabId) => {
                 ['requests', 'friends', 'suggestions'].forEach(id => {
                     document.getElementById(`subtab-${id}`).className = 'flex-1 py-3 text-center text-sm font-bold sub-tab-inactive btn-tap transition-colors';
@@ -2195,8 +2629,6 @@ hidePetPopup: () => {
 
                 if(tabId === 'requests') {
                     const myRequests = Memory.requests.filter(r => r.to === currentUser.uid);
-                    if(myRequests.length > 0) document.getElementById('badge-requests').classList.remove('hidden');
-                    else document.getElementById('badge-requests').classList.add('hidden');
                     
                     if(myRequests.length === 0) {
                         container.innerHTML = '<div class="text-center opacity-50 py-10 mt-6"><i class="ph ph-user-plus text-4xl mb-2 block mx-auto"></i>لا توجد طلبات جديدة</div>';
@@ -2250,15 +2682,37 @@ hidePetPopup: () => {
                     const friendsIds = Memory.friends.map(f => f.user1 === currentUser.uid ? f.user2 : (f.user2 === currentUser.uid ? f.user1 : null)).filter(id => id);
                     const requestedIds = Memory.requests.filter(r => r.from === currentUser.uid).map(r => r.to);
                     
-                    let suggestions = Object.values(Memory.users).filter(u => 
+                    let suggestions = [];
+                    
+                    const friendsOfFriends = new Set();
+                    friendsIds.forEach(friendId => {
+                        const friendFriends = Memory.friends
+                            .filter(f => f.user1 === friendId || f.user2 === friendId)
+                            .map(f => f.user1 === friendId ? f.user2 : f.user1)
+                            .filter(id => 
+                                id !== currentUser.uid && 
+                                !friendsIds.includes(id) && 
+                                !requestedIds.includes(id) &&
+                                !App.isBlocked(id)
+                            );
+                        friendFriends.forEach(id => friendsOfFriends.add(id));
+                    });
+                    
+                    let otherSuggestions = Object.values(Memory.users).filter(u => 
                         u.uid !== currentUser.uid && 
                         !friendsIds.includes(u.uid) && 
                         !requestedIds.includes(u.uid) &&
                         !App.isBlocked(u.uid) &&
-                        u.allowRequests !== false
+                        u.allowRequests !== false &&
+                        u.showInSuggestions !== false &&
+                        u.gender === currentUser.gender
                     );
                     
-                    suggestions.sort(() => 0.5 - Math.random()); 
+                    suggestions = [
+                        ...Array.from(friendsOfFriends).map(id => Memory.users[id]).filter(u => u && u.gender === currentUser.gender && u.showInSuggestions !== false),
+                        ...otherSuggestions.filter(u => !friendsOfFriends.has(u.uid))
+                    ];
+                    
                     suggestions = suggestions.slice(0, 10); 
 
                     if(suggestions.length === 0) {
@@ -2378,7 +2832,6 @@ hidePetPopup: () => {
                 });
             },
 
-            // --- البحث ---
             searchUsers: () => {
                 const query = document.getElementById('search-input').value.toLowerCase().trim();
                 const container = document.getElementById('search-results');
@@ -2418,62 +2871,98 @@ hidePetPopup: () => {
                 });
             },
 
-            // --- الملف الشخصي  ---
             renderUserProfile: (uid) => {
-                const u = Memory.users[uid];
-                if(!u) return;
+                const u = Memory.users[uid];
+                if(!u) return;
 
-                document.getElementById('vp-header-name').innerText = u.name;
-                document.getElementById('vp-name').innerText = u.name;
-                document.getElementById('vp-username').innerText = '@' + u.username;
-                document.getElementById('vp-bio').innerText = u.bio || '';
-                document.getElementById('vp-image').src = u.photo || App.getDefaultAvatar();
-                
-                const colors = ['from-blue-600 to-indigo-800', 'from-purple-600 to-pink-600', 'from-green-500 to-teal-700', 'from-orange-500 to-red-600'];
-                const colorIdx = u.uid.charCodeAt(0) % colors.length;
-                document.getElementById('vp-cover').className = `h-64 bg-gradient-to-tr ${colors[colorIdx]} relative flex items-end justify-center pb-4 pt-16`;
+                document.getElementById('vp-name').innerText = u.name;
+                document.getElementById('vp-username').innerText = '@' + u.username;
+                document.getElementById('vp-bio').innerText = u.bio || 'لا توجد نبذة';
+                document.getElementById('vp-image').src = u.photo || App.getDefaultAvatar();
 
-                const actionContainer = document.getElementById('vp-action-container');
-                actionContainer.innerHTML = '';
+                // حساب آخر ظهور بدقة
+                const isOnline = App.isOnline(u.lastActive);
+                if(isOnline) {
+                    document.getElementById('vp-last-seen').innerText = 'متصل الآن';
+                    document.getElementById('vp-last-seen').className = 'text-blue-500 text-sm mt-1 font-medium';
+                } else {
+                    const date = new Date(u.lastActive);
+                    const dateStr = date.toLocaleDateString('ar-EG', { day: 'numeric', month: 'long' });
+                    const timeStr = date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                    document.getElementById('vp-last-seen').innerText = `آخر ظهور ${dateStr} الساعة ${timeStr}`;
+                    document.getElementById('vp-last-seen').className = 'text-gray-500 dark:text-gray-400 text-sm mt-1';
+                }
 
-                const isMe = uid === currentUser.uid;
-                const isFriend = App.isFriend(currentUser.uid, uid);
-                const hasSentReq = Memory.requests.some(r => r.from === currentUser.uid && r.to === uid);
-                const hasReceivedReq = Memory.requests.some(r => r.from === uid && r.to === currentUser.uid);
-                const receivedReqId = hasReceivedReq ? Memory.requests.find(r => r.from === uid && r.to === currentUser.uid).id : null;
-                const sentReqId = hasSentReq ? Memory.requests.find(r => r.from === currentUser.uid && r.to === uid).id : null;
-                const isBlocked = App.isBlocked(uid);
+                const actionContainer = document.getElementById('vp-action-container');
+                actionContainer.innerHTML = '';
 
-                if (isMe) {
-                    actionContainer.innerHTML = `<button onclick="UI.openModal('edit-profile-modal')" class="bg-gray-100 text-gray-800 px-6 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-2"><i class="ph-fill ph-pencil-simple"></i> تعديل الحساب</button>`;
-                } else if (isBlocked) {
-                    actionContainer.innerHTML = `<button onclick="App.unblockUser('${uid}')" class="bg-gray-200 text-gray-800 px-6 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-2"><i class="ph-fill ph-lock-key-open"></i> إلغاء الحظر</button>`;
-                } else {
-                    let actionHtml = '';
-                    if (isFriend) {
-                        actionHtml = `
-                            <button onclick="UI.closeModal('profile-modal'); UI.openModal('chat-modal', '${uid}')" class="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-2"><i class="ph-fill ph-chat-circle-text"></i> مراسلة</button>
-                            <button onclick="App.showChatOptions('${uid}')" class="bg-gray-100 text-gray-800 px-4 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm"><i class="ph-fill ph-user-minus"></i></button>
-                        `;
-                    } else if (hasReceivedReq) {
-                        actionHtml = `
-                            <button onclick="App.acceptRequest('${receivedReqId}', '${uid}')" class="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-2"><i class="ph-fill ph-check"></i> قبول الطلب</button>
-                        `;
-                    } else if (hasSentReq) {
-                        actionHtml = `
-                            <button onclick="App.cancelRequest('${sentReqId}', '${uid}')" class="bg-gray-200 text-gray-800 px-6 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-2"><i class="ph-fill ph-x"></i> إلغاء الطلب</button>
-                        `;
-                    } else {
-                        if(u.allowRequests !== false) {
-                            actionHtml = `
-                                <button onclick="App.sendFriendRequest('${uid}')" class="bg-blue-600 text-white px-6 py-2.5 rounded-full font-bold btn-tap text-sm shadow-sm flex items-center gap-2"><i class="ph-fill ph-user-plus"></i> إضافة صديق</button>
-                            `;
-                        } else {
-                            actionHtml = `<span class="bg-gray-100 text-gray-500 px-6 py-2.5 rounded-full font-bold text-sm shadow-sm">لا يستقبل طلبات</span>`;
-                        }
-                    }
-                    actionContainer.innerHTML = actionHtml;
-                }
+                const isMe = uid === currentUser.uid;
+                const isFriend = App.isFriend(currentUser.uid, uid);
+                const hasSentReq = Memory.requests.some(r => r.from === currentUser.uid && r.to === uid);
+                const hasReceivedReq = Memory.requests.some(r => r.from === uid && r.to === currentUser.uid);
+                const receivedReqId = hasReceivedReq ? Memory.requests.find(r => r.from === uid && r.to === currentUser.uid).id : null;
+                const sentReqId = hasSentReq ? Memory.requests.find(r => r.from === currentUser.uid && r.to === uid).id : null;
+                const isBlocked = App.isBlocked(uid);
+                const isMuted = App.isMuted(uid);
+                const canMessage = u.messagePrivacy === 'all' || (u.messagePrivacy === 'friends' && isFriend) || (u.messagePrivacy === 'only_me' && isMe);
+
+                const btnClass = "flex flex-col items-center justify-center bg-white dark:bg-gray-800 rounded-2xl w-20 h-16 shadow-sm btn-tap gap-1 text-gray-800 dark:text-white";
+                const iconClass = "text-2xl";
+                const textClass = "text-[11px] font-medium";
+
+                if (isMe) {
+                    actionContainer.innerHTML = `
+                        <button onclick="copyProfileLink('${u.username}')" class="${btnClass} w-24">
+                            <i class="ph ph-copy ${iconClass}"></i><span class="${textClass}">نسخ الرابط</span>
+                        </button>
+                    `;
+                } else if (isBlocked) {
+                    actionContainer.innerHTML = `
+                        <button onclick="App.unblockUser('${uid}')" class="${btnClass} w-24 text-red-500">
+                            <i class="ph ph-lock-key-open ${iconClass}"></i><span class="${textClass}">إلغاء الحظر</span>
+                        </button>
+                    `;
+                } else {
+                    let buttons = '';
+                    
+                    // 1. زر المراسلة
+                    if (canMessage) {
+                        buttons += `<button onclick="UI.closeModal('profile-modal'); UI.openModal('chat-modal', '${uid}')" class="${btnClass}">
+                            <i class="ph ph-chat-circle ${iconClass}"></i><span class="${textClass}">مراسلة</span>
+                        </button>`;
+                    }
+                    
+                    // 2. زر الكتم (تم ربطه بالدالة الجديدة)
+buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClass}">
+    <i class="ph ${isMuted ? 'ph-bell-simple-slash' : 'ph-bell-simple'} ${iconClass}"></i><span class="${textClass}">${isMuted ? 'إلغاء كتم' : 'كتم'}</span>
+</button>`;
+
+                    // 3. زر نسخ الرابط (مكان المكالمة)
+                    buttons += `<button onclick="copyProfileLink('${u.username}')" class="${btnClass}">
+                        <i class="ph ph-link ${iconClass}"></i><span class="${textClass}">نسخ الرابط</span>
+                    </button>`;
+
+                    // 4. زر الصداقة (مكان مكالمة مرئية)
+                    if (isFriend) {
+                        buttons += `<button onclick="App.unfriend('${uid}')" class="${btnClass} text-red-500">
+                            <i class="ph ph-user-minus ${iconClass}"></i><span class="${textClass}">إلغاء الصداقة</span>
+                        </button>`;
+                    } else if (hasReceivedReq) {
+                        buttons += `<button onclick="App.acceptRequest('${receivedReqId}', '${uid}')" class="${btnClass} text-green-500">
+                            <i class="ph ph-check ${iconClass}"></i><span class="${textClass}">قبول الطلب</span>
+                        </button>`;
+                    } else if (hasSentReq) {
+                        buttons += `<button onclick="App.cancelRequest('${sentReqId}', '${uid}')" class="${btnClass}">
+                            <i class="ph ph-x ${iconClass}"></i><span class="${textClass}">إلغاء الطلب</span>
+                        </button>`;
+                    } else if (u.allowRequests !== false) {
+                        buttons += `<button onclick="App.sendFriendRequest('${uid}')" class="${btnClass}">
+                            <i class="ph ph-user-plus ${iconClass}"></i><span class="${textClass}">إضافة</span>
+                        </button>`;
+                    }
+                    
+                    actionContainer.innerHTML = buttons;
+                }
 
                 const friendsGrid = document.getElementById('vp-friends-grid');
                 friendsGrid.innerHTML = '';
@@ -2511,16 +3000,26 @@ hidePetPopup: () => {
                 }
             },
 
-            // المطلب 8: خيارات الرسالة ستايل تليكرام
             showMessageOptions: (msgId, isMe, text, isPinned) => {
                 const content = document.getElementById('action-modal-content');
-                content.innerHTML = `
+                let buttons = `
                     <button onclick="App.copyText('${escapeHTML(text).replace(/'/g, "\\'")}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
                         <span>نسخ النص</span> <i class="ph-fill ph-copy text-lg text-gray-500"></i>
                     </button>
                     <button onclick="App.togglePinMessage('${msgId}', ${isPinned})" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap text-blue-600">
                         <span>${isPinned ? 'إلغاء التثبيت' : 'تثبيت'}</span> <i class="ph-fill ${isPinned ? 'ph-push-pin-slash' : 'ph-push-pin'} text-lg"></i>
                     </button>
+                `;
+                
+                if(isMe) {
+                    buttons += `
+                        <button onclick="App.editMessage('${msgId}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-green-50 btn-tap text-green-600">
+                            <span>تعديل</span> <i class="ph-fill ph-pencil-simple text-lg"></i>
+                        </button>
+                    `;
+                }
+                
+                buttons += `
                     ${isMe ? `
                     <button onclick="App.deleteMessage('${msgId}', 'all')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-red-50 btn-tap text-red-500">
                         <span>حذف للجميع</span> <i class="ph-fill ph-trash text-lg"></i>
@@ -2530,22 +3029,52 @@ hidePetPopup: () => {
                         <span>حذف من عندي</span> <i class="ph-fill ph-trash-simple text-lg"></i>
                     </button>
                 `;
+                
+                content.innerHTML = buttons;
                 UI.openModal('action-modal');
             },
+            
+            editMessage: async (msgId) => {
+                const msg = Memory.messages.find(m => m.id === msgId);
+                const newText = prompt('تعديل الرسالة:', msg.text);
+                if(newText && newText.trim() && newText !== msg.text) {
+                    // تحديث الواجهة فوراً (Optimistic UI)
+                    msg.text = newText.trim();
+                    msg.edited = true;
+                    const allMsgIndex = window.allMessages.findIndex(m => m.id === msgId);
+                    if(allMsgIndex !== -1) window.allMessages[allMsgIndex].text = newText.trim();
+                    App.renderMessages(true); // إعادة رسم الرسائل مع الاحتفاظ بمكان التمرير
+                    
+                    UI.closeModal('action-modal');
+                    UI.showMessage('تم تعديل الرسالة');
+
+                    // تحديث قاعدة البيانات في الخلفية
+                    updateDoc(doc(db, MESSAGES_PATH, msgId), { text: newText.trim(), edited: true });
+                }
+            },
+            
             copyText: (text) => {
-                const tempInput = document.createElement("textarea");
-                tempInput.value = text;
-                document.body.appendChild(tempInput);
-                tempInput.select();
-                try { document.execCommand("copy"); UI.showMessage("تم النسخ!"); } catch(e){}
-                document.body.removeChild(tempInput);
-                UI.closeModal('action-modal');
+                navigator.clipboard.writeText(text).then(() => {
+                    UI.showMessage("تم النسخ!");
+                    UI.closeModal('action-modal');
+                }).catch(() => {
+                    const tempInput = document.createElement("textarea");
+                    tempInput.value = text;
+                    document.body.appendChild(tempInput);
+                    tempInput.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(tempInput);
+                    UI.showMessage("تم النسخ!");
+                    UI.closeModal('action-modal');
+                });
             },
+            
             togglePinMessage: async (msgId, isPinned) => {
                 await updateDoc(doc(db, MESSAGES_PATH, msgId), { pinned: !isPinned });
                 UI.showMessage(isPinned ? "تم إلغاء التثبيت" : "تم تثبيت الرسالة");
                 UI.closeModal('action-modal');
             },
+            
             deleteMessage: async (msgId, type) => {
                 if(type === 'all') {
                     await deleteDoc(doc(db, MESSAGES_PATH, msgId));
@@ -2554,6 +3083,7 @@ hidePetPopup: () => {
                 }
                 UI.closeModal('action-modal');
             },
+            
             reactToMessage: async (msgId, reactionEmoji = '❤️') => {
                 const msg = Memory.messages.find(m => m.id === msgId);
                 if(!msg) return;
@@ -2568,10 +3098,107 @@ hidePetPopup: () => {
                 await updateDoc(doc(db, MESSAGES_PATH, msgId), { reactions: currentReactions });
             },
 
+            showPinChatPopup: (otherUid) => {
+                window.pinChatTarget = otherUid;
+                UI.openModal('pin-chat-popup');
+            },
+            
+            pinChat: async (type) => {
+                const otherUid = window.pinChatTarget;
+                if(!otherUid) return;
+                
+                const existingPin = Memory.pins.find(p => 
+                    p.userId === currentUser.uid && p.chatId === otherUid
+                );
+                if(existingPin) {
+                    await deleteDoc(doc(db, PINS_PATH, existingPin.id));
+                }
+                
+                await addDoc(collection(db, PINS_PATH), {
+                    userId: currentUser.uid,
+                    chatId: otherUid,
+                    type: type,
+                    timestamp: Date.now()
+                });
+                
+                UI.showMessage('تم تثبيت المحادثة');
+            },
+            
+            unpinChat: async () => {
+                const otherUid = window.pinChatTarget;
+                if(!otherUid) return;
+                
+                const existingPin = Memory.pins.find(p => 
+                    p.userId === currentUser.uid && p.chatId === otherUid
+                );
+                if(existingPin) {
+                    await deleteDoc(doc(db, PINS_PATH, existingPin.id));
+                    UI.showMessage('تم إلغاء تثبيت المحادثة');
+                }
+            },
+
+            toggleMuteChat: () => {
+                UI.openModal('mute-chat-popup');
+            },
+
+            muteChat: async (hours) => {
+                const otherUid = window.currentChatUserId;
+                if(!otherUid) return;
+                
+                const existingMute = Memory.mutes.find(m => 
+                    m.userId === currentUser.uid && m.chatId === otherUid
+                );
+                if(existingMute) {
+                    await deleteDoc(doc(db, MUTES_PATH, existingMute.id));
+                }
+                
+                if(hours > 0) {
+                    await addDoc(collection(db, MUTES_PATH), {
+                        userId: currentUser.uid,
+                        chatId: otherUid,
+                        until: Date.now() + (hours * 60 * 60 * 1000)
+                    });
+                    UI.showMessage(`تم كتم المحادثة لمدة ${hours} ساعة`);
+                } else {
+                    UI.showMessage('تم إلغاء كتم المحادثة');
+                }
+                
+                const muteBtn = document.getElementById('chat-mute-btn').querySelector('i');
+                if(hours > 0) {
+                    muteBtn.className = 'ph-fill ph-bell-simple-slash text-lg';
+                } else {
+                    muteBtn.className = 'ph ph-bell-simple-z text-lg';
+                }
+            },
+
             showChatOptions: (otherUid) => {
                 const isMyFriend = App.isFriend(currentUser.uid, otherUid);
                 const content = document.getElementById('action-modal-content');
-                content.innerHTML = `
+                
+                const isPinned = Memory.pins.some(p => 
+                    p.userId === currentUser.uid && p.chatId === otherUid
+                );
+                
+                let buttons = '';
+                
+                if(isPinned) {
+                    buttons += `
+                        <button onclick="App.unpinChatFromOptions('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
+                            <span>إلغاء تثبيت المحادثة</span> <i class="ph-fill ph-push-pin-slash text-lg text-gray-500"></i>
+                        </button>
+                    `;
+                } else {
+                    buttons += `
+                        <button onclick="App.showPinChatPopup('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
+                            <span>تثبيت المحادثة</span> <i class="ph-fill ph-push-pin text-lg text-gray-500"></i>
+                        </button>
+                    `;
+                }
+                
+                buttons += `
+                    <button onclick="App.toggleMutePermanent('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
+    <span>${App.isMuted(otherUid) ? 'إلغاء الكتم' : 'كتم المحادثة'}</span> <i class="ph-fill ${App.isMuted(otherUid) ? 'ph-bell-simple-slash' : 'ph-bell-simple-z'} text-lg text-gray-500"></i>
+</button>
                     ${isMyFriend ? `
                     <button onclick="App.unfriend('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
                         <span>إزالة من الأصدقاء</span> <i class="ph-fill ph-user-minus text-lg text-gray-500"></i>
@@ -2580,19 +3207,56 @@ hidePetPopup: () => {
                     <button onclick="App.blockUser('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-orange-50 btn-tap text-orange-500">
                         <span>حظر المستخدم</span> <i class="ph-fill ph-prohibit text-lg"></i>
                     </button>
-                    <button onclick="App.deleteChatHistory('${otherUid}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-500">
+                    <button onclick="App.showDeleteChatPopup('${otherUid}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-500">
                         <span>حذف المحادثة</span> <i class="ph-fill ph-trash text-lg"></i>
                     </button>
                 `;
+                
+                content.innerHTML = buttons;
                 UI.openModal('action-modal');
             },
-            deleteChatHistory: async (otherUid) => {
-                if(confirm('هل أنت متأكد من حذف هذه المحادثة بالكامل؟')) {
-                    const msgsToDelete = Memory.messages.filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid));
-                    for(let msg of msgsToDelete) { await deleteDoc(doc(db, MESSAGES_PATH, msg.id)); }
+            
+            unpinChatFromOptions: async (otherUid) => {
+                const existingPin = Memory.pins.find(p => 
+                    p.userId === currentUser.uid && p.chatId === otherUid
+                );
+                if(existingPin) {
+                    await deleteDoc(doc(db, PINS_PATH, existingPin.id));
                     UI.closeModal('action-modal');
-                    UI.showMessage('تم حذف المحادثة');
+                    UI.showMessage('تم إلغاء تثبيت المحادثة');
                 }
+            },
+            
+            showDeleteChatPopup: (otherUid) => {
+                window.deleteChatTarget = otherUid;
+                UI.closeModal('action-modal');
+                UI.openModal('delete-chat-popup');
+            },
+            
+            deleteChatHistory: async (type) => {
+                const otherUid = window.deleteChatTarget;
+                if(!otherUid) return;
+                
+                const msgsToDelete = Memory.messages.filter(m => 
+                    m.participants.includes(currentUser.uid) && 
+                    m.participants.includes(otherUid)
+                );
+                
+                if(type === 'everyone') {
+                    for(let msg of msgsToDelete) {
+                        await deleteDoc(doc(db, MESSAGES_PATH, msg.id));
+                    }
+                    UI.showMessage('تم حذف المحادثة للجميع');
+                } else {
+                    for(let msg of msgsToDelete) {
+                        await updateDoc(doc(db, MESSAGES_PATH, msg.id), { 
+                            deletedFor: arrayUnion(currentUser.uid) 
+                        });
+                    }
+                    UI.showMessage('تم حذف المحادثة من جهازك فقط');
+                }
+                
+                UI.closeModal('chat-modal');
             },
 
             renderChats: () => {
@@ -2621,21 +3285,39 @@ hidePetPopup: () => {
                     }
                 });
 
-                const sortedChats = Object.entries(chatUsers).sort((a,b) => b[1].lastMsg.timestamp - a[1].lastMsg.timestamp);
+                let chatsArray = Object.entries(chatUsers);
+                
+                chatsArray = chatsArray.map(([uid, data]) => {
+                    const pin = Memory.pins.find(p => p.userId === currentUser.uid && p.chatId === uid);
+                    const mute = Memory.mutes.find(m => m.userId === currentUser.uid && m.chatId === uid && m.until > Date.now());
+                    return [uid, {...data, pin, mute}];
+                });
+                
+                chatsArray.sort((a, b) => {
+                    if(a[1].pin && !b[1].pin) return -1;
+                    if(!a[1].pin && b[1].pin) return 1;
+                    if(a[1].pin && b[1].pin) {
+                        if(a[1].pin.type === 'love' && b[1].pin.type !== 'love') return -1;
+                        if(a[1].pin.type !== 'love' && b[1].pin.type === 'love') return 1;
+                    }
+                    return b[1].lastMsg.timestamp - a[1].lastMsg.timestamp;
+                });
 
-                if(sortedChats.length === 0) {
+                if(chatsArray.length === 0) {
                     container.innerHTML = '<div class="text-center opacity-50 py-10 mt-10"><i class="ph ph-chat-circle-dots text-4xl mb-2 block mx-auto"></i>لا توجد رسائل بعد</div>';
                     document.getElementById('badge-messages').classList.add('hidden');
                     return;
                 }
 
-                sortedChats.forEach(([otherUid, chatData]) => {
+                chatsArray.forEach(([otherUid, chatData]) => {
                     const lastMsg = chatData.lastMsg;
                     const u = Memory.users[otherUid];
                     if(!u) return;
 
-                    const isUnread = chatData.unreadCount > 0;
+                    const isUnread = chatData.unreadCount > 0 && !chatData.mute;
                     const isOnline = App.isOnline(u.lastActive);
+                    const pin = chatData.pin;
+                    const mute = chatData.mute;
 
                     const el = document.createElement('div');
                     const unreadClass = isUnread ? 'bg-blue-50/20' : 'hover:opacity-80';
@@ -2662,15 +3344,30 @@ hidePetPopup: () => {
                     }
 
                     let msgPreview = lastMsg.isNoteReply ? `[رد على ملاحظة] ${lastMsg.text}` : lastMsg.text;
+                    
+                    let pinHtml = '';
+                    if(pin) {
+                        if(pin.type === 'love') {
+                            pinHtml = '<span class="pin-love"><i class="ph-fill ph-heart"></i> الحب</span>';
+                        } else {
+                            pinHtml = '<span class="pin-normal"><i class="ph-fill ph-push-pin"></i></span>';
+                        }
+                    }
+                    
+                    let muteHtml = '';
+                    if(mute) {
+                        muteHtml = '<span class="mute-badge mr-1"><i class="ph-fill ph-bell-simple-slash"></i></span>';
+                    }
 
                     el.innerHTML = `
                         <div class="relative">
                             <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border border-gray-100">
                             ${isOnline ? '<span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>' : ''}
+                            ${pinHtml}
                         </div>
                         <div class="flex-1 overflow-hidden pr-1 relative">
                             <div class="flex justify-between items-center mb-0.5">
-                                <h4 class="font-bold truncate text-[15px] flex items-center gap-1 ${isUnread ? 'theme-text' : 'opacity-90'}">${u.name}</h4>
+                                <h4 class="font-bold truncate text-[15px] flex items-center gap-1 ${isUnread ? 'theme-text' : 'opacity-90'}">${u.name} ${muteHtml}</h4>
                                 <span class="text-xs ${isUnread ? 'font-bold text-blue-600' : 'opacity-60'} whitespace-nowrap">${App.timeAgo(lastMsg.timestamp)}</span>
                             </div>
                             <div class="flex items-center justify-between">
@@ -2714,6 +3411,14 @@ hidePetPopup: () => {
                 const isOnline = App.isOnline(u.lastActive);
                 document.getElementById('chat-online-dot').style.display = isOnline ? 'block' : 'none';
                 document.getElementById('chat-user-status').innerText = isOnline ? 'نشط الآن' : `آخر ظهور ${App.timeAgo(u.lastActive)}`;
+                
+                const isMuted = App.isMuted(uid);
+                const muteBtnIcon = document.getElementById('chat-mute-btn').querySelector('i');
+                if(isMuted) {
+                    muteBtnIcon.className = 'ph-fill ph-bell-simple-slash text-lg';
+                } else {
+                    muteBtnIcon.className = 'ph ph-bell-simple-z text-lg';
+                }
             },
 
             setReplyMode: (msgId, text, senderName) => {
@@ -2728,159 +3433,192 @@ hidePetPopup: () => {
                 document.getElementById('replying-to-container').classList.add('hidden');
             },
 
-            renderMessages: () => {
+            highlightMessage: (msgId) => {
+                const container = document.getElementById('chat-messages-container');
+                const msgElement = container.querySelector(`[data-msg-id="${msgId}"]`);
+                if(msgElement) {
+                    msgElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    msgElement.classList.add('highlight-message');
+                    setTimeout(() => {
+                        msgElement.classList.remove('highlight-message');
+                    }, 2000);
+                }
+            },
+
+            loadMessages: async () => {
                 const otherUid = window.currentChatUserId;
                 if(!otherUid) return;
-
-                const container = document.getElementById('chat-messages-container');
-                const typingBubble = document.getElementById('live-typing-bubble');
-                container.innerHTML = '';
-
-                let msgs = Memory.messages
-                    .filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid))
-                    .sort((a,b) => a.timestamp - b.timestamp);
                 
-                msgs = msgs.filter(m => !(m.deletedFor && m.deletedFor.includes(currentUser.uid)));
+                window.currentMessagePage = 0;
+                window.hasMoreMessages = true;
+                window.allMessages = [];
+                
+                await App.loadMoreMessages(true);
+            },
 
-                // تحديث شخصية الستريك
-                App.updateChatPet(msgs);
-
-                const pinnedMsg = msgs.find(m => m.pinned);
-                if(pinnedMsg) {
-                    const pinEl = document.createElement('div');
-                    pinEl.className = 'sticky top-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-b p-2 mb-4 rounded-xl shadow-sm z-20 flex items-center justify-between cursor-pointer theme-text';
-                    pinEl.style.borderColor = "var(--border-color)";
-                    pinEl.innerHTML = `
-                        <div class="flex-1 overflow-hidden pr-2 border-r-4 border-blue-500">
-                            <span class="text-xs font-bold text-blue-600 block"><i class="ph-fill ph-push-pin"></i> رسالة مثبتة</span>
-                            <span class="text-sm truncate block opacity-80">${escapeHTML(pinnedMsg.text)}</span>
-                        </div>
-                    `;
-                    pinEl.onclick = () => { App.showMessageOptions(pinnedMsg.id, pinnedMsg.senderId === currentUser.uid, pinnedMsg.text, true) };
-                    container.appendChild(pinEl);
+            loadMoreMessages: async (reset = false) => {
+                const otherUid = window.currentChatUserId;
+                if(!otherUid) return;
+                if(!window.hasMoreMessages && !reset) return;
+                
+                const container = document.getElementById('chat-messages-container');
+                const loadMoreBtn = document.getElementById('load-more-messages');
+                
+                if(reset) {
+                    window.lastVisibleMessage = null;
+                    window.allMessages = [];
                 }
-
-                if(msgs.length === 0) {
-                    container.innerHTML += '<div class="text-center opacity-50 py-10 mt-auto theme-text">بدء محادثة جديدة 👋</div>';
-                    container.appendChild(typingBubble);
+                
+                let q;
+                if(window.lastVisibleMessage) {
+                    q = query(
+                        collection(db, MESSAGES_PATH),
+                        orderBy('timestamp', 'desc'),
+                        startAfter(window.lastVisibleMessage),
+                        limit(window.messagesLimit)
+                    );
+                } else {
+                    q = query(
+                        collection(db, MESSAGES_PATH),
+                        orderBy('timestamp', 'desc'),
+                        limit(window.messagesLimit)
+                    );
+                }
+                
+                const snapshot = await getDocs(q);
+                
+                if(snapshot.empty) {
+                    window.hasMoreMessages = false;
+                    loadMoreBtn.classList.add('hidden');
+                    if(reset) {
+                        App.renderMessages(true);
+                    }
                     return;
                 }
+                
+                window.lastVisibleMessage = snapshot.docs[snapshot.docs.length - 1];
+                
+                const newMessages = snapshot.docs
+                    .map(d => ({id: d.id, ...d.data()}))
+                    .filter(m => 
+                        m.participants.includes(currentUser.uid) && 
+                        m.participants.includes(otherUid) &&
+                        !(m.deletedFor && m.deletedFor.includes(currentUser.uid))
+                    );
+                
+                window.allMessages = [...newMessages, ...window.allMessages];
+                
+                if(snapshot.docs.length < window.messagesLimit) {
+                    window.hasMoreMessages = false;
+                    loadMoreBtn.classList.add('hidden');
+                } else {
+                    loadMoreBtn.classList.remove('hidden');
+                }
+                
+                App.renderMessages(reset);
+            },
 
-                msgs.forEach(m => {
-                    const isMe = m.senderId === currentUser.uid;
-                    const row = document.createElement('div');
-                    row.className = `msg-row flex w-full mb-1 ${isMe ? 'justify-end' : 'justify-start'}`;
+            renderMessages: (keepScroll = false) => {
+                const otherUid = window.currentChatUserId;
+                if(!otherUid) return;
 
-                    const el = document.createElement('div');
-                    el.className = `max-w-[80%] rounded-2xl p-3 shadow-sm relative break-words ${isMe ? 'bubble-me rounded-br-sm' : 'bubble-other rounded-bl-sm'}`;
-                    
-                    const pinIconHTML = m.pinned ? '<i class="ph-fill ph-push-pin opacity-50 text-[10px] absolute top-1 left-2"></i>' : '';
+                const container = document.getElementById('chat-messages-container');
+                const loadMoreBtn = document.getElementById('load-more-messages');
+                
+                let oldScrollHeight = container.scrollHeight;
+                
+                let msgs = window.allMessages.length > 0 ? window.allMessages : Memory.messages
+                    .filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid));
+                
+                // الترتيب: الأقدم أولاً (من الأعلى للأسفل)
+                msgs = msgs.sort((a,b) => a.timestamp - b.timestamp);
+                msgs = msgs.filter(m => !(m.deletedFor && m.deletedFor.includes(currentUser.uid)));
 
-                    let tapCount = 0;
-                    let tapTimer;
-                    
-                    const handleTap = (e) => {
-                        tapCount++;
-                        if (tapCount === 1) {
-                            tapTimer = setTimeout(() => {
-                                tapCount = 0;
-                                App.showMessageOptions(m.id, isMe, m.text, m.pinned);
-                            }, 300); 
-                        } else if (tapCount === 2) {
-                            clearTimeout(tapTimer);
-                            tapCount = 0;
-                            App.reactToMessage(m.id, '❤️');
-                        }
-                    };
+                App.updateChatPet(msgs);
 
-                    el.onclick = handleTap; 
-
-                    let startX = 0, startY = 0, currentX = 0;
-                    let isSwiping = false;
-                    const replyIcon = document.createElement('i');
-                    replyIcon.className = `ph-fill ph-reply reply-icon-indicator ${isMe ? '-left-8' : '-right-8'}`;
-                    row.appendChild(replyIcon);
-
-                    row.addEventListener('touchstart', (e) => { 
-                        startX = e.touches[0].clientX; 
-                        startY = e.touches[0].clientY;
-                        isSwiping = false;
-                    }, {passive: true});
-
-                    row.addEventListener('touchmove', (e) => {
-                        if(!startX || !startY) return;
-                        currentX = e.touches[0].clientX;
-                        let currentY = e.touches[0].clientY;
-                        let diffX = currentX - startX;
-                        let diffY = currentY - startY;
-
-                        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 10) {
-                            isSwiping = true;
-                            if((isMe && diffX < 0) || (!isMe && diffX > 0)) {
-                                if(e.cancelable) e.preventDefault();
-                                let translate = Math.abs(diffX) > 70 ? 70 * Math.sign(diffX) : diffX;
-                                row.style.transform = `translateX(${translate}px)`;
-                                replyIcon.style.opacity = Math.abs(translate) / 70;
-                            }
-                        }
-                    }, {passive: false});
-
-                    row.addEventListener('touchend', (e) => {
-                        if(!isSwiping) { startX = 0; startY = 0; return; }
-                        row.style.transform = `translateX(0)`;
-                        replyIcon.style.opacity = 0;
-                        let diffX = currentX - startX;
-                        if (Math.abs(diffX) > 50 && ((isMe && diffX < 0) || (!isMe && diffX > 0))) {
-                            const senderName = isMe ? 'نفسك' : Memory.users[m.senderId].name;
-                            App.setReplyMode(m.id, m.text, senderName);
-                        }
-                        startX = 0; startY = 0; isSwiping = false;
-                    });
-
-                    const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-200"></i>' : '<i class="ph ph-check opacity-70"></i>') : '';
-                    
-                    let replyHtml = '';
-                    if(m.replyToId) {
-                        const repliedMsg = Memory.messages.find(msg => msg.id === m.replyToId);
-                        if(repliedMsg) {
-                            replyHtml = `
-                            <div class="bg-black/10 rounded-lg p-2 mb-2 border-r-4 ${isMe ? 'border-white text-white' : 'border-blue-500 theme-text'}">
-                                <span class="text-xs font-bold block opacity-90">${repliedMsg.senderId === currentUser.uid ? 'أنت' : Memory.users[repliedMsg.senderId].name}</span>
-                                <span class="text-xs truncate block opacity-80">${escapeHTML(repliedMsg.text)}</span>
-                            </div>`;
-                        }
-                    } else if (m.isNoteReply && m.replyNoteText) {
-                        replyHtml = `
-                            <div class="bg-black/10 rounded-lg p-2 mb-2 border-r-4 border-green-500 text-white">
-                                <span class="text-xs font-bold block opacity-90">رد على ملاحظة</span>
-                                <span class="text-xs truncate block opacity-80">${escapeHTML(m.replyNoteText)}</span>
-                            </div>`;
-                    }
-
-                    let reactionHtml = '';
-                    if(m.reactions && Object.keys(m.reactions).length > 0) {
-                        const reactValues = Object.values(m.reactions);
-                        reactionHtml = `<div class="reaction-badge ${isMe ? '-left-2' : '-right-2'}">${reactValues[0]}</div>`;
-                    }
-
-                    el.innerHTML = `
-                        ${pinIconHTML}
-                        ${replyHtml}
-                        <p class="text-[15px] leading-relaxed whitespace-pre-wrap">${escapeHTML(m.text)}</p>
-                        <span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">
-                            ${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                            ${tickHtml}
-                        </span>
-                        ${reactionHtml}
-                    `;
-                    
-                    row.appendChild(el);
-                    container.appendChild(row);
+                // تفريغ الرسائل فقط مع إبقاء زر التحميل
+                Array.from(container.children).forEach(child => {
+                    if(child.id !== 'load-more-messages') child.remove();
                 });
 
-                container.appendChild(typingBubble);
-                container.scrollTop = container.scrollHeight;
-            },
+                const pinnedMsg = msgs.find(m => m.pinned);
+                if(pinnedMsg) {
+                    const pinEl = document.createElement('div');
+                    pinEl.className = 'sticky top-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-b p-2 mb-4 rounded-xl shadow-sm z-20 flex items-center justify-between cursor-pointer theme-text';
+                    pinEl.innerHTML = `<div class="flex-1 overflow-hidden pr-2 border-r-4 border-blue-500"><span class="text-xs font-bold text-blue-600 block"><i class="ph-fill ph-push-pin"></i> رسالة مثبتة</span><span class="text-sm truncate block opacity-80">${escapeHTML(pinnedMsg.text)}</span></div>`;
+                    pinEl.onclick = () => { App.highlightMessage(pinnedMsg.id); };
+                    container.appendChild(pinEl);
+                }
+
+                if(msgs.length === 0) {
+                    container.innerHTML += '<div class="text-center opacity-50 py-10 mt-auto theme-text">بدء محادثة جديدة 👋</div>';
+                    return;
+                }
+
+                msgs.forEach(m => {
+                    const isMe = m.senderId === currentUser.uid;
+                    const row = document.createElement('div');
+                    row.className = `msg-row flex w-full mb-2 ${isMe ? 'justify-end' : 'justify-start'}`; // mb-2 للمسافة
+                    row.setAttribute('data-msg-id', m.id);
+
+                    // --- هنا نضع نفس كود بناء الرسالة القديم (el.innerHTML، touchstart للرد الخ...) ---
+                    // أضفت فقط كود بناء الرسالة لتجنب الطول، يرجى الاحتفاظ بكود السحب (touch) كما هو.
+                    // لضمان عمل السحب للرد (التعديل الثالث سيعدل عليه).
+
+                    const el = document.createElement('div');
+                    el.className = `max-w-[80%] rounded-2xl p-3 shadow-sm relative break-words ${isMe ? 'bubble-me rounded-br-sm' : 'bubble-other rounded-bl-sm'}`;
+                    el.onclick = () => { App.showMessageOptions(m.id, isMe, m.text, m.pinned); }; // اختصار للضغط
+                    
+                    let replyIcon = document.createElement('i');
+                    replyIcon.className = `ph-fill ph-reply reply-icon-indicator ${isMe ? '-left-8' : '-right-8'}`;
+                    row.appendChild(replyIcon);
+
+                    // --- دمج تعديل السحب لليسار فقط (التعديل الثالث) في نفس الدالة ---
+                    let startX = 0, startY = 0, currentX = 0;
+                    let isSwiping = false;
+                    row.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isSwiping = false; }, {passive: true});
+                    row.addEventListener('touchmove', (e) => {
+                        if(!startX || !startY) return;
+                        currentX = e.touches[0].clientX; let diffX = currentX - startX; let diffY = e.touches[0].clientY - startY;
+                        if (diffX < -10 && Math.abs(diffX) > Math.abs(diffY)) { // سحب لليسار فقط
+                            isSwiping = true;
+                            if(e.cancelable) e.preventDefault();
+                            let translate = Math.max(diffX, -70); // حد أقصى للسحب
+                            row.style.transform = `translateX(${translate}px)`;
+                            replyIcon.style.opacity = Math.abs(translate) / 70;
+                        }
+                    }, {passive: false});
+                    row.addEventListener('touchend', (e) => {
+                        if(!isSwiping) return;
+                        row.style.transform = `translateX(0)`; replyIcon.style.opacity = 0;
+                        if (currentX - startX < -50) { // تم السحب لليسار للرد
+                            App.setReplyMode(m.id, m.text, isMe ? 'نفسك' : Memory.users[m.senderId].name);
+                        }
+                        startX = 0; isSwiping = false;
+                    });
+                    // -----------------------------------------------------------
+
+                    const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-200"></i>' : '<i class="ph ph-check opacity-70"></i>') : '';
+                    el.innerHTML = `<p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p><span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${tickHtml}</span>`;
+                    
+                    row.appendChild(el);
+                    container.appendChild(row);
+                });
+
+                const typingBubble = document.getElementById('live-typing-bubble');
+                if(typingBubble) container.appendChild(typingBubble);
+
+// تأخير لضمان رسم الرسائل في الشاشة قبل ضبط النزول
+                setTimeout(() => {
+                    if(keepScroll === 'loadMore' && oldScrollHeight > 0) {
+                        // عند تحميل رسائل قديمة فقط، حافظ على موقعك لتتمكن من إكمال القراءة
+                        container.scrollTop = container.scrollHeight - oldScrollHeight;
+                    } else {
+                        // في حالة إرسال رسالة، أو استلام رسالة، أو فتح المحادثة: انزل للأسفل تماماً
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }, 50);
+            },
 
             sendMessage: async () => {
                 const otherUid = window.currentChatUserId;
@@ -2908,10 +3646,17 @@ hidePetPopup: () => {
                 }
                 
                 await addDoc(collection(db, MESSAGES_PATH), payload);
-                App.renderMessages(); 
+                
+                // إضافة الرسالة إلى allMessages
+                window.allMessages.push({
+                    id: 'temp-' + Date.now(),
+                    ...payload
+                });
+                window.allMessages.sort((a,b) => a.timestamp - b.timestamp);
+                
+                App.renderMessages(true);
             },
 
-            // --- الإشعارات ---
             sendNotification: async (toUid, text, linkId) => {
                 if(toUid === currentUser.uid) return;
                 await addDoc(collection(db, NOTIFS_PATH), {
@@ -2989,7 +3734,6 @@ hidePetPopup: () => {
                 });
             },
 
-            // --- الإعدادات وتعديل الملف ---
             handleEditImage: (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -3030,6 +3774,16 @@ hidePetPopup: () => {
                     updates.username = username;
                     updates.lastUsernameChange = Date.now();
                 }
+                
+                // حفظ الجنس إذا تغير
+                if(window.selectedEditGender && window.selectedEditGender !== currentUser.gender) {
+                    const sixtyDaysInMs = 60 * 24 * 60 * 60 * 1000;
+                    const lastChange = currentUser.lastGenderChange || 0;
+                    if (Date.now() - lastChange >= sixtyDaysInMs) {
+                        updates.gender = window.selectedEditGender;
+                        updates.lastGenderChange = Date.now();
+                    }
+                }
 
                 if(window.tempEditPhoto) updates.photo = window.tempEditPhoto;
 
@@ -3049,10 +3803,98 @@ hidePetPopup: () => {
 
         };
 
+        // دالة نسخ الرابط
+        window.copyProfileLink = (username) => {
+            const link = `${window.location.origin}${window.location.pathname}?user=${username}`;
+            navigator.clipboard.writeText(link).then(() => {
+                UI.showMessage('تم نسخ رابط الملف الشخصي');
+            }).catch(() => {
+                const tempInput = document.createElement("input");
+                tempInput.value = link;
+                document.body.appendChild(tempInput);
+                tempInput.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempInput);
+                UI.showMessage('تم نسخ رابط الملف الشخصي');
+            });
+        };
+
+// السحب لليمين للخروج من المحادثة (على كامل الشاشة)
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatModal = document.getElementById('chat-modal');
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let isPageSwiping = false;
+            
+            chatModal.addEventListener('touchstart', (e) => {
+                if(e.target.closest('#chat-back-button')) return;
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                isPageSwiping = false;
+                chatModal.style.transition = 'none'; // لإلغاء التأخير أثناء السحب
+            }, {passive: true});
+            
+            chatModal.addEventListener('touchmove', (e) => {
+                if(!touchStartX) return;
+                const diffX = e.touches[0].clientX - touchStartX;
+                const diffY = e.touches[0].clientY - touchStartY;
+                
+                // إذا كان السحب لليمين أقوى من السحب للأعلى/أسفل
+                if(diffX > 20 && Math.abs(diffX) > Math.abs(diffY) && !chatModal.classList.contains('hidden')) {
+                    isPageSwiping = true;
+                    chatModal.style.transform = `translateX(${diffX}px)`;
+                }
+            }, {passive: true}); // passive true لمنع تداخل السكرول
+            
+            chatModal.addEventListener('touchend', (e) => {
+                if(!isPageSwiping) return;
+                const diffX = e.changedTouches[0].clientX - touchStartX;
+                chatModal.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'; // إعادة الحركة السلسة
+                if(diffX > 100) { // مسافة كافية للخروج
+                    UI.closeModal('chat-modal');
+                    setTimeout(() => chatModal.style.transform = '', 300);
+                } else {
+                    chatModal.style.transform = 'translateX(0)'; // العودة إذا السحب غير كافي
+                }
+                touchStartX = 0; isPageSwiping = false;
+            });
+        });
+
         window.onload = () => {
             Auth.init();
         };
+        
 
+// دالة الكتم المباشر والدائم
+            toggleMutePermanent: async (uid) => {
+                if(!uid) return;
+                try {
+                    const isMuted = App.isMuted(uid);
+                    if(isMuted) {
+                        // إلغاء الكتم
+                        const existingMute = Memory.mutes.find(m => m.userId === currentUser.uid && m.chatId === uid);
+                        if(existingMute) await deleteDoc(doc(db, MUTES_PATH, existingMute.id));
+                        UI.showMessage('تم إلغاء الكتم 🔔');
+                    } else {
+                        // كتم دائم (لمدة 10 سنوات)
+                        await addDoc(collection(db, MUTES_PATH), {
+                            userId: currentUser.uid, chatId: uid, until: Date.now() + (10 * 365 * 24 * 60 * 60 * 1000)
+                        });
+                        UI.showMessage('تم كتم المحادثة بشكل دائم 🔕');
+                    }
+                    
+                    // تحديث الواجهة مباشرة
+                    if(!document.getElementById('profile-modal').classList.contains('hidden')) App.renderUserProfile(uid);
+                    if(!document.getElementById('chat-modal').classList.contains('hidden')) App.renderChatInfo(uid);
+                    App.renderChats();
+                    UI.closeModal('action-modal'); 
+                } catch (error) {
+                    console.error("Error muting:", error);
+                    UI.showMessage('حدث خطأ، حاول مرة أخرى');
+                }
+            }
+        
+        
     </script>
 </body>
 </html>
