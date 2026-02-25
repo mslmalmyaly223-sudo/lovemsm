@@ -1185,9 +1185,11 @@
         
         <div id="chat-background" class="flex-1 overflow-hidden flex flex-col relative chat-container-bg">
             <div id="chat-messages-container" class="flex-1 overflow-y-auto smooth-scroll p-4 flex flex-col relative z-10 pb-4 overflow-x-hidden">
-                <button id="load-more-messages" class="load-more-btn hidden mt-2 mb-6" onclick="App.loadMoreMessages()">عرض الرسائل السابقة</button>
-            </div>
-        </div>
+    <button id="load-more-messages" class="load-more-btn hidden mt-2 mb-6" onclick="App.loadMoreMessages()">عرض الرسائل السابقة</button>
+    <div id="live-typing-bubble" class="hidden bubble-other rounded-2xl rounded-bl-sm p-3 shadow-sm self-start mb-2 text-[15px] opacity-70 w-fit max-w-[80%] transition-all duration-300">
+        <span class="typing-cursor font-medium"></span>
+    </div>
+</div>
 
         <div id="replying-to-container" class="hidden theme-card border-t px-4 py-2 flex items-center justify-between shadow-[0_-2px_10px_rgba(0,0,0,0.02)] z-10 relative">
             <div class="flex flex-col border-r-4 border-blue-500 pr-3">
@@ -1910,13 +1912,48 @@
                 onSnapshot(collection(db, MESSAGES_PATH), (snap) => {
                     Memory.messages = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     App.renderChats();
+                    
                     if(window.currentChatUserId) {
+                        let needsRender = false;
+                        
+                        // 1. تحديث الرسائل غير المقروءة
                         const unreadInChat = snap.docs.filter(d => d.data().senderId === window.currentChatUserId && !d.data().read && d.data().participants.includes(currentUser.uid));
                         if(unreadInChat.length > 0) {
                             unreadInChat.forEach(d => updateDoc(d.ref, {read: true}));
                         }
-                        // إعادة تحميل الرسائل بدون فقدان التمرير
-                        App.renderMessages(false);
+
+                        // 2. مزامنة التغييرات بدقة بدون أي تكرار
+                        snap.docChanges().forEach(change => {
+                            const msgData = {id: change.doc.id, ...change.doc.data()};
+                            
+                            if(msgData.participants.includes(currentUser.uid) && msgData.participants.includes(window.currentChatUserId)) {
+                                const existingIndex = window.allMessages.findIndex(m => m.id === msgData.id);
+                                
+                                if (change.type === 'added') {
+                                    if(existingIndex === -1) {
+                                        window.allMessages.push(msgData);
+                                        needsRender = true;
+                                    }
+                                } else if (change.type === 'modified') {
+                                    if(existingIndex !== -1) {
+                                        window.allMessages[existingIndex] = msgData;
+                                        needsRender = true;
+                                    }
+                                } else if (change.type === 'removed') {
+                                    if(existingIndex !== -1) {
+                                        window.allMessages.splice(existingIndex, 1);
+                                        needsRender = true;
+                                    }
+                                }
+                            }
+                        });
+
+                        if(needsRender) {
+                            // تنظيف أي رسائل وهمية سابقة لتجنب أي تعارض
+                            window.allMessages = window.allMessages.filter(m => !m.id.startsWith('temp-'));
+                            window.allMessages.sort((a,b) => a.timestamp - b.timestamp);
+                            App.renderMessages(false);
+                        }
                     }
                 }, errHandler);
 
@@ -3553,8 +3590,9 @@ buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClas
                 App.updateChatPet(msgs);
 
                 // تفريغ الرسائل فقط مع إبقاء زر التحميل
-                Array.from(container.children).forEach(child => {
-                    if(child.id !== 'load-more-messages') child.remove();
+                // تفريغ الرسائل فقط مع إبقاء زر التحميل وفقاعة الكتابة
+                Array.from(container.children).forEach(child => {
+                    if(child.id !== 'load-more-messages' && child.id !== 'live-typing-bubble') child.remove();
                 });
 
                 const pinnedMsg = msgs.find(m => m.pinned);
@@ -3662,15 +3700,7 @@ buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClas
                 }
                 
                 await addDoc(collection(db, MESSAGES_PATH), payload);
-                
-                // إضافة الرسالة إلى allMessages
-                window.allMessages.push({
-                    id: 'temp-' + Date.now(),
-                    ...payload
-                });
-                window.allMessages.sort((a,b) => a.timestamp - b.timestamp);
-                
-                App.renderMessages(true);
+                // Firebase سيقوم بتحديث الشاشة فوراً وبشكل تلقائي عبر onSnapshot
             },
 
             sendNotification: async (toUid, text, linkId) => {
