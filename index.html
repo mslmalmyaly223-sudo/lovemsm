@@ -943,20 +943,7 @@
                     <label class="text-xs font-bold opacity-60 block mb-1">النبذة</label>
                     <textarea id="edit-bio" class="w-full bg-transparent border-b border-gray-300 py-2 outline-none focus:border-blue-600 resize-none transition-colors theme-text" rows="3" placeholder="اكتب نبذة عن نفسك..."></textarea>
                 </div>
-                <!-- إضافة اختيار الجنس - تعديل 8 -->
-                <div>
-                    <label class="text-xs font-bold opacity-60 block mb-3">الجنس (يمكن التعديل كل 60 يوم)</label>
-                    <div class="flex gap-4">
-                        <div id="edit-gender-male" class="gender-option flex-1 flex flex-col items-center p-3 rounded-2xl bg-gray-100 cursor-pointer btn-tap" onclick="App.selectEditGender('male')">
-                            <i class="ph-fill ph-gender-male text-3xl text-blue-600"></i>
-                            <span class="font-bold mt-1 text-sm">ولد</span>
-                        </div>
-                        <div id="edit-gender-female" class="gender-option flex-1 flex flex-col items-center p-3 rounded-2xl bg-gray-100 cursor-pointer btn-tap" onclick="App.selectEditGender('female')">
-                            <i class="ph-fill ph-gender-female text-3xl text-pink-600"></i>
-                            <span class="font-bold mt-1 text-sm">بنت</span>
-                        </div>
-                    </div>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -1189,7 +1176,7 @@
             </div>
             
             <div class="flex items-center gap-2">
-                <button onclick="App.toggleMuteChat()" class="w-9 h-9 rounded-full theme-bg border flex items-center justify-center btn-tap relative" id="chat-mute-btn">
+                <button onclick="App.toggleMuteChat()" class="hidden w-9 h-9 rounded-full theme-bg border flex items-center justify-center btn-tap relative" id="chat-mute-btn">
                     <i class="ph ph-bell-simple-z text-lg"></i>
                 </button>
                 <div id="chat-pet-container" class="w-12 h-12 flex items-center justify-center relative shrink-0 cursor-pointer btn-tap"></div>
@@ -3233,6 +3220,35 @@ buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClas
                 UI.openModal('delete-chat-popup');
             },
             
+            // دالة الكتم المباشر والدائم
+            toggleMutePermanent: async (uid) => {
+                if(!uid) return;
+                try {
+                    const isMuted = App.isMuted(uid);
+                    if(isMuted) {
+                        // إلغاء الكتم
+                        const existingMute = Memory.mutes.find(m => m.userId === currentUser.uid && m.chatId === uid);
+                        if(existingMute) await deleteDoc(doc(db, MUTES_PATH, existingMute.id));
+                        UI.showMessage('تم إلغاء الكتم 🔔');
+                    } else {
+                        // كتم دائم (لمدة 10 سنوات)
+                        await addDoc(collection(db, MUTES_PATH), {
+                            userId: currentUser.uid, chatId: uid, until: Date.now() + (10 * 365 * 24 * 60 * 60 * 1000)
+                        });
+                        UI.showMessage('تم كتم المحادثة بشكل دائم 🔕');
+                    }
+                    
+                    // تحديث الواجهة مباشرة
+                    if(!document.getElementById('profile-modal').classList.contains('hidden')) App.renderUserProfile(uid);
+                    if(!document.getElementById('chat-modal').classList.contains('hidden')) App.renderChatInfo(uid);
+                    App.renderChats();
+                    UI.closeModal('action-modal'); 
+                } catch (error) {
+                    console.error("Error muting:", error);
+                    UI.showMessage('حدث خطأ، حاول مرة أخرى');
+                }
+            },
+            
             deleteChatHistory: async (type) => {
                 const otherUid = window.deleteChatTarget;
                 if(!otherUid) return;
@@ -3835,65 +3851,57 @@ buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClas
             }, {passive: true});
             
             chatModal.addEventListener('touchmove', (e) => {
-                if(!touchStartX) return;
-                const diffX = e.touches[0].clientX - touchStartX;
-                const diffY = e.touches[0].clientY - touchStartY;
-                
-                // إذا كان السحب لليمين أقوى من السحب للأعلى/أسفل
-                if(diffX > 20 && Math.abs(diffX) > Math.abs(diffY) && !chatModal.classList.contains('hidden')) {
-                    isPageSwiping = true;
-                    chatModal.style.transform = `translateX(${diffX}px)`;
-                }
-            }, {passive: true}); // passive true لمنع تداخل السكرول
-            
-            chatModal.addEventListener('touchend', (e) => {
-                if(!isPageSwiping) return;
-                const diffX = e.changedTouches[0].clientX - touchStartX;
-                chatModal.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'; // إعادة الحركة السلسة
-                if(diffX > 100) { // مسافة كافية للخروج
-                    UI.closeModal('chat-modal');
-                    setTimeout(() => chatModal.style.transform = '', 300);
-                } else {
-                    chatModal.style.transform = 'translateX(0)'; // العودة إذا السحب غير كافي
-                }
-                touchStartX = 0; isPageSwiping = false;
-            });
+                if(!touchStartX) return;
+                const diffX = e.touches[0].clientX - touchStartX;
+                const diffY = e.touches[0].clientY - touchStartY;
+                
+                if(diffX > 20 && Math.abs(diffX) > Math.abs(diffY) && !chatModal.classList.contains('hidden')) {
+                    isPageSwiping = true;
+                    
+                    // حساب نسبة السحب لعمل تأثير طي الورقة
+                    const progress = Math.min(diffX / window.innerWidth, 1);
+                    const angle = progress * 65; // زاوية الطي القصوى
+                    
+                    chatModal.style.transformOrigin = 'right center';
+                    // إضافة المنظور والدوران والشفافية
+                    chatModal.style.transform = `perspective(1500px) rotateY(${-angle}deg) translateX(${diffX * 0.4}px)`;
+                    chatModal.style.opacity = 1 - (progress * 0.6);
+                }
+            }, {passive: true});
+            
+            chatModal.addEventListener('touchend', (e) => {
+                if(!isPageSwiping) return;
+                const diffX = e.changedTouches[0].clientX - touchStartX;
+                
+                chatModal.style.transition = 'all 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                
+                if(diffX > 100) { 
+                    // إكمال طي الورقة وإخفائها عند الإفلات
+                    chatModal.style.transform = 'perspective(1500px) rotateY(-90deg) translateX(100px)';
+                    chatModal.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        UI.closeModal('chat-modal');
+                        setTimeout(() => {
+                            // إعادة تعيين الخصائص للوضع الافتراضي بعد إغلاق المحادثة
+                            chatModal.style.transform = '';
+                            chatModal.style.opacity = '';
+                            chatModal.style.transformOrigin = '';
+                        }, 300);
+                    }, 300);
+                } else {
+                    // ارتداد الورقة لحالتها الطبيعية إذا لم يكن السحب كافياً
+                    chatModal.style.transform = 'perspective(1500px) rotateY(0deg) translateX(0)';
+                    chatModal.style.opacity = '1';
+                }
+                
+                touchStartX = 0; isPageSwiping = false;
+            });
         });
 
         window.onload = () => {
             Auth.init();
         };
-        
-
-// دالة الكتم المباشر والدائم
-            toggleMutePermanent: async (uid) => {
-                if(!uid) return;
-                try {
-                    const isMuted = App.isMuted(uid);
-                    if(isMuted) {
-                        // إلغاء الكتم
-                        const existingMute = Memory.mutes.find(m => m.userId === currentUser.uid && m.chatId === uid);
-                        if(existingMute) await deleteDoc(doc(db, MUTES_PATH, existingMute.id));
-                        UI.showMessage('تم إلغاء الكتم 🔔');
-                    } else {
-                        // كتم دائم (لمدة 10 سنوات)
-                        await addDoc(collection(db, MUTES_PATH), {
-                            userId: currentUser.uid, chatId: uid, until: Date.now() + (10 * 365 * 24 * 60 * 60 * 1000)
-                        });
-                        UI.showMessage('تم كتم المحادثة بشكل دائم 🔕');
-                    }
-                    
-                    // تحديث الواجهة مباشرة
-                    if(!document.getElementById('profile-modal').classList.contains('hidden')) App.renderUserProfile(uid);
-                    if(!document.getElementById('chat-modal').classList.contains('hidden')) App.renderChatInfo(uid);
-                    App.renderChats();
-                    UI.closeModal('action-modal'); 
-                } catch (error) {
-                    console.error("Error muting:", error);
-                    UI.showMessage('حدث خطأ، حاول مرة أخرى');
-                }
-            }
-        
         
     </script>
 </body>
