@@ -634,7 +634,7 @@
     <div id="main-app" class="hidden flex-1 flex flex-col h-screen w-full relative">
         
         <header class="theme-nav px-4 py-3 flex justify-between items-center z-20 relative shadow-sm border-b">
-            <h1 class="text-3xl font-black text-blue-600" style="font-family: 'Cairo', sans-serif;">زايو</h1>
+            <h1 class="text-3xl font-black text-blue-600" style="font-family: 'Cairo', sans-serif;">زايلو</h1>
             <div class="flex gap-3">
                 <button onclick="UI.openModal('search-modal')" class="w-10 h-10 rounded-full theme-card flex items-center justify-center btn-tap border">
                     <i class="ph ph-magnifying-glass text-xl"></i>
@@ -3982,38 +3982,22 @@ async function sendOneSignalPush(receiverId, senderName, messageText) {
   // التحقق إذا كان المستقبل محظور أو مكتوم
   if (window.App.isBlocked(receiverId) || window.App.isMuted(receiverId)) return;
   
-  const appId = "d2884c38-8a59-46c4-8288-e40c389449e9";
-  // ملاحظة أمنية: وضع مفتاح الـ API هنا مو آمن 100% بس راح يشتغل عندك حالياً
-  const apiKey = "os_v2_app_2keeyoeklfdmjaui4qgdrfcj5hvmppbhrjyeu3v5awea56ytmtpoqefzswl5uwbver2psy4dhjjxykfs4rkjzqxsiszjjgonp2mgobq";
-
-  const shortMessage = messageText.length > 50 ? messageText.substring(0, 50) + '...' : messageText;
-
-  // التعديل هنا: استخدام include_aliases بدلاً من include_external_user_ids لأنها الطريقة الأحدث
-  const notificationData = {
-    app_id: appId,
-    target_channel: "push",
-    include_aliases: {
-        "external_id": [receiverId]
-    },
-    headings: { "en": "رسالة جديدة من " + senderName, "ar": "رسالة جديدة من " + senderName },
-    contents: { "en": shortMessage, "ar": shortMessage },
-    data: { senderId: window.currentUser.uid, type: 'message' }
-  };
+  // الرابط السحري الخاص بيك
+  const webhookUrl = "https://hook.eu1.make.com/f852g4wphbdky06us8khpbuosrdh4d7r";
 
   try {
-    const response = await fetch("https://onesignal.com/api/v1/notifications", {
+    await fetch(webhookUrl, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Authorization": "Basic " + apiKey,
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(notificationData)
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        receiverId: receiverId,
+        senderName: senderName,
+        messageText: messageText
+      })
     });
-    const result = await response.json();
-    console.log("✅ إشعار OneSignal تم إرساله:", result);
+    console.log("✅ تم إرسال الرسالة إلى الرابط السحري بنجاح");
   } catch (error) {
-    console.error("❌ خطأ في إرسال الإشعار:", error);
+    console.error("❌ خطأ في الإرسال للرابط السحري:", error);
   }
 }
 
