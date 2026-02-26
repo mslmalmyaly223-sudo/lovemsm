@@ -634,7 +634,7 @@
     <div id="main-app" class="hidden flex-1 flex flex-col h-screen w-full relative">
         
         <header class="theme-nav px-4 py-3 flex justify-between items-center z-20 relative shadow-sm border-b">
-            <h1 class="text-3xl font-black text-blue-600" style="font-family: 'Cairo', sans-serif;">زايلو</h1>
+            <h1 class="text-3xl font-black text-blue-600" style="font-family: 'Cairo', sans-serif;">زايو</h1>
             <div class="flex gap-3">
                 <button onclick="UI.openModal('search-modal')" class="w-10 h-10 rounded-full theme-card flex items-center justify-center btn-tap border">
                     <i class="ph ph-magnifying-glass text-xl"></i>
@@ -1633,20 +1633,30 @@
         if (userDoc.exists()) {
             window.currentUser = userDoc.data();
             
-            // تسجيل UID المستخدم في OneSignal للإشعارات
+// تسجيل UID المستخدم في OneSignal للإشعارات وطلب الإذن
             if (window.OneSignal) {
                 try {
                     await window.OneSignal.login(window.currentUser.uid);
-                    console.log("✅ OneSignal login successful for UID:", window.currentUser.uid);
+                    console.log("✅ تم ربط حساب OneSignal بنجاح للمعرف:", window.currentUser.uid);
+                    
+                    // هنا نطلب إذن الإشعارات من المستخدم
+                    const permission = await window.OneSignal.Notifications.requestPermission();
+                    console.log("إذن الإشعارات:", permission === true || permission === "granted" ? "مقبول" : "مرفوض");
                 } catch (error) {
-                    console.error("❌ OneSignal login error:", error);
+                    console.error("❌ خطأ في OneSignal:", error);
                 }
             } else {
                 console.log("⏳ OneSignal not ready yet, will try again...");
                 // محاولة مرة أخرى بعد ثانية إذا كان OneSignal غير جاهز
-                setTimeout(() => {
+                setTimeout(async () => {
                     if (window.OneSignal) {
-                        window.OneSignal.login(window.currentUser.uid);
+                        try {
+                            await window.OneSignal.login(window.currentUser.uid);
+                            const permission = await window.OneSignal.Notifications.requestPermission();
+                            console.log("إذن الإشعارات (المحاولة الثانية):", permission === true || permission === "granted" ? "مقبول" : "مرفوض");
+                        } catch (e) {
+                            console.error("❌ خطأ في المحاولة الثانية لـ OneSignal:", e);
+                        }
                     }
                 }, 1000);
             }
@@ -3724,7 +3734,7 @@ buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClas
     
     // إرسال الإشعار للمستقبل
     const senderName = currentUser.name;
-    sendNotification(otherUid, senderName, text);
+sendOneSignalPush(otherUid, senderName, text);
 },
 
             sendNotification: async (toUid, text, linkId) => {
@@ -3965,25 +3975,29 @@ buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClas
   });
 
 
-async function sendNotification(receiverId, senderName, messageText) {
+async function sendOneSignalPush(receiverId, senderName, messageText) {
   // التحقق إذا كان المستقبل هو المرسل (لا نرسل إشعار لنفسنا)
-  if (receiverId === currentUser.uid) return;
+  if (receiverId === window.currentUser.uid) return;
   
   // التحقق إذا كان المستقبل محظور أو مكتوم
-  if (App.isBlocked(receiverId) || App.isMuted(receiverId)) return;
+  if (window.App.isBlocked(receiverId) || window.App.isMuted(receiverId)) return;
   
   const appId = "d2884c38-8a59-46c4-8288-e40c389449e9";
+  // ملاحظة أمنية: وضع مفتاح الـ API هنا مو آمن 100% بس راح يشتغل عندك حالياً
   const apiKey = "os_v2_app_2keeyoeklfdmjaui4qgdrfcj5hvmppbhrjyeu3v5awea56ytmtpoqefzswl5uwbver2psy4dhjjxykfs4rkjzqxsiszjjgonp2mgobq";
 
-  // تقصير النص إذا كان طويلاً
   const shortMessage = messageText.length > 50 ? messageText.substring(0, 50) + '...' : messageText;
 
+  // التعديل هنا: استخدام include_aliases بدلاً من include_external_user_ids لأنها الطريقة الأحدث
   const notificationData = {
     app_id: appId,
-    include_external_user_ids: [receiverId],
+    target_channel: "push",
+    include_aliases: {
+        "external_id": [receiverId]
+    },
     headings: { "en": "رسالة جديدة من " + senderName, "ar": "رسالة جديدة من " + senderName },
     contents: { "en": shortMessage, "ar": shortMessage },
-    data: { senderId: currentUser.uid, type: 'message' } // معلومات إضافية
+    data: { senderId: window.currentUser.uid, type: 'message' }
   };
 
   try {
@@ -3991,18 +4005,18 @@ async function sendNotification(receiverId, senderName, messageText) {
       method: "POST",
       headers: {
         "Content-Type": "application/json; charset=utf-8",
-        "Authorization": "Basic " + apiKey
+        "Authorization": "Basic " + apiKey,
+        "Accept": "application/json"
       },
       body: JSON.stringify(notificationData)
     });
     const result = await response.json();
-    console.log("Notification sent:", result);
+    console.log("✅ إشعار OneSignal تم إرساله:", result);
   } catch (error) {
-    console.error("Error sending notification:", error);
+    console.error("❌ خطأ في إرسال الإشعار:", error);
   }
 }
 
     </script>
 </body>
 </html>
-
