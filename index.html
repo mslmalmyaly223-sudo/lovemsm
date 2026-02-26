@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>زايلو - Zailo</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@900&display=swap" rel="stylesheet">
     
@@ -1628,68 +1627,39 @@
                 } 
 
                 onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const userDoc = await getDoc(doc(db, USERS_PATH, user.uid));
-        if (userDoc.exists()) {
-            window.currentUser = userDoc.data();
-            
-// تسجيل UID المستخدم في OneSignal للإشعارات وطلب الإذن
-            if (window.OneSignal) {
-                try {
-                    await window.OneSignal.login(window.currentUser.uid);
-                    console.log("✅ تم ربط حساب OneSignal بنجاح للمعرف:", window.currentUser.uid);
-                    
-                    // هنا نطلب إذن الإشعارات من المستخدم
-                    const permission = await window.OneSignal.Notifications.requestPermission();
-                    console.log("إذن الإشعارات:", permission === true || permission === "granted" ? "مقبول" : "مرفوض");
-                } catch (error) {
-                    console.error("❌ خطأ في OneSignal:", error);
-                }
-            } else {
-                console.log("⏳ OneSignal not ready yet, will try again...");
-                // محاولة مرة أخرى بعد ثانية إذا كان OneSignal غير جاهز
-                setTimeout(async () => {
-                    if (window.OneSignal) {
-                        try {
-                            await window.OneSignal.login(window.currentUser.uid);
-                            const permission = await window.OneSignal.Notifications.requestPermission();
-                            console.log("إذن الإشعارات (المحاولة الثانية):", permission === true || permission === "granted" ? "مقبول" : "مرفوض");
-                        } catch (e) {
-                            console.error("❌ خطأ في المحاولة الثانية لـ OneSignal:", e);
-                        }
-                    }
-                }, 1000);
-            }
-            
-            if(!window.currentUser.blockedUsers) window.currentUser.blockedUsers = [];
-            if(!window.currentUser.mentionsCount) window.currentUser.mentionsCount = {};
-            if(window.currentUser.showInSuggestions === undefined) window.currentUser.showInSuggestions = true; // تعديل 7: معطل افتراضياً يظهر
-            
-            const savedTheme = localStorage.getItem('xylo-theme');
-            if(savedTheme === 'dark') {
-                document.body.classList.add('dark-theme');
-                const themeToggle = document.getElementById('theme-toggle');
-                if(themeToggle) themeToggle.checked = true;
-            }
+                    if (user) {
+                        const userDoc = await getDoc(doc(db, USERS_PATH, user.uid));
+                        if (userDoc.exists()) {
+                            window.currentUser = userDoc.data();
+                            if(!window.currentUser.blockedUsers) window.currentUser.blockedUsers = [];
+                            if(!window.currentUser.mentionsCount) window.currentUser.mentionsCount = {};
+                            if(window.currentUser.showInSuggestions === undefined) window.currentUser.showInSuggestions = true; // تعديل 7: معطل افتراضياً يظهر
+                            
+                            const savedTheme = localStorage.getItem('xylo-theme');
+                            if(savedTheme === 'dark') {
+                                document.body.classList.add('dark-theme');
+                                const themeToggle = document.getElementById('theme-toggle');
+                                if(themeToggle) themeToggle.checked = true;
+                            }
 
-            setTimeout(() => { App.startCore(); }, 500); 
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const postIdParam = urlParams.get('post');
-            const userParam = urlParams.get('user');
-            if(postIdParam) {
-                setTimeout(() => App.openSinglePost(postIdParam), 1000);
-            } else if (userParam) {
-                setTimeout(() => UI.openProfileByUsername(userParam), 1000);
-            }
-        } else {
-            setTimeout(() => { UI.showScreen('setup-profile-screen'); }, 500);
-        }
-    } else {
-        window.currentUser = null;
-        setTimeout(() => { UI.showScreen('auth-screen'); }, 2000);
-    }
-});
+                            setTimeout(() => { App.startCore(); }, 500); 
+                            
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const postIdParam = urlParams.get('post');
+                            const userParam = urlParams.get('user');
+                            if(postIdParam) {
+                                setTimeout(() => App.openSinglePost(postIdParam), 1000);
+                            } else if (userParam) {
+                                setTimeout(() => UI.openProfileByUsername(userParam), 1000);
+                            }
+                        } else {
+                            setTimeout(() => { UI.showScreen('setup-profile-screen'); }, 500);
+                        }
+                    } else {
+                        window.currentUser = null;
+                        setTimeout(() => { UI.showScreen('auth-screen'); }, 2000);
+                    }
+                });
             },
             register: async () => {
                 const name = document.getElementById('reg-name').value;
@@ -3705,37 +3675,33 @@ buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClas
             },
 
             sendMessage: async () => {
-    const otherUid = window.currentChatUserId;
-    const inputEl = document.getElementById('chat-input');
-    const text = inputEl.value.trim();
-    if(!text || !otherUid) return;
+                const otherUid = window.currentChatUserId;
+                const inputEl = document.getElementById('chat-input');
+                const text = inputEl.value.trim();
+                if(!text || !otherUid) return;
 
-    inputEl.value = '';
-    inputEl.style.height = ''; 
-    inputEl.focus(); 
-    
-    try { await deleteDoc(doc(db, TYPING_PATH, `${currentUser.uid}_${otherUid}`)); } catch(e){}
+                inputEl.value = '';
+                inputEl.style.height = ''; 
+                inputEl.focus(); 
+                
+                try { await deleteDoc(doc(db, TYPING_PATH, `${currentUser.uid}_${otherUid}`)); } catch(e){}
 
-    const payload = {
-        participants: [currentUser.uid, otherUid],
-        senderId: currentUser.uid,
-        text: text,
-        timestamp: Date.now(),
-        read: false 
-    };
+                const payload = {
+                    participants: [currentUser.uid, otherUid],
+                    senderId: currentUser.uid,
+                    text: text,
+                    timestamp: Date.now(),
+                    read: false 
+                };
 
-    if(window.replyingToMessage) {
-        payload.replyToId = window.replyingToMessage;
-        App.cancelReply();
-    }
-    
-    // حفظ الرسالة في Firebase
-    await addDoc(collection(db, MESSAGES_PATH), payload);
-    
-    // إرسال الإشعار للمستقبل
-    const senderName = currentUser.name;
-sendOneSignalPush(otherUid, senderName, text);
-},
+                if(window.replyingToMessage) {
+                    payload.replyToId = window.replyingToMessage;
+                    App.cancelReply();
+                }
+                
+                await addDoc(collection(db, MESSAGES_PATH), payload);
+                // Firebase سيقوم بتحديث الشاشة فوراً وبشكل تلقائي عبر onSnapshot
+            },
 
             sendNotification: async (toUid, text, linkId) => {
                 if(toUid === currentUser.uid) return;
@@ -3966,41 +3932,7 @@ sendOneSignalPush(otherUid, senderName, text);
         window.onload = () => {
             Auth.init();
         };
-
-  window.OneSignalDeferred = window.OneSignalDeferred || [];
-  OneSignalDeferred.push(async function(OneSignal) {
-    await OneSignal.init({
-      appId: "d2884c38-8a59-46c4-8288-e40c389449e9",
-    });
-  });
-
-
-async function sendOneSignalPush(receiverId, senderName, messageText) {
-  // التحقق إذا كان المستقبل هو المرسل (لا نرسل إشعار لنفسنا)
-  if (receiverId === window.currentUser.uid) return;
-  
-  // التحقق إذا كان المستقبل محظور أو مكتوم
-  if (window.App.isBlocked(receiverId) || window.App.isMuted(receiverId)) return;
-  
-  // الرابط السحري الخاص بيك
-  const webhookUrl = "https://hook.eu1.make.com/f852g4wphbdky06us8khpbuosrdh4d7r";
-
-  try {
-    await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        receiverId: receiverId,
-        senderName: senderName,
-        messageText: messageText
-      })
-    });
-    console.log("✅ تم إرسال الرسالة إلى الرابط السحري بنجاح");
-  } catch (error) {
-    console.error("❌ خطأ في الإرسال للرابط السحري:", error);
-  }
-}
-
+        
     </script>
 </body>
 </html>
