@@ -3941,7 +3941,32 @@ buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClas
     });
   });
 
+
+        // هاي الدالة هي المسؤولة عن إرسال الإشعار
+async function sendNotification(receiverId, senderName, messageText) {
+  const appId = "d2884c38-8a59-46c4-8288-e40c389449e9";
+  const apiKey = "os_v2_app_2keeyoeklfdmjaui4qgdrfcj5edd4ibhytnu62fm774mq6t6azqxw344ak3zh7h3duberucqpj7n7luo7rlj4zbqzqrmnnzxralm46i";
+
+  const notificationData = {
+    app_id: appId,
+    include_external_user_ids: [receiverId], // رقم الشخص اللي راح يستلم الإشعار
+    headings: { "en": "رسالة جديدة من " + senderName },
+    contents: { "en": messageText }
+  };
+
+  fetch("https://onesignal.com/api/v1/notifications", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Authorization": "Basic " + apiKey
+    },
+    body: JSON.stringify(notificationData)
+  });
+}
+
+
     </script>
 </body>
 </html>
+
 
