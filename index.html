@@ -2014,23 +2014,32 @@
             },
 
             startCore: () => {
-                UI.showScreen('main-app');
-                App.updateUIWithUserData();
-                App.setupListeners();
-                App.updateLastActive();
-                Mentions.setup();
-                PullToRefresh.init();
-                setInterval(App.updateLastActive, 60000);
-                
-                const themeToggle = document.getElementById('theme-toggle');
-                if(themeToggle) themeToggle.checked = document.body.classList.contains('dark-theme');
+                UI.showScreen('main-app');
+                App.updateUIWithUserData();
+                App.setupListeners();
+                App.updateLastActive();
+                Mentions.setup();
+                PullToRefresh.init();
+                setInterval(App.updateLastActive, 60000);
+                
+                const themeToggle = document.getElementById('theme-toggle');
+                if(themeToggle) themeToggle.checked = document.body.classList.contains('dark-theme');
 
-                // إظهار زر لوحة التحكم للمالك فقط (تم التحسين)
-                const userEmail = currentUser?.email || (auth.currentUser ? auth.currentUser.email : '');
-                if(userEmail && userEmail.toLowerCase() === window.MASTER_EMAIL.toLowerCase()) {
-                    document.getElementById('admin-panel-btn').classList.remove('hidden');
-                }
-            },
+                // إظهار زر لوحة التحكم للمالك فقط
+                const userEmail = currentUser?.email || (auth.currentUser ? auth.currentUser.email : '');
+                if(userEmail && userEmail.toLowerCase() === window.MASTER_EMAIL.toLowerCase()) {
+                    document.getElementById('admin-panel-btn').classList.remove('hidden');
+                }
+
+                // التعديل الجديد هنا: إضافة مستمع لحالة التطبيق لضبط آخر ظهور بدقة
+                document.addEventListener("visibilitychange", () => {
+                    if (document.visibilityState === "hidden") {
+                        App.updateLastActive(true); // التطبيق في الخلفية
+                    } else if (document.visibilityState === "visible") {
+                        App.updateLastActive(false); // عاد للتطبيق
+                    }
+                });
+            },
 
             updateUIWithUserData: () => {
                 const photo = currentUser.photo || App.getDefaultAvatar();
@@ -2043,7 +2052,8 @@
 
             updateLastActive: async (forceOffline = false) => {
                 if(!currentUser) return;
-                const now = forceOffline ? (Date.now() - (6 * 60 * 1000)) : Date.now();
+                // إذا تم الخروج من التطبيق يعطيه وقت الخروج الفعلي، ليس ناقص 6 دقائق
+                const now = forceOffline ? (Date.now() - (1 * 60 * 1000)) : Date.now();
                 currentUser.lastActive = now;
                 try {
                     await updateDoc(doc(db, USERS_PATH, currentUser.uid), { lastActive: now });
@@ -2115,9 +2125,13 @@
                         let needsRender = false;
                         
                         // 1. تحديث الرسائل غير المقروءة
-                        const unreadInChat = snap.docs.filter(d => d.data().senderId === window.currentChatUserId && !d.data().read && d.data().participants.includes(currentUser.uid));
-                        if(unreadInChat.length > 0) {
-                            unreadInChat.forEach(d => updateDoc(d.ref, {read: true}));
+                        // 1. تحديث الرسائل غير المقروءة (فقط إذا كانت نافذة المحادثة مفتوحة على الشاشة)
+                        const isChatOpen = !document.getElementById('chat-modal').classList.contains('hidden');
+                        if (isChatOpen && window.currentChatUserId) {
+                            const unreadInChat = snap.docs.filter(d => d.data().senderId === window.currentChatUserId && !d.data().read && d.data().participants.includes(currentUser.uid));
+                            if(unreadInChat.length > 0) {
+                                unreadInChat.forEach(d => updateDoc(d.ref, {read: true}));
+                            }
                         }
 
                         // 2. مزامنة التغييرات بدقة بدون أي تكرار
@@ -4081,6 +4095,16 @@ el.addEventListener('touchmove', cancelPress);
 
                     let msgPreview = lastMsg.isNoteReply ? `[رد على ملاحظة] ${lastMsg.text}` : lastMsg.text;
                     
+                    // التحقق الآمن مما إذا كان المستخدم يكتب الآن
+                    if (!Memory.typingStatus) Memory.typingStatus = {}; // حماية حتى لا تختفي المحادثات
+                    const typingData = Memory.typingStatus[`${otherUid}_${currentUser.uid}`];
+                    let isTypingNow = false;
+                    if(typingData && typingData.text && (Date.now() - typingData.timestamp < 5000)) {
+                        isTypingNow = true;
+                        msgPreview = `<span class="text-blue-500 font-bold animate-pulse">يكتب الآن...</span>`;
+                        tickHtml = ''; // إخفاء الصحين أثناء الكتابة
+                    }
+                    
                     let pinHtml = '';
                     if(pin) {
                         if(pin.type === 'love') {
@@ -4330,7 +4354,9 @@ el.addEventListener('touchmove', cancelPress);
                     });
                     // -----------------------------------------------------------
 
-                    const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-200"></i>' : '<i class="ph ph-check opacity-70"></i>') : '';
+                    // الكود الآمن والجميل لعلامات الصح (بدون تخريب حجم الرسالة)
+                    const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-500 text-[16px] ml-1 drop-shadow-sm"></i>' : '<i class="ph ph-check opacity-70 text-[16px] ml-1"></i>') : '';
+                    
                     el.innerHTML = `<p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p><span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${tickHtml}</span>`;
                     
                     row.appendChild(el);
