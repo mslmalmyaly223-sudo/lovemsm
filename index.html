@@ -785,7 +785,7 @@
                     <div class="w-full theme-card p-4 rounded-xl shadow-sm border flex items-center justify-between">
                         <div class="flex items-center gap-4">
                             <div class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center"><i class="ph-fill ph-moon text-xl"></i></div>
-                            <span class="font-semibold text-right theme-text">الوضع الليلي</span>
+                            <span id="theme-text-label" class="font-semibold text-right theme-text">الوضع الليلي</span>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="theme-toggle" class="sr-only peer" onchange="App.toggleTheme(this.checked)">
@@ -862,7 +862,7 @@
             </div>
             <div class="p-5 flex flex-col items-center">
                 <img id="create-post-avatar" src="" class="w-14 h-14 rounded-full object-cover border border-gray-100 mb-4 shadow-sm">
-                <textarea id="post-text-input" placeholder="بم تفكر؟ استخدم @ لذكر صديق" class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 text-center font-semibold text-lg outline-none resize-none theme-text min-h-[120px]" rows="4"></textarea>
+                <textarea id="post-text-input" placeholder="بم تفكر؟ استخدم @ لذكر صديق" class="w-full theme-bg border border-[var(--border-color)] rounded-2xl p-4 text-center font-semibold text-lg outline-none resize-none theme-text min-h-[120px]" rows="4"></textarea>
             </div>
         </div>
     </div>
@@ -884,8 +884,11 @@
     </div>
 
     <!-- الملاحظات عرض -->
-    <div id="note-view-modal" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col modal-slide-in">
-        <div class="p-4 flex items-center gap-3 absolute top-0 w-full z-10 bg-gradient-to-b from-black/80 to-transparent">
+    <div id="note-view-modal" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col modal-slide-in select-none">
+        <div id="story-progress-container" class="absolute top-2 left-2 right-2 flex gap-1 z-20">
+            </div>
+
+        <div class="p-4 pt-6 flex items-center gap-3 absolute top-0 w-full z-10 bg-gradient-to-b from-black/80 to-transparent">
             <img id="nv-avatar" class="w-10 h-10 rounded-full border border-gray-600 object-cover cursor-pointer btn-tap" onclick="App.viewProfileFromNote()">
             <div class="flex-1 flex flex-col cursor-pointer" onclick="App.viewProfileFromNote()">
                 <div class="flex items-center gap-1">
@@ -895,19 +898,25 @@
             </div>
             
             <button id="nv-options-btn" class="hidden w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center btn-tap"><i class="ph ph-dots-three-vertical text-xl"></i></button>
-            <button onclick="UI.closeModal('note-view-modal')" class="w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center btn-tap"><i class="ph ph-x text-lg"></i></button>
+            <button onclick="App.closeStoryViewer()" class="w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center btn-tap"><i class="ph ph-x text-lg"></i></button>
         </div>
         
-        <div class="flex-1 flex items-center justify-center p-6 relative">
-            <div id="nv-text" class="text-white text-3xl font-black text-center leading-relaxed whitespace-pre-wrap">...</div>
+        <div class="absolute inset-0 z-0 flex">
+            <div class="w-1/3 h-full cursor-pointer" onclick="App.prevStory()"></div>
+            <div id="story-pause-area" class="w-1/3 h-full cursor-pointer"></div>
+            <div class="w-1/3 h-full cursor-pointer" onclick="App.nextStory()"></div>
+        </div>
+
+        <div class="flex-1 flex items-center justify-center p-6 relative pointer-events-none">
+            <div id="nv-text" class="text-white text-3xl font-black text-center leading-relaxed whitespace-pre-wrap drop-shadow-lg">...</div>
         </div>
 
         <div id="note-bottom-section" class="p-4 w-full flex flex-col gap-3 z-10 bg-gradient-to-t from-black/80 to-transparent pb-safe relative">
             <div id="note-reply-section" class="hidden flex gap-3 items-center w-full">
-                <input type="text" id="note-reply-input" placeholder="إرسال رسالة..." class="flex-1 bg-white/10 text-white placeholder-white/50 border border-white/20 rounded-full px-5 py-3 outline-none text-sm focus:bg-white/20 transition-colors backdrop-blur-sm">
-                <button onmousedown="event.preventDefault(); App.sendNoteReply();" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center btn-tap shadow-lg shrink-0"><i class="ph-fill ph-paper-plane-right text-xl"></i></button>
+                <input type="text" id="note-reply-input" placeholder="إرسال رسالة..." class="flex-1 bg-white/10 text-white placeholder-white/50 border border-white/20 rounded-full px-5 py-3 outline-none text-sm focus:bg-white/20 transition-colors backdrop-blur-sm relative z-20">
+                <button onmousedown="event.preventDefault(); App.sendNoteReply();" class="w-12 h-12 bg-blue-600 text-white rounded-full flex items-center justify-center btn-tap shadow-lg shrink-0 relative z-20"><i class="ph-fill ph-paper-plane-right text-xl"></i></button>
             </div>
-            <div id="note-viewers-section" class="hidden flex flex-col items-center w-full">
+            <div id="note-viewers-section" class="hidden flex flex-col items-center w-full relative z-20">
                 <button onclick="App.showNoteViewers()" class="flex flex-col items-center gap-1 text-white opacity-80 hover:opacity-100 transition-opacity btn-tap p-2">
                     <i class="ph ph-eye text-2xl"></i>
                     <span id="note-viewers-count" class="text-sm font-bold">0</span>
@@ -1992,12 +2001,15 @@
             },
 
             toggleTheme: (isDark) => {
+                const themeLabel = document.getElementById('theme-text-label');
                 if(isDark) {
                     document.body.classList.add('dark-theme');
                     localStorage.setItem('xylo-theme', 'dark');
+                    if(themeLabel) themeLabel.innerText = "الوضع النهاري";
                 } else {
                     document.body.classList.remove('dark-theme');
                     localStorage.setItem('xylo-theme', 'light');
+                    if(themeLabel) themeLabel.innerText = "الوضع الليلي";
                 }
             },
 
@@ -2898,39 +2910,82 @@ renderReports: () => {
                 App.notifyMentions(text, 'تعليق', postId);
             },
 
+            // --- بداية نظام الستوريات (الملاحظات) المحدث ---
             renderNotes: () => {
                 const container = document.getElementById('notes-container');
                 const myBtnContainer = container.firstElementChild.outerHTML;
                 container.innerHTML = myBtnContainer;
 
-                const sortedNotes = [...Memory.notes].sort((a,b) => b.timestamp - a.timestamp);
-                const visibleNotes = sortedNotes.filter(n => App.isFriend(currentUser.uid, n.authorId) && !App.isBlocked(n.authorId));
+                const now = Date.now();
+                const oneDay = 24 * 60 * 60 * 1000;
+                // جلب الملاحظات الفعالة فقط وتجميعها حسب المستخدم
+                const activeNotes = Memory.notes.filter(n => (now - n.timestamp) < oneDay).sort((a,b) => a.timestamp - b.timestamp);
                 
-                const myActiveNote = sortedNotes.find(n => n.authorId === currentUser.uid);
-                
+                const groupedNotes = {};
+                activeNotes.forEach(n => {
+                    if(!groupedNotes[n.authorId]) groupedNotes[n.authorId] = [];
+                    groupedNotes[n.authorId].push(n);
+                });
+
+                const myNotes = groupedNotes[currentUser.uid] || [];
                 const myBtnEl = container.firstElementChild;
                 const myAvatar = myBtnEl.querySelector('#current-user-avatar-note');
                 const myPlusIcon = myBtnEl.querySelector('#my-note-plus-icon');
                 
-                if(myActiveNote) {
-                    myAvatar.parentElement.classList.add('story-ring');
-                    if(myActiveNote.viewers && myActiveNote.viewers.includes(currentUser.uid)) {
-                        myAvatar.parentElement.classList.add('viewed');
+                // رسم الدائرة المقطعة بناءً على عدد الملاحظات (Gradient)
+                const getConicGradient = (count, isAllViewed) => {
+                    if(count === 0) return '';
+                    if(count === 1) return `conic-gradient(${isAllViewed ? '#9ca3af' : '#3b82f6'} 100%, transparent 0)`;
+                    
+                    const gap = 5; // الفراغ بالدرجات
+                    const segment = (360 - (count * gap)) / count;
+                    let grad = [];
+                    let currentAngle = 0;
+                    const color = isAllViewed ? '#9ca3af' : '#3b82f6'; // اللون الأزرق أو الرمادي
+
+                    for(let i=0; i<count; i++) {
+                        grad.push(`${color} ${currentAngle}deg ${currentAngle + segment}deg`);
+                        grad.push(`transparent ${currentAngle + segment}deg ${currentAngle + segment + gap}deg`);
+                        currentAngle += segment + gap;
                     }
+                    return `conic-gradient(${grad.join(', ')})`;
+                };
+
+                if(myNotes.length > 0) {
+                    const isAllViewed = myNotes.every(n => n.viewers && n.viewers.includes(currentUser.uid));
+                    myAvatar.parentElement.style.background = getConicGradient(myNotes.length, isAllViewed);
+                    myAvatar.parentElement.style.padding = '3px';
+                    myAvatar.parentElement.style.borderRadius = '50%';
                     myAvatar.classList.replace('border-transparent', 'border-white');
-                    myPlusIcon.classList.add('hidden');
-                    myBtnEl.onclick = () => App.viewNoteFull(myActiveNote, currentUser);
+                    
+                    // السهم الصغير للإضافة (يظهر فقط إذا كان عدد الملاحظات أقل من 5)
+                    if(myNotes.length < 5) {
+                        myPlusIcon.classList.remove('hidden');
+                        myPlusIcon.innerHTML = '<i class="ph ph-plus text-white text-[10px] font-bold"></i>';
+                        myPlusIcon.onclick = (e) => { e.stopPropagation(); UI.openModal('create-note-modal'); };
+                    } else {
+                        myPlusIcon.classList.add('hidden');
+                    }
+                    
+                    myBtnEl.onclick = () => App.startStorySession(currentUser.uid, groupedNotes);
                 } else {
                     myAvatar.src = currentUser.photo || App.getDefaultAvatar();
-                    myAvatar.parentElement.classList.remove('story-ring');
+                    myAvatar.parentElement.style.background = 'none';
                     myAvatar.classList.replace('border-white', 'border-transparent');
                     myPlusIcon.classList.remove('hidden');
-                    myBtnEl.onclick = App.checkAndCreateNote;
+                    myBtnEl.onclick = () => UI.openModal('create-note-modal');
                 }
 
-                visibleNotes.forEach(note => {
-                    const author = Memory.users[note.authorId];
+                // رسم ملاحظات الأصدقاء
+                Object.keys(groupedNotes).forEach(authorId => {
+                    if(authorId === currentUser.uid) return; // تم رسم المستخدم الحالي
+                    if(!App.isFriend(currentUser.uid, authorId) || App.isBlocked(authorId)) return;
+
+                    const author = Memory.users[authorId];
                     if(!author) return;
+
+                    const userNotes = groupedNotes[authorId];
+                    const isAllViewed = userNotes.every(n => n.viewers && n.viewers.includes(currentUser.uid));
 
                     const el = document.createElement('div');
                     el.className = 'inline-flex flex-col items-center cursor-pointer shrink-0 btn-tap w-16';
@@ -2938,21 +2993,165 @@ renderReports: () => {
                     const shortName = author.name.split(' ')[0];
                     
                     el.innerHTML = `
-                        <div class="relative story-ring ${note.viewers && note.viewers.includes(currentUser.uid) ? 'viewed' : ''}">
-                            <img src="${author.photo || App.getDefaultAvatar()}" class="w-16 h-16 rounded-full object-cover border-2 shadow-sm" style="border-color: var(--bg-color);">
+                        <div class="relative rounded-full" style="background: ${getConicGradient(userNotes.length, isAllViewed)}; padding: 3px;">
+                            <img src="${author.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--bg-color)] shadow-sm">
                         </div>
-                        <span class="text-[11px] font-bold mt-1 w-full text-center truncate theme-text">${shortName}</span>
+                        <span class="text-[11px] font-bold mt-1 w-full text-center truncate theme-text ${!isAllViewed ? 'text-blue-600' : ''}">${shortName}</span>
                     `;
-                    el.onclick = () => { App.viewNoteFull(note, author); };
+                    el.onclick = () => { App.startStorySession(authorId, groupedNotes); };
                     
-                    // ترتيب: التي لم تشاهدها أولاً
-                    if(note.viewers && note.viewers.includes(currentUser.uid)) {
-                        container.appendChild(el);
-                    } else {
-                        container.insertBefore(el, container.children[1]);
-                    }
+                    // التي لم تشاهدها تظهر أولاً
+                    if(isAllViewed) container.appendChild(el);
+                    else container.insertBefore(el, container.children[1]);
                 });
             },
+
+            // منطق تشغيل الستوريات
+            storyTimer: null,
+            currentStoryAuthorId: null,
+            currentStoryIndex: 0,
+            allStoryGroups: {},
+            storyAuthorsOrder: [],
+
+            startStorySession: (authorId, groupedNotes) => {
+                App.allStoryGroups = groupedNotes;
+                // ترتيب المؤلفين (الذي ضغطت عليه أولاً، ثم البقية الذين لم تشاهدهم)
+                App.storyAuthorsOrder = Object.keys(groupedNotes).filter(id => id !== currentUser.uid && App.isFriend(currentUser.uid, id) && !App.isBlocked(id));
+                if(authorId !== currentUser.uid) {
+                    App.storyAuthorsOrder = [authorId, ...App.storyAuthorsOrder.filter(id => id !== authorId)];
+                } else {
+                    App.storyAuthorsOrder = [currentUser.uid]; // إذا ضغط على نفسه يشاهد نفسه فقط
+                }
+
+                App.currentStoryAuthorId = authorId;
+                App.currentStoryIndex = 0;
+                
+                // البحث عن أول ستوري غير مشاهَد لهذا المستخدم
+                const notes = App.allStoryGroups[authorId];
+                const firstUnreadIndex = notes.findIndex(n => !(n.viewers && n.viewers.includes(currentUser.uid)));
+                if(firstUnreadIndex !== -1) App.currentStoryIndex = firstUnreadIndex;
+
+                UI.openModal('note-view-modal');
+                App.renderCurrentStory();
+                
+                // إيقاف الستوري عند الضغط المطول بالوسط
+                const pauseArea = document.getElementById('story-pause-area');
+                pauseArea.onmousedown = () => clearTimeout(App.storyTimer);
+                pauseArea.ontouchstart = () => clearTimeout(App.storyTimer);
+                pauseArea.onmouseup = () => App.resumeStoryTimer();
+                pauseArea.ontouchend = () => App.resumeStoryTimer();
+            },
+
+            renderCurrentStory: async () => {
+                clearTimeout(App.storyTimer);
+                const authorId = App.currentStoryAuthorId;
+                const notes = App.allStoryGroups[authorId];
+                const author = Memory.users[authorId];
+                if(!notes || !author) return App.closeStoryViewer();
+
+                const note = notes[App.currentStoryIndex];
+                window.noteViewId = note.id;
+                window.noteViewAuthorId = authorId;
+
+                // تحديث الواجهة
+                document.getElementById('nv-avatar').src = author.photo || App.getDefaultAvatar();
+                document.getElementById('nv-name').innerText = author.name;
+                document.getElementById('nv-time').innerText = App.timeAgo(note.timestamp);
+                document.getElementById('nv-text').innerHTML = App.parseMentions(note.text);
+
+                // رسم أشرطة التقدم
+                const progContainer = document.getElementById('story-progress-container');
+                progContainer.innerHTML = '';
+                notes.forEach((n, idx) => {
+                    const bar = document.createElement('div');
+                    bar.className = 'flex-1 h-1 bg-white/30 rounded-full overflow-hidden';
+                    let innerClass = 'h-full bg-white transition-all duration-[5000ms] ease-linear w-0';
+                    
+                    if(idx < App.currentStoryIndex) innerClass = 'h-full bg-white w-full'; // تمت مشاهدته
+                    else if (idx === App.currentStoryIndex) innerClass = 'h-full bg-white w-0'; // الحالي
+                    
+                    bar.innerHTML = `<div id="story-prog-inner-${idx}" class="${innerClass}"></div>`;
+                    progContainer.appendChild(bar);
+                });
+
+                // تفعيل الشريط الحالي
+                setTimeout(() => {
+                    const currentBar = document.getElementById(`story-prog-inner-${App.currentStoryIndex}`);
+                    if(currentBar) currentBar.style.width = '100%';
+                }, 50);
+
+                // تسجيل المشاهدة
+                if(authorId !== currentUser.uid) {
+                    let viewers = note.viewers || [];
+                    if(!viewers.includes(currentUser.uid)) {
+                        viewers.push(currentUser.uid);
+                        try { await updateDoc(doc(db, NOTES_PATH, note.id), { viewers }); } catch(e){}
+                    }
+                    document.getElementById('note-reply-section').classList.remove('hidden');
+                    document.getElementById('note-reply-section').classList.add('flex');
+                    document.getElementById('note-viewers-section').classList.add('hidden');
+                    document.getElementById('nv-options-btn').classList.add('hidden');
+                } else {
+                    document.getElementById('note-reply-section').classList.add('hidden');
+                    document.getElementById('note-viewers-section').classList.remove('hidden');
+                    document.getElementById('note-viewers-section').classList.add('flex');
+                    document.getElementById('nv-options-btn').classList.remove('hidden');
+                    document.getElementById('note-viewers-count').innerText = (note.viewers || []).length;
+                    document.getElementById('nv-options-btn').onclick = () => {
+                        App.openManageNote(note.id, note.text);
+                        App.closeStoryViewer();
+                    };
+                }
+
+                App.resumeStoryTimer();
+            },
+
+            resumeStoryTimer: () => {
+                clearTimeout(App.storyTimer);
+                App.storyTimer = setTimeout(() => {
+                    App.nextStory();
+                }, 5000); // 5 ثواني لكل ستوري
+            },
+
+            nextStory: () => {
+                const notes = App.allStoryGroups[App.currentStoryAuthorId];
+                if(App.currentStoryIndex < notes.length - 1) {
+                    App.currentStoryIndex++;
+                    App.renderCurrentStory();
+                } else {
+                    // الانتقال للمستخدم التالي
+                    const currentAuthorIdx = App.storyAuthorsOrder.indexOf(App.currentStoryAuthorId);
+                    if(currentAuthorIdx !== -1 && currentAuthorIdx < App.storyAuthorsOrder.length - 1) {
+                        App.currentStoryAuthorId = App.storyAuthorsOrder[currentAuthorIdx + 1];
+                        App.currentStoryIndex = 0;
+                        App.renderCurrentStory();
+                    } else {
+                        App.closeStoryViewer();
+                    }
+                }
+            },
+
+            prevStory: () => {
+                if(App.currentStoryIndex > 0) {
+                    App.currentStoryIndex--;
+                    App.renderCurrentStory();
+                } else {
+                    // الانتقال للمستخدم السابق
+                    const currentAuthorIdx = App.storyAuthorsOrder.indexOf(App.currentStoryAuthorId);
+                    if(currentAuthorIdx > 0) {
+                        App.currentStoryAuthorId = App.storyAuthorsOrder[currentAuthorIdx - 1];
+                        App.currentStoryIndex = App.allStoryGroups[App.currentStoryAuthorId].length - 1; // آخر ستوري له
+                        App.renderCurrentStory();
+                    }
+                }
+            },
+
+            closeStoryViewer: () => {
+                clearTimeout(App.storyTimer);
+                UI.closeModal('note-view-modal');
+                App.renderNotes(); // تحديث الدوائر بالخارج
+            },
+            // --- نهاية نظام الستوريات ---
             
             viewNoteFull: async (note, author) => {
                 document.getElementById('nv-avatar').src = author.photo || App.getDefaultAvatar();
@@ -3059,6 +3258,15 @@ renderReports: () => {
             createNote: async () => {
                 const text = document.getElementById('note-text-input').value.trim();
                 if(!text) return UI.showMessage('اكتب شيئاً');
+                
+                // تحقق من العدد (حد أقصى 5 ملاحظات نشطة)
+                const now = Date.now();
+                const oneDay = 24 * 60 * 60 * 1000;
+                const myActiveNotes = Memory.notes.filter(n => n.authorId === currentUser.uid && (now - n.timestamp) < oneDay);
+                if(myActiveNotes.length >= 5) {
+                    return UI.showMessage('لا يمكنك نشر أكثر من 5 ملاحظات في اليوم');
+                }
+
                 UI.closeModal('create-note-modal');
                 await addDoc(collection(db, NOTES_PATH), {
                     authorId: currentUser.uid, text: text, timestamp: Date.now(), viewers: []
@@ -3550,8 +3758,18 @@ renderReports: () => {
             },
             
             togglePinMessage: async (msgId, isPinned) => {
+                // تحديث الرسالة في قاعدة البيانات للطرفين
                 await updateDoc(doc(db, MESSAGES_PATH, msgId), { pinned: !isPinned });
-                UI.showMessage(isPinned ? "تم إلغاء التثبيت" : "تم تثبيت الرسالة");
+                
+                // تحديث الذاكرة المحلية فوراً لتسريع الاستجابة
+                const msgIndex = window.allMessages.findIndex(m => m.id === msgId);
+                if(msgIndex !== -1) window.allMessages[msgIndex].pinned = !isPinned;
+                
+                const memoryIndex = Memory.messages.findIndex(m => m.id === msgId);
+                if(memoryIndex !== -1) Memory.messages[memoryIndex].pinned = !isPinned;
+
+                App.renderMessages(true); // إعادة رسم المحادثة لاظهار شريط التثبيت
+                UI.showMessage(isPinned ? "تم إلغاء التثبيت من الطرفين" : "تم تثبيت الرسالة للطرفين");
                 UI.closeModal('action-modal');
             },
             
