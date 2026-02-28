@@ -1460,8 +1460,10 @@
         const BANNED_PATH = `artifacts/${appId}/public/data/banned`; // جديد
 
         window.Memory = {
-            users: {}, posts: [], comments: [], requests: [], friends: [], messages: [], notes: [], notifications: [], pins: [], mutes: [], reports: [], banned: []
-        };
+    users: {}, posts: [], comments: [], requests: [], friends: [], 
+    messages: [], notes: [], notifications: [], pins: [], mutes: [], 
+    reports: [], banned: [], typing: {}, presence: {} // أضفنا typing و presence هنا
+};
 
         window.currentUser = null;
         window.currentChatUserId = null;
@@ -2225,6 +2227,8 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                     App.renderChats(); 
                     App.renderFeed(); 
                 }, errHandler);
+                
+                
 
                 onSnapshot(collection(db, POSTS_PATH), (snap) => {
                     Memory.posts = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -2341,20 +2345,31 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                 }, errHandler);
 
                 onSnapshot(collection(db, TYPING_PATH), (snap) => {
-                    if(!window.currentChatUserId) return;
-                    const typingDoc = snap.docs.find(d => d.id === `${window.currentChatUserId}_${currentUser.uid}`);
-                    const bubble = document.getElementById('live-typing-bubble');
-                    if(typingDoc && typingDoc.data().text) {
-                        if(Date.now() - typingDoc.data().timestamp < 5000) {
-                            bubble.innerText = typingDoc.data().text;
-                            bubble.classList.remove('hidden');
-                            const container = document.getElementById('chat-messages-container');
-                            container.scrollTop = container.scrollHeight;
-                            return;
-                        }
-                    }
-                    bubble.classList.add('hidden');
-                }, errHandler);
+    // تحديث الذاكرة لكل حالات الكتابة الموجهة لي
+    Memory.typing = {};
+    snap.docs.forEach(d => {
+        const data = d.data();
+        // إذا كانت الكتابة موجهة لي ولم تمر عليها أكثر من 5 ثواني
+        if (d.id.endsWith(`_${currentUser.uid}`) && (Date.now() - data.timestamp < 5000)) {
+            const senderId = d.id.split('_')[0];
+            Memory.typing[senderId] = data.text;
+        }
+    });
+
+    // 1. تحديث قائمة المحادثات بالخارج
+    App.renderChats();
+
+    // 2. تحديث الفقاعة داخل المحادثة إذا كانت مفتوحة
+    const bubble = document.getElementById('live-typing-bubble');
+    if(window.currentChatUserId && Memory.typing[window.currentChatUserId]) {
+        bubble.innerText = Memory.typing[window.currentChatUserId];
+        bubble.classList.remove('hidden');
+        const container = document.getElementById('chat-messages-container');
+        if(container) container.scrollTop = container.scrollHeight;
+    } else if(bubble) {
+        bubble.classList.add('hidden');
+    }
+}, errHandler);
 
                 onSnapshot(collection(db, NOTIFS_PATH), (snap) => {
                     Memory.notifications = snap.docs.map(d => ({id: d.id, ...d.data()}))
@@ -4655,7 +4670,7 @@ showChatOptions: (otherUid, event) => {
     const badgeColorClass = isMuted ? 'bg-gray-400' : 'bg-blue-600';
     const isLastMsgMe = chatData.lastMsg.senderId === currentUser.uid;
 const tickHtml = isLastMsgMe ? (chatData.lastMsg.read ? '<i class="ph-fill ph-checks text-blue-500 text-[16px] ml-1"></i>' : '<i class="ph ph-check opacity-70 text-[16px] ml-1"></i>') : '';
-
+const isTyping = Memory.typing[otherUid]; // التحقق من حالة الكتابة لهذا المستخدم
 el.innerHTML = `
     <div class="relative shrink-0">
         <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border pointer-events-none">
@@ -4667,9 +4682,10 @@ el.innerHTML = `
             <span class="text-xs opacity-60">${App.timeAgo(chatData.lastMsg.timestamp)}</span>
         </div>
         <div class="flex items-center justify-between mt-1">
-            <p class="text-sm truncate opacity-60 theme-text flex items-center">
-                ${tickHtml} ${chatData.lastMsg.text}
-            </p>
+            ${isTyping ? 
+                `<p class="text-sm truncate text-blue-500 font-bold animate-pulse">يكتب الآن...</p>` : 
+                `<p class="text-sm truncate opacity-60 theme-text flex items-center">${tickHtml} ${chatData.lastMsg.text}</p>`
+            }
             ${hasUnread ? `<span class="${badgeColorClass} text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0">${chatData.unreadCount}</span>` : ''}
         </div>
     </div>
