@@ -584,6 +584,25 @@
             font-weight: bold;
             border: 2px solid var(--card-bg);
         }
+        
+        /* حركات جديدة لمستويات الكائن العليا */
+        @keyframes spinRing {
+            100% { transform: rotate(360deg); }
+        }
+        @keyframes pulseAura {
+            0%, 100% { transform: scale(1); opacity: 0.4; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        .spin-ring {
+            transform-origin: center;
+            animation: spinRing 4s linear infinite;
+        }
+        .pulse-aura {
+            transform-origin: center;
+            animation: pulseAura 2s ease-in-out infinite;
+        }
+        
+        
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col antialiased pb-safe theme-bg">
@@ -871,21 +890,26 @@
         </div>
     </div>
 
-    <!-- نافذة إنشاء ملاحظة -->
     <div id="create-note-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-        <div class="w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative rounded-3xl" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-            <div class="p-4 flex items-center justify-between w-full">
-                <button onclick="UI.closeModal('create-note-modal')" class="p-2 text-white font-bold btn-tap drop-shadow-md">إلغاء</button>
-                <span class="font-bold text-white text-lg">ملاحظة جديدة</span>
-                <button onclick="App.createNote()" class="bg-white text-purple-700 px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">مشاركة</button>
-            </div>
-            <div class="p-6 flex flex-col items-center justify-center">
-                <img id="create-note-preview-avatar" src="" class="w-20 h-20 rounded-full border-4 border-white shadow-lg mb-6">
-                <textarea id="note-text-input" placeholder="اكتب ملاحظة لـ 24 ساعة..." class="w-full bg-transparent border-none text-white text-2xl font-bold text-center outline-none resize-none placeholder-white/60" rows="3" maxlength="60"></textarea>
-                <p class="text-white/50 text-xs mt-2">الحد الأقصى 60 حرفاً</p>
-            </div>
+    <div class="w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative rounded-3xl" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <div class="p-4 flex items-center justify-between w-full">
+            <button onclick="UI.closeModal('create-note-modal')" class="p-2 text-white font-bold btn-tap drop-shadow-md">إلغاء</button>
+            <span class="font-bold text-white text-lg">ملاحظة جديدة</span>
+            <button onclick="App.createNote()" class="bg-white text-purple-700 px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">مشاركة</button>
+        </div>
+        <div class="p-6 flex flex-col items-center justify-center">
+            <img id="create-note-preview-avatar" src="" class="w-20 h-20 rounded-full border-4 border-white shadow-lg mb-4">
+            <textarea id="note-text-input" placeholder="اكتب ملاحظة لـ 24 ساعة..." class="w-full bg-transparent border-none text-white text-2xl font-bold text-center outline-none resize-none placeholder-white/60" rows="3" maxlength="60"></textarea>
+            
+            <label class="flex items-center gap-2 bg-black/20 p-3 rounded-xl mt-4 cursor-pointer btn-tap border border-white/30 w-full justify-center">
+                <input type="checkbox" id="is-close-note" class="w-5 h-5 accent-green-500 rounded">
+                <span class="text-white font-bold text-sm">مشاركة مع الكلوز فقط 🟢</span>
+            </label>
+            <p class="text-white/50 text-xs mt-2">الحد الأقصى 60 حرفاً</p>
         </div>
     </div>
+</div>
+
 
     <!-- الملاحظات عرض -->
     <div id="note-view-modal" class="hidden fixed inset-0 bg-black/95 z-[100] flex flex-col modal-slide-in select-none">
@@ -1111,7 +1135,9 @@
         <div class="p-3 border-b flex items-center justify-between theme-card shadow-sm sticky top-0 z-30">
     <button onclick="UI.closeModal('profile-modal')" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
     <span class="font-bold text-lg">الملف الشخصي</span>
-    <button id="profile-options-btn" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-dots-three-outline-fill text-lg"></i></button>
+    <button id="profile-options-btn" class="w-9 h-9 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-full flex items-center justify-center btn-tap shadow-sm border border-gray-200 dark:border-gray-700">
+        <i class="ph-bold ph-dots-three text-xl"></i>
+    </button>
 </div>
 
         <div class="flex-1 overflow-y-auto smooth-scroll pb-10 relative">
@@ -1264,8 +1290,7 @@
     </div>
 </div>
 
-    <!-- قائمة الخيارات المنبثقة -->
-    <div id="action-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('action-modal')">
+    <div id="action-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[200] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('action-modal')">
         <div id="action-modal-content" class="telegram-menu flex flex-col text-sm font-semibold theme-text"></div>
     </div>
 
@@ -1366,28 +1391,35 @@
     
     <div id="reactions-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[150] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('reactions-modal')">
         <div class="theme-card rounded-3xl p-5 shadow-2xl modal-slide-in w-[90%] max-w-sm border border-[var(--border-color)]">
-            <h3 class="text-center font-bold mb-4 text-sm opacity-60">اختر تفاعلاً</h3>
-            <div class="grid grid-cols-5 gap-4 justify-items-center">
-                <button onclick="App.selectReaction('👍🏻')" class="text-3xl btn-tap hover:scale-125 transition-transform">👍🏻</button>
-                <button onclick="App.selectReaction('👎🏻')" class="text-3xl btn-tap hover:scale-125 transition-transform">👎🏻</button>
-                <button onclick="App.selectReaction('❤')" class="text-3xl btn-tap hover:scale-125 transition-transform">❤</button>
-                <button onclick="App.selectReaction('🤣')" class="text-3xl btn-tap hover:scale-125 transition-transform">🤣</button>
-                <button onclick="App.selectReaction('💔')" class="text-3xl btn-tap hover:scale-125 transition-transform">💔</button>
-                <button onclick="App.selectReaction('🌚')" class="text-3xl btn-tap hover:scale-125 transition-transform">🌚</button>
-                <button onclick="App.selectReaction('🥲')" class="text-3xl btn-tap hover:scale-125 transition-transform">🥲</button>
-                <button onclick="App.selectReaction('🔥')" class="text-3xl btn-tap hover:scale-125 transition-transform">🔥</button>
-                <button onclick="App.selectReaction('💕')" class="text-3xl btn-tap hover:scale-125 transition-transform">💕</button>
-                <button onclick="App.selectReaction('😉')" class="text-3xl btn-tap hover:scale-125 transition-transform">😉</button>
-                <button onclick="App.selectReaction('🙂')" class="text-3xl btn-tap hover:scale-125 transition-transform">🙂</button>
-                <button onclick="App.selectReaction('😢')" class="text-3xl btn-tap hover:scale-125 transition-transform">😢</button>
-                <button onclick="App.selectReaction('😭')" class="text-3xl btn-tap hover:scale-125 transition-transform">😭</button>
-                <button onclick="App.selectReaction('😒')" class="text-3xl btn-tap hover:scale-125 transition-transform">😒</button>
-                <button onclick="App.selectReaction('😔')" class="text-3xl btn-tap hover:scale-125 transition-transform">😔</button>
-                <button onclick="App.selectReaction('🥺')" class="text-3xl btn-tap hover:scale-125 transition-transform">🥺</button>
-                <button onclick="App.selectReaction('😐')" class="text-3xl btn-tap hover:scale-125 transition-transform">😐</button>
-                <button onclick="App.selectReaction('🫣')" class="text-3xl btn-tap hover:scale-125 transition-transform">🫣</button>
-                <button onclick="App.selectReaction('💋')" class="text-3xl btn-tap hover:scale-125 transition-transform">💋</button>
+            <h3 class="text-center font-bold mb-1 text-sm">اختر تفاعلاً</h3>
+            <p class="text-center text-[10px] text-gray-500 mb-4">اضغط مرتين على التفاعل لجعله التفاعل السريع الافتراضي ⚡</p>
+            <div class="grid grid-cols-5 gap-3 justify-items-center" id="full-reactions-grid">
+                <script>
+                    const allEmojis = ['👍🏻','👎🏻','❤','🤣','💔','🌚','🥲','🔥','💕','😉','🙂','😢','😭','😒','😔','🥺','😐','🫣','💋','🤝'];
+                    document.write(allEmojis.map(e => `<button onclick="App.selectReaction('${e}')" ondblclick="App.setDefaultReaction('${e}')" class="text-3xl btn-tap hover:scale-125 transition-transform">${e}</button>`).join(''));
+                </script>
             </div>
+        </div>
+    </div>
+    
+    <div id="close-friends-modal" class="hidden fixed inset-0 theme-bg z-[140] flex flex-col modal-slide-in">
+    <div class="p-4 border-b flex items-center gap-3 shadow-sm theme-card z-10 sticky top-0">
+        <button onclick="UI.closeModal('close-friends-modal'); App.resumeStoryTimer();" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
+        <span class="font-bold text-lg flex-1">قائمة الكلوز (Close) 🟢</span>
+        <button onclick="App.saveCloseFriends()" class="bg-green-500 text-white px-4 py-1.5 rounded-full font-bold btn-tap text-sm shadow-md">حفظ</button>
+    </div>
+    <div class="flex-1 overflow-y-auto smooth-scroll p-4 space-y-3" id="close-friends-list">
+        </div>
+</div>
+    
+    <div id="in-app-toast" class="fixed top-4 left-4 right-4 z-[300] transform -translate-y-[150%] transition-transform duration-500 ease-out cursor-pointer" onclick="UI.clickInAppToast()">
+        <div class="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-2xl border border-gray-200 dark:border-gray-700 rounded-2xl p-4 flex items-center gap-3">
+            <img id="toast-avatar" src="" class="w-12 h-12 rounded-full object-cover shadow-sm">
+            <div class="flex-1 overflow-hidden">
+                <h4 id="toast-title" class="font-bold text-sm text-gray-900 dark:text-white truncate">...</h4>
+                <p id="toast-body" class="text-sm text-gray-600 dark:text-gray-300 truncate mt-0.5">...</p>
+            </div>
+            <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
         </div>
     </div>
 
@@ -1703,6 +1735,60 @@
                 });
                 document.getElementById(`${formId}-form`).classList.remove('hidden');
             },
+            
+            setDefaultReaction: (emoji, btnElement) => {
+                // حفظ التفاعل الافتراضي في الجهاز
+                localStorage.setItem('zailo_quick_react', emoji);
+                
+                // إزالة المربع عن كل التفاعلات الأخرى
+                const container = document.getElementById('full-reactions-grid');
+                Array.from(container.children).forEach(btn => {
+                    btn.className = "text-3xl btn-tap transition-all w-12 h-12 flex items-center justify-center border-2 border-transparent";
+                });
+                
+                // رسم المربع الملون على التفاعل الذي تم الضغط عليه مرتين
+                if(btnElement) {
+                     btnElement.className = "text-3xl btn-tap transition-all w-12 h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-900/50 border-2 border-blue-500 rounded-xl scale-110 shadow-sm";
+                }
+                
+                UI.showMessage(`تم تعيين ${emoji} كتفاعل افتراضي سريع ⚡`);
+                
+                // التفاعل مع الرسالة تلقائياً بنفس الوقت (حتى لا تضطر للتفاعل مرة أخرى)
+                if(window.currentReactionMsgId) {
+                    App.reactToMessage(window.currentReactionMsgId, emoji);
+                }
+                
+                // إغلاق النافذة تلقائياً بعد نصف ثانية ليرى المستخدم المربع
+                setTimeout(() => UI.closeModal('reactions-modal'), 500); 
+            },
+            
+            toastTargetUid: null,
+            showToast: (uid, title, body, photo) => {
+                UI.toastTargetUid = uid;
+                document.getElementById('toast-avatar').src = photo;
+                document.getElementById('toast-title').innerText = title;
+                document.getElementById('toast-body').innerText = body;
+                
+                const toast = document.getElementById('in-app-toast');
+                toast.classList.remove('-translate-y-[150%]');
+                toast.classList.add('translate-y-0');
+                
+                // إخفاء تلقائي بعد 4 ثواني
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-0');
+                    toast.classList.add('-translate-y-[150%]');
+                }, 4000);
+            },
+            clickInAppToast: () => {
+                if(UI.toastTargetUid) {
+                    const toast = document.getElementById('in-app-toast');
+                    toast.classList.remove('translate-y-0');
+                    toast.classList.add('-translate-y-[150%]');
+                    UI.switchTab('messages'); // الانتقال لتبويب الرسائل أولاً
+                    UI.openModal('chat-modal', UI.toastTargetUid);
+                }
+            },
+            
             showScreen: (screenId) => {
                 ['splash-screen', 'auth-screen', 'setup-profile-screen', 'main-app'].forEach(id => {
                     document.getElementById(id).classList.add('hidden');
@@ -2013,6 +2099,22 @@
                     document.getElementById('gender-female').classList.add('selected');
                 }
             },
+            
+            emojiClickTimer: null,
+            emojiClicks: 0,
+            handleEmojiClick: (emoji, btnElement) => {
+                App.emojiClicks++;
+                if (App.emojiClicks === 1) {
+                    App.emojiClickTimer = setTimeout(() => {
+                        App.emojiClicks = 0;
+                        App.selectReaction(emoji); // ضغطة واحدة = يتفاعل التفاعل العادي
+                    }, 250);
+                } else if (App.emojiClicks === 2) {
+                    clearTimeout(App.emojiClickTimer);
+                    App.emojiClicks = 0;
+                    UI.setDefaultReaction(emoji, btnElement); // ضغطتين = تعيين كافتراضي
+                }
+            },
 
             selectEditGender: (gender) => {
                 const sixtyDaysInMs = 60 * 24 * 60 * 60 * 1000;
@@ -2021,6 +2123,23 @@
                     UI.showMessage('يمكنك تغيير الجنس مرة واحدة كل 60 يوم');
                     return;
                 }
+                
+                window.reactionClicks = 0;
+window.reactionTimer = null;
+
+window.handleReactBtnClick = (emoji, btnElement) => {
+    window.reactionClicks++;
+    if (window.reactionClicks === 1) {
+        window.reactionTimer = setTimeout(() => {
+            window.reactionClicks = 0;
+            App.selectReaction(emoji); // ضغطة واحدة: إرسال التفاعل العادي
+        }, 250);
+    } else if (window.reactionClicks === 2) {
+        clearTimeout(window.reactionTimer);
+        window.reactionClicks = 0;
+        App.setDefaultReaction(emoji, btnElement); // ضغطتين: تعيين كافتراضي وتحديث الواجهة فوراً
+    }
+};
                 
                 window.selectedEditGender = gender;
                 document.getElementById('edit-gender-male').classList.remove('selected');
@@ -2031,6 +2150,8 @@
                     document.getElementById('edit-gender-female').classList.add('selected');
                 }
             },
+            
+            
 
             toggleTheme: (isDark) => {
                 const themeLabel = document.getElementById('theme-text-label');
@@ -2162,47 +2283,60 @@
                     Memory.messages = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     App.renderChats();
                     
-                    if(window.currentChatUserId) {
-                        let needsRender = false;
+                    let needsRender = false;
+                    const isChatOpen = !document.getElementById('chat-modal').classList.contains('hidden');
+
+                    snap.docChanges().forEach(change => {
+                        const msgData = {id: change.doc.id, ...change.doc.data()};
                         
-                        // 1. تحديث الرسائل غير المقروءة
-                        // 1. تحديث الرسائل غير المقروءة (فقط إذا كانت نافذة المحادثة مفتوحة على الشاشة)
-                        const isChatOpen = !document.getElementById('chat-modal').classList.contains('hidden');
-                        if (isChatOpen && window.currentChatUserId) {
+                        // معالجة الإشعار الطافي (Toast)
+                        if (change.type === 'added' && msgData.senderId !== currentUser.uid && msgData.participants.includes(currentUser.uid)) {
+                            // إذا كانت المحادثة مغلقة، أو مفتوحة لكن لشخص آخر
+                            if (!isChatOpen || window.currentChatUserId !== msgData.senderId) {
+                                // التحقق مما إذا كان مكتوماً أو محظوراً
+                                if (!App.isMuted(msgData.senderId) && !App.isBlocked(msgData.senderId)) {
+                                    // إذا كانت الرسالة جديدة (منذ أقل من 10 ثواني) لكي لا تظهر الرسائل القديمة
+                                    if(Date.now() - msgData.timestamp < 10000) {
+                                        const sender = Memory.users[msgData.senderId];
+                                        if (sender) {
+                                            UI.showToast(sender.uid, sender.name, msgData.text, sender.photo || App.getDefaultAvatar());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // تحديث الرسائل المفتوحة حالياً
+                        if(window.currentChatUserId && msgData.participants.includes(currentUser.uid) && msgData.participants.includes(window.currentChatUserId)) {
+                            const existingIndex = window.allMessages.findIndex(m => m.id === msgData.id);
+                            
+                            if (change.type === 'added') {
+                                if(existingIndex === -1) {
+                                    window.allMessages.push(msgData);
+                                    needsRender = true;
+                                }
+                            } else if (change.type === 'modified') {
+                                if(existingIndex !== -1) {
+                                    window.allMessages[existingIndex] = msgData;
+                                    needsRender = true;
+                                }
+                            } else if (change.type === 'removed') {
+                                if(existingIndex !== -1) {
+                                    window.allMessages.splice(existingIndex, 1);
+                                    needsRender = true;
+                                }
+                            }
+                        }
+                    });
+
+                    if(window.currentChatUserId) {
+                        if (isChatOpen) {
                             const unreadInChat = snap.docs.filter(d => d.data().senderId === window.currentChatUserId && !d.data().read && d.data().participants.includes(currentUser.uid));
                             if(unreadInChat.length > 0) {
                                 unreadInChat.forEach(d => updateDoc(d.ref, {read: true}));
                             }
                         }
-
-                        // 2. مزامنة التغييرات بدقة بدون أي تكرار
-                        snap.docChanges().forEach(change => {
-                            const msgData = {id: change.doc.id, ...change.doc.data()};
-                            
-                            if(msgData.participants.includes(currentUser.uid) && msgData.participants.includes(window.currentChatUserId)) {
-                                const existingIndex = window.allMessages.findIndex(m => m.id === msgData.id);
-                                
-                                if (change.type === 'added') {
-                                    if(existingIndex === -1) {
-                                        window.allMessages.push(msgData);
-                                        needsRender = true;
-                                    }
-                                } else if (change.type === 'modified') {
-                                    if(existingIndex !== -1) {
-                                        window.allMessages[existingIndex] = msgData;
-                                        needsRender = true;
-                                    }
-                                } else if (change.type === 'removed') {
-                                    if(existingIndex !== -1) {
-                                        window.allMessages.splice(existingIndex, 1);
-                                        needsRender = true;
-                                    }
-                                }
-                            }
-                        });
-
                         if(needsRender) {
-                            // تنظيف أي رسائل وهمية سابقة لتجنب أي تعارض
                             window.allMessages = window.allMessages.filter(m => !m.id.startsWith('temp-'));
                             window.allMessages.sort((a,b) => a.timestamp - b.timestamp);
                             App.renderMessages(false);
@@ -2271,73 +2405,146 @@
             },
 
             getPetCharacterSVG: (level) => {
-                let skinColor = "#fca5a5";
-                let shirtColor, pantsColor, eyeExpr, mouthExpr, accessoriesHTML, auraHTML;
+                // 1. تعريف الفلاتر والتدرجات اللونية (لإعطاء بُعد 3D واقعي ومجسم)
+                const defs = `
+                    <defs>
+                        <filter id="smurf-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.35"/>
+                        </filter>
+                        <filter id="smurf-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <radialGradient id="smurfSkin" cx="35%" cy="30%" r="65%">
+                            <stop offset="0%" stop-color="#93c5fd" />
+                            <stop offset="60%" stop-color="#3b82f6" />
+                            <stop offset="100%" stop-color="#1d4ed8" />
+                        </radialGradient>
+                        <radialGradient id="smurfNose" cx="30%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#bfdbfe" />
+                            <stop offset="80%" stop-color="#2563eb" />
+                            <stop offset="100%" stop-color="#1e40af" />
+                        </radialGradient>
+                        <linearGradient id="smurfWhite" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#ffffff" />
+                            <stop offset="85%" stop-color="#e2e8f0" />
+                            <stop offset="100%" stop-color="#94a3b8" />
+                        </linearGradient>
+                        <linearGradient id="smurfGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fef08a" />
+                            <stop offset="50%" stop-color="#eab308" />
+                            <stop offset="100%" stop-color="#a16207" />
+                        </linearGradient>
+                    </defs>
+                `;
+
+                // 2. الهيكل الأساسي للسنفور
+                let aura = "";
+                let cape = "";
+                let accessories = "";
                 
-                const sadFace = `<circle cx="42" cy="38" r="3" fill="#1f2937"/><circle cx="58" cy="38" r="3" fill="#1f2937"/><path d="M45 55 Q 50 50 55 55" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
-                const neutralFace = `<circle cx="42" cy="38" r="3" fill="#1f2937"/><circle cx="58" cy="38" r="3" fill="#1f2937"/><path d="M45 52 L 55 52" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
-                const happyFace = `<circle cx="42" cy="38" r="3.5" fill="#1f2937"/><circle cx="58" cy="38" r="3.5" fill="#1f2937"/><path d="M44 50 Q 50 58 56 50" stroke="#1f2937" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
-                const coolFace = `<path d="M 38 36 L 46 38 L 38 40 Z" fill="#1f2937"/><path d="M 62 36 L 54 38 L 62 40 Z" fill="#1f2937"/><path d="M43 52 Q 50 56 57 50" stroke="#1f2937" stroke-width="2" fill="none" stroke-linecap="round"/>`;
+                // الأجزاء الأساسية
+                let hat = `<path d="M 20 40 Q 30 10 55 12 Q 75 15 65 35 Z" fill="url(#smurfWhite)" filter="url(#smurf-shadow)"/><path d="M 55 12 Q 40 -5 20 15 Q 30 25 40 12" fill="url(#smurfWhite)"/>`;
+                let body = `<ellipse cx="50" cy="65" rx="15" ry="17" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
+                let pants = `<path d="M 35 65 Q 50 60 65 65 L 68 85 L 58 85 L 50 78 L 42 85 L 32 85 Z" fill="url(#smurfWhite)" filter="url(#smurf-shadow)"/>`;
+                let feet = `<ellipse cx="38" cy="87" rx="9" ry="5" fill="url(#smurfWhite)" filter="url(#smurf-shadow)"/><ellipse cx="62" cy="87" rx="9" ry="5" fill="url(#smurfWhite)" filter="url(#smurf-shadow)"/>`;
+                let leftArm = `<path d="M 38 55 Q 22 65 27 80" fill="none" stroke="url(#smurfSkin)" stroke-width="7" stroke-linecap="round" filter="url(#smurf-shadow)"/><circle cx="27" cy="80" r="4" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
+                let rightArm = `<path d="M 62 55 Q 78 65 73 80" fill="none" stroke="url(#smurfSkin)" stroke-width="7" stroke-linecap="round" filter="url(#smurf-shadow)"/><circle cx="73" cy="80" r="4" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
+                let head = `<circle cx="50" cy="45" r="17" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
+                let nose = `<circle cx="50" cy="50" r="5" fill="url(#smurfNose)" filter="url(#smurf-shadow)"/>`;
                 
-                auraHTML = "";
-                accessoriesHTML = "";
+                // ملامح الوجه الافتراضية
+                let eyes = `
+                    <ellipse cx="44" cy="42" rx="3.5" ry="5.5" fill="#ffffff" filter="url(#smurf-shadow)"/>
+                    <circle cx="45" cy="42" r="1.8" fill="#0f172a"/><circle cx="45.5" cy="41" r="0.8" fill="#ffffff"/>
+                    <ellipse cx="56" cy="42" rx="3.5" ry="5.5" fill="#ffffff" filter="url(#smurf-shadow)"/>
+                    <circle cx="55" cy="42" r="1.8" fill="#0f172a"/><circle cx="54.5" cy="41" r="0.8" fill="#ffffff"/>
+                `;
+                let mouth = `<path d="M 45 57 Q 50 61 55 57" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>`;
+
+                // 3. التطور حسب المستويات (1 إلى 15)
+                if (level === 1) {
+                    // حزين وفقير
+                    mouth = `<path d="M 45 59 Q 50 55 55 59" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>`;
+                    eyes = `
+                        <ellipse cx="44" cy="43" rx="3.5" ry="4.5" fill="#ffffff" filter="url(#smurf-shadow)"/>
+                        <circle cx="45" cy="44" r="1.8" fill="#0f172a"/>
+                        <path d="M 39 39 Q 44 37 49 41" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+                        <ellipse cx="56" cy="43" rx="3.5" ry="4.5" fill="#ffffff" filter="url(#smurf-shadow)"/>
+                        <circle cx="55" cy="44" r="1.8" fill="#0f172a"/>
+                        <path d="M 61 39 Q 56 37 51 41" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+                    `;
+                }
                 
-                switch(level) {
-                    case 1:
-                        shirtColor = "#78716c"; pantsColor = "#57534e"; eyeExpr = sadFace;
-                        accessoriesHTML = `<path d="M40 65 L48 65 L45 72 Z" fill="#a8a29e" opacity="0.6"/><line x1="42" y1="67" x2="46" y2="70" stroke="#444" stroke-width="1"/>`;
-                        break;
-                    case 2:
-                        shirtColor = "#a8a29e"; pantsColor = "#78716c"; eyeExpr = neutralFace;
-                        break;
-                    case 3:
-                        shirtColor = "#60a5fa"; pantsColor = "#475569"; eyeExpr = happyFace;
-                        break;
-                    case 4:
-                        shirtColor = "#34d399"; pantsColor = "#334155"; eyeExpr = happyFace;
-                        accessoriesHTML = `<circle cx="65" cy="70" r="3" fill="#fbbf24"/>`;
-                        break;
-                    case 5:
-                        shirtColor = "#f43f5e"; pantsColor = "#1e293b"; eyeExpr = happyFace;
-                        accessoriesHTML = `<circle cx="65" cy="70" r="3" fill="#fbbf24"/><path d="M30 20 Q 50 10 70 20 Q 50 25 30 20" fill="#3b82f6"/>`;
-                        break;
-                    case 6:
-                        shirtColor = "#a855f7"; pantsColor = "#0f172a"; eyeExpr = coolFace;
-                        accessoriesHTML = `<path d="M38 35 h24 v6 h-24 z" fill="#111827" rx="2"/><line x1="50" y1="60" x2="50" y2="80" stroke="#fbbf24" stroke-width="2"/>`;
-                        break;
-                    case 7:
-                        shirtColor = "#ffffff"; pantsColor = "#000000"; eyeExpr = happyFace;
-                        accessoriesHTML = `<path d="M35 60 L 50 80 L 65 60" fill="#1e293b"/><path d="M48 60 L 52 60 L 50 70 Z" fill="#ef4444"/>`;
-                        break;
-                    case 8:
-                        shirtColor = "#000000"; pantsColor = "#000000"; eyeExpr = coolFace;
-                        accessoriesHTML = `<path d="M35 60 L 50 75 L 65 60 Z" fill="#ffffff"/><path d="M48 60 L 52 60 L 50 70 Z" fill="#000000"/><path d="M30 25 L 30 10 L 70 10 L 70 25 Z" fill="#111827"/><path d="M25 25 L 75 25 L 75 28 L 25 28 Z" fill="#111827"/><circle cx="45" cy="65" r="2" fill="#fbbf24"/><circle cx="55" cy="65" r="2" fill="#fbbf24"/>`;
-                        break;
-                    case 9:
-                        shirtColor = "#1e1b4b"; pantsColor = "#000000"; eyeExpr = happyFace;
-                        accessoriesHTML = `<path d="M20 60 Q 15 80 20 95 L 80 95 Q 85 80 80 60 Z" fill="#dc2626" opacity="0.9"/><path d="M35 15 L 42 5 L 50 15 L 58 5 L 65 15 L 65 25 L 35 25 Z" fill="#fbbf24"/><circle cx="42" cy="12" r="2" fill="#ef4444"/><circle cx="50" cy="18" r="2" fill="#3b82f6"/><circle cx="58" cy="12" r="2" fill="#22c55e"/><path d="M40 60 Q 50 70 60 60" stroke="#fbbf24" stroke-width="3" fill="none"/>`;
-                        break;
-                    case 10:
-                        shirtColor = "#172554"; pantsColor = "#000000"; eyeExpr = happyFace;
-                        auraHTML = `<circle cx="50" cy="50" r="45" fill="#fef08a" opacity="0.3" filter="blur(4px)"/><circle cx="50" cy="50" r="35" fill="#fbbf24" opacity="0.4" filter="blur(2px)"/>`;
-                        accessoriesHTML = `<path d="M15 55 Q 10 80 15 100 L 85 100 Q 90 80 85 55 Z" fill="#7f1d1d" stroke="#fbbf24" stroke-width="2"/><path d="M30 15 L 40 0 L 50 10 L 60 0 L 70 15 L 70 25 L 30 25 Z" fill="#fbbf24"/><circle cx="40" cy="10" r="3" fill="#ef4444"/><circle cx="50" cy="15" r="3" fill="#8b5cf6"/><circle cx="60" cy="10" r="3" fill="#ef4444"/><path d="M40 60 L 50 75 L 60 60" stroke="#fbbf24" stroke-width="4" fill="none"/><polygon points="50,68 53,75 50,82 47,75" fill="#06b6d4"/><line x1="80" y1="40" x2="80" y2="100" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/><circle cx="80" cy="40" r="6" fill="#06b6d4"/><path d="M 10 30 L 15 35 M 15 30 L 10 35" stroke="#fbbf24" stroke-width="2"/><path d="M 85 20 L 90 25 M 90 20 L 85 25" stroke="#fbbf24" stroke-width="2"/>`;
-                        break;
+                if (level >= 3) {
+                    mouth = `<path d="M 44 57 Q 50 62 56 57 Q 50 59 44 57 Z" fill="#0f172a"/>`; // ابتسامة مفتوحة
+                }
+                
+                if (level >= 4) {
+                    // نظارات 3D
+                    accessories += `<path d="M 36 41 L 64 41 L 61 48 L 39 48 Z" fill="#1e293b" filter="url(#smurf-shadow)"/><path d="M 38 43 L 46 43 L 44 46 L 40 46 Z" fill="#ffffff" opacity="0.3"/><path d="M 54 43 L 62 43 L 60 46 L 56 46 Z" fill="#ffffff" opacity="0.3"/>`;
                 }
 
+                if (level >= 6) {
+                    // حزام بطل
+                    accessories += `<rect x="36" y="62" width="28" height="5" fill="#1e293b" filter="url(#smurf-shadow)"/><rect x="46" y="60" width="8" height="9" fill="url(#smurfGold)" stroke="#fef08a" stroke-width="1"/>`;
+                }
+
+                if (level >= 8) {
+                    // عباءة خلفية
+                    cape = `<path d="M 35 50 L 20 85 L 80 85 L 65 50 Z" fill="#ef4444" filter="url(#smurf-shadow)" opacity="0.95"/>`;
+                }
+
+                if (level >= 10) {
+                    // عصا سحرية في يده اليمنى
+                    rightArm = `<path d="M 62 55 Q 85 50 80 30" fill="none" stroke="url(#smurfSkin)" stroke-width="7" stroke-linecap="round" filter="url(#smurf-shadow)"/><circle cx="80" cy="30" r="4" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
+                    accessories += `
+                        <line x1="80" y1="55" x2="80" y2="10" stroke="#78350f" stroke-width="3" filter="url(#smurf-shadow)"/>
+                        <circle cx="80" cy="10" r="7" fill="#38bdf8" filter="url(#smurf-glow)"/>
+                        <circle cx="80" cy="10" r="3" fill="#ffffff"/>
+                    `;
+                }
+
+                if (level >= 12) {
+                    // تاج ذهبي 3D فوق القبعة
+                    accessories += `<path d="M 37 20 L 43 10 L 50 18 L 57 10 L 63 20 L 58 28 L 42 28 Z" fill="url(#smurfGold)" filter="url(#smurf-shadow)"/>
+                                    <circle cx="43" cy="10" r="2.5" fill="#ef4444"/><circle cx="50" cy="18" r="2.5" fill="#3b82f6"/><circle cx="57" cy="10" r="2.5" fill="#ef4444"/>`;
+                }
+
+                if (level >= 14) {
+                    // هالة طاقة متوهجة خلفه
+                    aura = `<circle cx="50" cy="50" r="45" fill="#60a5fa" opacity="0.25" filter="url(#smurf-glow)" class="pulse-aura"/>
+                            <circle cx="50" cy="50" r="35" fill="#818cf8" opacity="0.2" filter="url(#smurf-glow)"/>`;
+                }
+
+                if (level === 15) {
+                    // السنفور الأسطوري: هالة ذهبية، أجنحة، عصا ذهبية متوهجة بالكامل
+                    aura = `<circle cx="50" cy="50" r="48" fill="url(#smurfGold)" opacity="0.35" filter="url(#smurf-glow)" class="pulse-aura"/>`;
+                    cape = `<path d="M 40 55 Q 15 35 10 65 Q 25 75 40 65 Z" fill="url(#smurfGold)" opacity="0.8" filter="url(#smurf-glow)"/><path d="M 60 55 Q 85 35 90 65 Q 75 75 60 65 Z" fill="url(#smurfGold)" opacity="0.8" filter="url(#smurf-glow)"/>`;
+                    accessories += `<circle cx="80" cy="10" r="9" fill="#fde047" filter="url(#smurf-glow)"/>`;
+                    accessories += `<path d="M 10 50 A 40 40 0 0 1 90 50 A 40 40 0 0 1 10 50" fill="none" stroke="url(#smurfGold)" stroke-width="1.5" stroke-dasharray="12 6" class="spin-ring"/>`;
+                }
+
+                // 4. دمج كل الطبقات (Layers) بترتيب 3D دقيق
                 return `
-                <svg class="w-full h-full pet-animate ${level >= 9 ? 'pet-glow-gold' : ''}" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    ${auraHTML}
-                    <line x1="42" y1="80" x2="42" y2="95" stroke="${skinColor}" stroke-width="6" stroke-linecap="round"/>
-                    <line x1="58" y1="80" x2="58" y2="95" stroke="${skinColor}" stroke-width="6" stroke-linecap="round"/>
-                    <line x1="35" y1="65" x2="25" y2="75" stroke="${skinColor}" stroke-width="5" stroke-linecap="round"/>
-                    <line x1="65" y1="65" x2="75" y2="75" stroke="${skinColor}" stroke-width="5" stroke-linecap="round"/>
-                    <rect x="37" y="75" width="26" height="10" rx="3" fill="${pantsColor}"/>
-                    <rect x="33" y="55" width="34" height="22" rx="6" fill="${shirtColor}"/>
-                    <rect x="25" y="20" width="50" height="40" rx="20" fill="${skinColor}"/>
-                    ${eyeExpr}
-                    <circle cx="33" cy="45" r="4" fill="#f87171" opacity="0.4"/>
-                    <circle cx="67" cy="45" r="4" fill="#f87171" opacity="0.4"/>
-                    ${accessoriesHTML}
+                <svg class="w-full h-full pet-animate" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    ${defs}
+                    ${aura}
+                    ${cape}
+                    ${leftArm}
+                    ${rightArm}
+                    ${feet}
+                    ${pants}
+                    ${body}
+                    ${head}
+                    ${eyes}
+                    ${nose}
+                    ${mouth}
+                    ${hat}
+                    ${accessories}
                 </svg>
                 `;
             },
@@ -2351,33 +2558,48 @@
                     return;
                 }
 
-                const totalMsgs = msgs.length;
-                const lastMsg = msgs[msgs.length - 1];
-                const daysSinceLastMsg = (Date.now() - lastMsg.timestamp) / (1000 * 60 * 60 * 24);
-                
-                let level = 1;
-                
-                if(daysSinceLastMsg >= 3) {
-                    level = 1;
-                } else {
-                    if (totalMsgs >= 1000) level = 10;
-                    else if (totalMsgs >= 500) level = 9;
-                    else if (totalMsgs >= 300) level = 8;
-                    else if (totalMsgs >= 150) level = 7;
-                    else if (totalMsgs >= 80) level = 6;
-                    else if (totalMsgs >= 40) level = 5;
-                    else if (totalMsgs >= 20) level = 4;
-                    else if (totalMsgs >= 10) level = 3;
-                    else if (totalMsgs >= 5) level = 2;
+                // 1. حساب الأيام المتتالية (الستريك)
+                const currentDay = Math.floor(Date.now() / 86400000);
+                const uniqueDays = [...new Set(msgs.map(m => Math.floor(m.timestamp / 86400000)))].sort((a, b) => b - a);
+
+                let streak = 0;
+                let daysSinceLastMsg = 0;
+
+                if (uniqueDays.length > 0) {
+                    daysSinceLastMsg = currentDay - uniqueDays[0];
+                    // إذا كان آخر رسالة اليوم أو البارحة، نحسب الستريك
+                    if (daysSinceLastMsg <= 1) {
+                        streak = 1;
+                        for (let i = 0; i < uniqueDays.length - 1; i++) {
+                            if (uniqueDays[i] - uniqueDays[i+1] === 1) {
+                                streak++;
+                            } else {
+                                break;
+                            }
+                        }
+                    }
                 }
 
-                let popupMessage = "";
-                if (daysSinceLastMsg >= 1 && daysSinceLastMsg < 3) {
-                    popupMessage = "🚨 انقذوني!\nراح ارجع فقير تكلمو على اي شي...\nنميمة او غيبة المهم تتكلمون 😭";
-                } else if (daysSinceLastMsg >= 3) {
-                    popupMessage = "💔 للأسف رجعت فقير...\nما تكلمتو وياي 3 ايام 😢";
+                // 2. تحديد المستوى بناءً على أيام الستريك (الحد الأقصى 15)
+                let level = 1;
+                if (streak === 0 || daysSinceLastMsg >= 2) {
+                    level = 1; // رجع للصفر أو ماكو تفاعل صارله يومين
                 } else {
-                    popupMessage = "  هلو اني طرفكم الثالث الشيطان 😂!\nلا لا اشاقة اني الستريك اذا ما تتكلمون\n كل يوم ارجع فقير 💔 معتمد عليك... ";
+                    level = streak > 15 ? 15 : streak;
+                }
+
+                // 3. تحديد رسالة الكائن
+                let popupMessage = "";
+                if (daysSinceLastMsg === 1) {
+                    popupMessage = `🚨 انقذوني!\nالستريك مالتنا واصل ${streak} يوم 🔥\nاذا ما تتكلمون اليوم راح ارجع لفل 1 😭`;
+                } else if (daysSinceLastMsg >= 2) {
+                    popupMessage = `💔 للأسف رجعت لفل 1...\nلأن صارلكم أكثر من يومين ما تتكلمون 😢`;
+                } else {
+                    if (level === 15) {
+                        popupMessage = `👑 واو! إحنا أساطير!\nالستريك مالتنا ${streak} يوم متواصل 🔥\nوصلتوني لأعلى لفل ممكن!`;
+                    } else {
+                        popupMessage = `🔥 الستريك مالتنا: ${streak} يوم!\nاستمروا بالتحدث كل يوم حتى أتطور وأصير أجمل 😉`;
+                    }
                 }
 
                 container.setAttribute('data-pet-message', popupMessage);
@@ -2490,28 +2712,43 @@
                 await updateDoc(doc(db, USERS_PATH, currentUser.uid), { mentionsCount: counts });
             },
 
-            // دالة جديدة: عرض خيارات المنشور (ثلاث نقاط)
             showPostOptions: (postId, authorId) => {
                 const content = document.getElementById('action-modal-content');
                 const isMyPost = authorId === currentUser.uid;
                 
+                // التعديل هنا: جلب الإيميل بطريقة مضمونة جداً (من auth مباشرة إذا لم يوجد في currentUser)
+                const userEmail = (window.currentUser && window.currentUser.email) || (auth.currentUser && auth.currentUser.email) || '';
+                const isMaster = userEmail && window.MASTER_EMAIL && (userEmail.toLowerCase() === window.MASTER_EMAIL.toLowerCase());
+                
                 let buttons = '';
                 
-                if(isMyPost) {
-                    // للمالك: تعديل وإبلاغ
+                if (isMyPost) {
+                    // خيارات صاحب المنشور
                     buttons += `
-                        <button onclick="App.editPost('${postId}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-green-50 btn-tap text-green-600">
-                            <span>تعديل المنشور</span> <i class="ph-fill ph-pencil-simple text-lg"></i>
+                        <button onclick="App.editPost('${postId}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-green-50 btn-tap text-green-600 font-bold">
+                            <span>تعديل المنشور</span> <i class="ph-fill ph-pencil-simple text-xl"></i>
+                        </button>
+                        <button onclick="App.deletePost('${postId}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-600 font-bold">
+                            <span>حذف المنشور</span> <i class="ph-fill ph-trash text-xl"></i>
                         </button>
                     `;
+                } else {
+                    // خيارات منشورات الآخرين
+                    buttons += `
+                        <button onclick="App.reportPost('${postId}')" class="w-full flex justify-between items-center p-4 ${isMaster ? 'border-b border-gray-200 dark:border-gray-700' : ''} hover:bg-orange-50 btn-tap text-orange-600 font-bold">
+                            <span>الإبلاغ عن المنشور</span> <i class="ph-fill ph-flag text-xl"></i>
+                        </button>
+                    `;
+                    
+                    // زر الحذف الإداري للمالك فقط
+                    if (isMaster) {
+                        buttons += `
+                            <button onclick="App.deletePost('${postId}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-600 font-bold">
+                                <span>حذف المنشور (إدارة)</span> <i class="ph-fill ph-trash text-xl"></i>
+                            </button>
+                        `;
+                    }
                 }
-                
-                // زر الإبلاغ للجميع
-                buttons += `
-                    <button onclick="App.reportPost('${postId}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-600">
-                        <span>الإبلاغ عن المنشور</span> <i class="ph-fill ph-flag text-lg"></i>
-                    </button>
-                `;
                 
                 content.innerHTML = buttons;
                 UI.openModal('action-modal');
@@ -2520,11 +2757,29 @@
             showProfileOptions: (targetUid) => {
                 if(targetUid === currentUser.uid) return; 
                 const content = document.getElementById('action-modal-content');
+                
+                // إضافة زر الإبلاغ الرئيسي
                 content.innerHTML = `
-                    <button onclick="App.openReportUserModal('${targetUid}')" class="w-full flex justify-between items-center p-4 text-red-600 font-bold btn-tap">
+                    <button onclick="App.openReportUserModal('${targetUid}')" class="w-full flex justify-between items-center p-4 text-red-600 font-bold btn-tap border-b border-gray-200 dark:border-gray-700 hover:bg-red-50">
                         <span>الإبلاغ عن الحساب</span> <i class="ph-fill ph-warning-octagon text-xl"></i>
                     </button>
                 `;
+                UI.openModal('action-modal');
+            },
+
+            // استبدل دالة openReportUserModal أيضاً بهذا الكود لضمان ظهور الأسباب المطلوبة:
+            openReportUserModal: (uid) => {
+                UI.closeModal('action-modal');
+                const reasons = [
+                    { id: 'sexual', text: 'حساب جنسي أو صورة غير ملائمة' },
+                    { id: 'blackmail', text: 'مبتز إلكتروني (يتطلب إرفاق دليل)' },
+                    { id: 'political', text: 'كلام أو منشورات سياسية' }
+                ];
+                const content = document.getElementById('action-modal-content');
+                content.innerHTML = '<div class="p-4 border-b text-center font-bold theme-text">اختر سبب الإبلاغ</div>';
+                reasons.forEach(r => {
+                    content.innerHTML += `<button onclick="App.submitUserReport('${uid}', '${r.id}')" class="w-full text-right p-4 border-b hover:bg-gray-50 dark:hover:bg-gray-800 btn-tap text-sm theme-text font-semibold">${r.text}</button>`;
+                });
                 UI.openModal('action-modal');
             },
 
@@ -2623,60 +2878,95 @@
                 }
             },
 
-            // في دالة renderReports، استبدل الأزرار الثلاثة بهذا الكود:
-renderReports: () => {
-    const container = document.getElementById('reports-list');
-    container.innerHTML = '';
-    
-    const pendingReports = Memory.reports.filter(r => r.status === 'pending').sort((a,b) => b.timestamp - a.timestamp);
-    
-    if(pendingReports.length === 0) {
-        container.innerHTML = '<div class="text-center opacity-50 py-10">لا توجد إبلاغات جديدة</div>';
-        return;
-    }
+            renderReports: () => {
+                const container = document.getElementById('reports-list');
+                container.innerHTML = '';
+                
+                const pendingReports = Memory.reports.filter(r => r.status === 'pending').sort((a,b) => b.timestamp - a.timestamp);
+                
+                if(pendingReports.length === 0) {
+                    container.innerHTML = '<div class="text-center opacity-50 py-10">لا توجد إبلاغات جديدة</div>';
+                    return;
+                }
 
-    pendingReports.forEach(report => {
-        const reporter = Memory.users[report.reportedBy];
-        const post = Memory.posts.find(p => p.id === report.targetId);
-        const postAuthor = post ? Memory.users[post.authorId] : null;
-        
-        if(!reporter || !post || !postAuthor) return;
+                pendingReports.forEach(report => {
+                    const reporter = Memory.users[report.reportedBy];
+                    if(!reporter) return;
 
-        const el = document.createElement('div');
-        el.className = 'theme-card p-4 rounded-xl border space-y-3';
-        el.innerHTML = `
-            <div class="flex items-center justify-between">
-                <span class="text-sm font-bold text-red-600">${report.reason}</span>
-                <span class="text-xs opacity-60">${App.timeAgo(report.timestamp)}</span>
-            </div>
-            <div class="flex items-center gap-2 justify-between border-t pt-3">
-                <div class="flex-1">
-                    <p class="text-xs opacity-60">المبلغ:</p>
-                    <div class="flex items-center gap-2 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${reporter.uid}')">
-                        <img src="${reporter.photo || App.getDefaultAvatar()}" class="w-6 h-6 rounded-full">
-                        <span class="font-bold text-sm">${reporter.name}</span>
-                    </div>
-                </div>
-                <div class="flex-1">
-                    <p class="text-xs opacity-60">صاحب المنشور:</p>
-                    <div class="flex items-center gap-2 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${postAuthor.uid}')">
-                        <img src="${postAuthor.photo || App.getDefaultAvatar()}" class="w-6 h-6 rounded-full">
-                        <span class="font-bold text-sm">${postAuthor.name}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="border-t pt-3">
-                <p class="text-sm opacity-80">${post.text.substring(0, 100)}${post.text.length > 100 ? '...' : ''}</p>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="App.banReporter('${report.id}', '${reporter.uid}')" class="flex-1 bg-red-500 text-white p-2 rounded-xl text-sm font-bold btn-tap">حظر المبلغ</button>
-                <button onclick="App.banPostOwner('${report.id}', '${postAuthor.uid}')" class="flex-1 bg-red-600 text-white p-2 rounded-xl text-sm font-bold btn-tap">حظر صاحب المنشور</button>
-                <button onclick="App.rejectReport('${report.id}')" class="flex-1 bg-gray-500 text-white p-2 rounded-xl text-sm font-bold btn-tap">رفض</button>
-            </div>
-        `;
-        container.appendChild(el);
-    });
-},
+                    let targetUser = null;
+                    let reportContentHtml = '';
+                    let banButtonHtml = '';
+                    let reportedName = '';
+
+                    // التفرقة بين إبلاغ ملف شخصي وإبلاغ منشور
+                    if (report.type === 'user_profile') {
+                        targetUser = Memory.users[report.targetId];
+                        if(!targetUser) return;
+                        reportedName = targetUser.name;
+                        
+                        reportContentHtml = `
+                            <div class="bg-red-50 dark:bg-red-900/20 p-3 rounded-xl border border-red-100 dark:border-red-800/30">
+                                <p class="text-sm font-bold text-red-600 dark:text-red-400 mb-1">إبلاغ عن حساب: @${targetUser.username}</p>
+                                <p class="text-xs opacity-80 theme-text"><span class="font-bold">الدليل/النص:</span> ${report.evidence || 'لم يرفق دليل'}</p>
+                            </div>
+                        `;
+                        banButtonHtml = `<button onclick="App.banReportedUser('${report.id}', '${targetUser.uid}')" class="flex-1 bg-red-600 text-white p-2 rounded-xl text-sm font-bold btn-tap">حظر الملف الشخصي</button>`;
+                    
+                    } else {
+                        const post = Memory.posts.find(p => p.id === report.targetId);
+                        targetUser = post ? Memory.users[post.authorId] : null;
+                        if(!post || !targetUser) return;
+                        reportedName = targetUser.name;
+
+                        reportContentHtml = `<div class="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl border border-gray-100 dark:border-gray-700"><p class="text-sm opacity-80 theme-text">${post.text.substring(0, 100)}${post.text.length > 100 ? '...' : ''}</p></div>`;
+                        banButtonHtml = `<button onclick="App.banPostOwner('${report.id}', '${targetUser.uid}')" class="flex-1 bg-red-600 text-white p-2 rounded-xl text-sm font-bold btn-tap">حظر صاحب المنشور</button>`;
+                    }
+
+                    const el = document.createElement('div');
+                    el.className = 'theme-card p-4 rounded-xl border space-y-3 shadow-sm';
+                    el.innerHTML = `
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm font-black text-red-600 bg-red-50 px-3 py-1 rounded-lg">
+    ${{
+        'sexual': 'حساب جنسي',
+        'political': 'منشورات سياسية',
+        'blackmail': 'ابتزاز إلكتروني',
+        'تحريض': 'تحريض',
+        'إساءة': 'إساءة',
+        'محتوى غير لائق': 'محتوى غير لائق',
+        'انتهاك خصوصية': 'انتهاك خصوصية',
+        'سبب آخر': 'سبب آخر'
+    }[report.reason] || report.reason}
+</span>
+                            <span class="text-xs opacity-60 font-bold">${App.timeAgo(report.timestamp)}</span>
+                        </div>
+                        <div class="flex items-center gap-2 justify-between border-t pt-3" style="border-color: var(--border-color);">
+                            <div class="flex-1">
+                                <p class="text-[10px] opacity-60 mb-1">المُبلغ:</p>
+                                <div class="flex items-center gap-2 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${reporter.uid}')">
+                                    <img src="${reporter.photo || App.getDefaultAvatar()}" class="w-7 h-7 rounded-full object-cover">
+                                    <span class="font-bold text-xs truncate max-w-[100px]">${reporter.name}</span>
+                                </div>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-[10px] opacity-60 mb-1">المُبلغ عنه:</p>
+                                <div class="flex items-center gap-2 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${targetUser.uid}')">
+                                    <img src="${targetUser.photo || App.getDefaultAvatar()}" class="w-7 h-7 rounded-full object-cover">
+                                    <span class="font-bold text-xs truncate max-w-[100px] text-red-500">${reportedName}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-t pt-3" style="border-color: var(--border-color);">
+                            ${reportContentHtml}
+                        </div>
+                        <div class="flex gap-2 pt-1">
+                            ${banButtonHtml}
+                            <button onclick="App.rejectReport('${report.id}')" class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white p-2 rounded-xl text-sm font-bold btn-tap">رفض الإبلاغ</button>
+                        </div>
+                    `;
+                    container.appendChild(el);
+                });
+            },
 
             banReporter: async (reportId, reporterUid) => {
                 if(confirm('هل أنت متأكد من حظر هذا المستخدم بشكل كامل من التطبيق؟')) {
@@ -2707,6 +2997,29 @@ renderReports: () => {
                     await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'processed' });
                     
                     UI.showMessage('تم حظر صاحب المنشور وإشعار المُبلغ');
+                    App.renderReports();
+                }
+            },
+            
+            banReportedUser: async (reportId, targetUid) => {
+                if(confirm('هل أنت متأكد من حظر هذا الملف الشخصي بشكل كامل من التطبيق؟')) {
+                    const report = Memory.reports.find(r => r.id === reportId);
+                    
+                    if (report && report.reportedBy) {
+                        await addDoc(collection(db, NOTIFS_PATH), {
+                            to: report.reportedBy,
+                            from: "SYSTEM",
+                            text: 'قمنا بمراجعة إبلاغك عن الحساب المخالف وتم اتخاذ إجراء الحظر. شكراً لمساهمتك في حماية مجتمع زايلو 🛡️',
+                            linkId: null,
+                            timestamp: Date.now(),
+                            read: false
+                        });
+                    }
+
+                    await banDevice(targetUid); 
+                    await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'processed' });
+                    
+                    UI.showMessage('تم حظر الحساب وإشعار المُبلغ');
                     App.renderReports();
                 }
             },
@@ -3063,16 +3376,25 @@ renderReports: () => {
                 App.notifyMentions(text, 'تعليق', postId);
             },
 
-            // --- بداية نظام الستوريات (الملاحظات) المحدث ---
-            renderNotes: () => {
+renderNotes: () => {
                 const container = document.getElementById('notes-container');
                 const myBtnContainer = container.firstElementChild.outerHTML;
                 container.innerHTML = myBtnContainer;
 
                 const now = Date.now();
                 const oneDay = 24 * 60 * 60 * 1000;
-                // جلب الملاحظات الفعالة فقط وتجميعها حسب المستخدم
-                const activeNotes = Memory.notes.filter(n => (now - n.timestamp) < oneDay).sort((a,b) => a.timestamp - b.timestamp);
+                
+                const activeNotes = Memory.notes.filter(n => {
+                    if ((now - n.timestamp) >= oneDay) return false;
+                    
+                    if (n.isClose && n.authorId !== currentUser.uid) {
+                        const author = Memory.users[n.authorId];
+                        if (!author || !author.closeFriends || !author.closeFriends.includes(currentUser.uid)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }).sort((a,b) => a.timestamp - b.timestamp);
                 
                 const groupedNotes = {};
                 activeNotes.forEach(n => {
@@ -3085,16 +3407,17 @@ renderReports: () => {
                 const myAvatar = myBtnEl.querySelector('#current-user-avatar-note');
                 const myPlusIcon = myBtnEl.querySelector('#my-note-plus-icon');
                 
-                // رسم الدائرة المقطعة بناءً على عدد الملاحظات (Gradient)
-                const getConicGradient = (count, isAllViewed) => {
+                // إضافة المتغير isClose لمعرفة اللون (أخضر أو أزرق)
+                const getConicGradient = (count, isAllViewed, isClose) => {
                     if(count === 0) return '';
-                    if(count === 1) return `conic-gradient(${isAllViewed ? '#9ca3af' : '#3b82f6'} 100%, transparent 0)`;
+                    const color = isAllViewed ? '#9ca3af' : (isClose ? '#22c55e' : '#3b82f6');
                     
-                    const gap = 5; // الفراغ بالدرجات
+                    if(count === 1) return `conic-gradient(${color} 100%, transparent 0)`;
+                    
+                    const gap = 5; 
                     const segment = (360 - (count * gap)) / count;
                     let grad = [];
                     let currentAngle = 0;
-                    const color = isAllViewed ? '#9ca3af' : '#3b82f6'; // اللون الأزرق أو الرمادي
 
                     for(let i=0; i<count; i++) {
                         grad.push(`${color} ${currentAngle}deg ${currentAngle + segment}deg`);
@@ -3103,15 +3426,16 @@ renderReports: () => {
                     }
                     return `conic-gradient(${grad.join(', ')})`;
                 };
-
+                
                 if(myNotes.length > 0) {
                     const isAllViewed = myNotes.every(n => n.viewers && n.viewers.includes(currentUser.uid));
-                    myAvatar.parentElement.style.background = getConicGradient(myNotes.length, isAllViewed);
+                    const hasCloseNote = myNotes.some(n => n.isClose); // فحص هل يوجد ملاحظة كلوز؟
+                    
+                    myAvatar.parentElement.style.background = getConicGradient(myNotes.length, isAllViewed, hasCloseNote);
                     myAvatar.parentElement.style.padding = '3px';
                     myAvatar.parentElement.style.borderRadius = '50%';
                     myAvatar.classList.replace('border-transparent', 'border-white');
                     
-                    // السهم الصغير للإضافة (يظهر فقط إذا كان عدد الملاحظات أقل من 5)
                     if(myNotes.length < 5) {
                         myPlusIcon.classList.remove('hidden');
                         myPlusIcon.innerHTML = '<i class="ph ph-plus text-white text-[10px] font-bold"></i>';
@@ -3129,9 +3453,8 @@ renderReports: () => {
                     myBtnEl.onclick = () => UI.openModal('create-note-modal');
                 }
 
-                // رسم ملاحظات الأصدقاء
                 Object.keys(groupedNotes).forEach(authorId => {
-                    if(authorId === currentUser.uid) return; // تم رسم المستخدم الحالي
+                    if(authorId === currentUser.uid) return; 
                     if(!App.isFriend(currentUser.uid, authorId) || App.isBlocked(authorId)) return;
 
                     const author = Memory.users[authorId];
@@ -3139,6 +3462,7 @@ renderReports: () => {
 
                     const userNotes = groupedNotes[authorId];
                     const isAllViewed = userNotes.every(n => n.viewers && n.viewers.includes(currentUser.uid));
+                    const hasCloseNote = userNotes.some(n => n.isClose); // فحص ستوريات الصديق هل بها كلوز؟
 
                     const el = document.createElement('div');
                     el.className = 'inline-flex flex-col items-center cursor-pointer shrink-0 btn-tap w-16';
@@ -3146,14 +3470,13 @@ renderReports: () => {
                     const shortName = author.name.split(' ')[0];
                     
                     el.innerHTML = `
-                        <div class="relative rounded-full" style="background: ${getConicGradient(userNotes.length, isAllViewed)}; padding: 3px;">
+                        <div class="relative rounded-full" style="background: ${getConicGradient(userNotes.length, isAllViewed, hasCloseNote)}; padding: 3px;">
                             <img src="${author.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--bg-color)] shadow-sm">
                         </div>
-                        <span class="text-[11px] font-bold mt-1 w-full text-center truncate theme-text ${!isAllViewed ? 'text-blue-600' : ''}">${shortName}</span>
+                        <span class="text-[11px] font-bold mt-1 w-full text-center truncate theme-text ${!isAllViewed ? (hasCloseNote ? 'text-green-600' : 'text-blue-600') : ''}">${shortName}</span>
                     `;
                     el.onclick = () => { App.startStorySession(authorId, groupedNotes); };
                     
-                    // التي لم تشاهدها تظهر أولاً
                     if(isAllViewed) container.appendChild(el);
                     else container.insertBefore(el, container.children[1]);
                 });
@@ -3251,9 +3574,8 @@ renderReports: () => {
                     document.getElementById('nv-options-btn').classList.remove('hidden');
                     document.getElementById('note-viewers-count').innerText = (note.viewers || []).length;
                     document.getElementById('nv-options-btn').onclick = () => {
-                        App.openManageNote(note.id, note.text);
-                        App.closeStoryViewer();
-                    };
+    App.showMyNoteOptions(note.id, note.text);
+};
                 }
 
                 App.resumeStoryTimer();
@@ -3336,9 +3658,10 @@ renderReports: () => {
                     
                     document.getElementById('note-viewers-count').innerText = (note.viewers || []).length;
                     
+                    // التعديل هنا: توجيه الزر لفتح القائمة بدلاً من فتح التعديل المباشر
                     document.getElementById('nv-options-btn').onclick = () => {
-                        App.openManageNote(note.id, note.text);
-                        UI.closeModal('note-view-modal');
+                        App.showMyNoteOptions(note.id, note.text);
+                        // تم إزالة الإغلاق المباشر للنافذة ليقوم بالانتقال للقائمة بسلاسة
                     };
                 }
 
@@ -3408,24 +3731,91 @@ await addDoc(collection(db, NOTIFS_PATH), {
             },
 
             createNote: async () => {
-                const text = document.getElementById('note-text-input').value.trim();
-                if(!text) return UI.showMessage('اكتب شيئاً');
-                
-                // تحقق من العدد (حد أقصى 5 ملاحظات نشطة)
-                const now = Date.now();
-                const oneDay = 24 * 60 * 60 * 1000;
-                const myActiveNotes = Memory.notes.filter(n => n.authorId === currentUser.uid && (now - n.timestamp) < oneDay);
-                if(myActiveNotes.length >= 5) {
-                    return UI.showMessage('لا يمكنك نشر أكثر من 5 ملاحظات في اليوم');
-                }
+    const text = document.getElementById('note-text-input').value.trim();
+    const isClose = document.getElementById('is-close-note').checked; // جلب حالة الكلوز
+    if(!text) return UI.showMessage('اكتب شيئاً');
+    
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const myActiveNotes = Memory.notes.filter(n => n.authorId === currentUser.uid && (now - n.timestamp) < oneDay);
+    if(myActiveNotes.length >= 5) {
+        return UI.showMessage('لا يمكنك نشر أكثر من 5 ملاحظات في اليوم');
+    }
 
-                UI.closeModal('create-note-modal');
-                await addDoc(collection(db, NOTES_PATH), {
-                    authorId: currentUser.uid, text: text, timestamp: Date.now(), viewers: []
-                });
-                App.notifyMentions(text, 'ملاحظة', null);
-                UI.showMessage('تمت الإضافة (صالحة لـ 24 ساعة)');
-            },
+    UI.closeModal('create-note-modal');
+    await addDoc(collection(db, NOTES_PATH), {
+        authorId: currentUser.uid, 
+        text: text, 
+        timestamp: Date.now(), 
+        viewers: [],
+        isClose: isClose // حفظ ككلوز
+    });
+    
+    App.notifyMentions(text, 'ملاحظة', null);
+    UI.showMessage(isClose ? 'تم النشر للكلوز 🟢' : 'تمت الإضافة (صالحة لـ 24 ساعة)');
+},
+
+openCloseFriendsManager: () => {
+    UI.closeModal('action-modal'); // إغلاق قائمة الخيارات السابقة
+    const container = document.getElementById('close-friends-list');
+    container.innerHTML = '';
+    
+    const myCloseFriends = currentUser.closeFriends || [];
+    const myFriendsRelations = Memory.friends.filter(f => f.user1 === currentUser.uid || f.user2 === currentUser.uid);
+    
+    if(myFriendsRelations.length === 0) {
+        container.innerHTML = '<div class="text-center opacity-50 py-10">ليس لديك أصدقاء لإضافتهم للكلوز</div>';
+    } else {
+        myFriendsRelations.forEach(f => {
+            const friendId = f.user1 === currentUser.uid ? f.user2 : f.user1;
+            const u = Memory.users[friendId];
+            if(!u || App.isBlocked(friendId)) return;
+            
+            const isChecked = myCloseFriends.includes(friendId);
+            
+            const el = document.createElement('label');
+            el.className = 'flex items-center justify-between p-3 theme-card rounded-2xl border shadow-sm cursor-pointer btn-tap';
+            el.innerHTML = `
+                <div class="flex items-center gap-3 pointer-events-none">
+                    <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover">
+                    <span class="font-bold theme-text">${u.name}</span>
+                </div>
+                <input type="checkbox" value="${friendId}" class="close-friend-cb w-6 h-6 accent-green-500 rounded-full" ${isChecked ? 'checked' : ''}>
+            `;
+            container.appendChild(el);
+        });
+    }
+    UI.openModal('close-friends-modal');
+},
+
+saveCloseFriends: async () => {
+    const checkboxes = document.querySelectorAll('.close-friend-cb:checked');
+    const selectedIds = Array.from(checkboxes).map(cb => cb.value);
+    
+    await updateDoc(doc(db, USERS_PATH, currentUser.uid), { closeFriends: selectedIds });
+    currentUser.closeFriends = selectedIds;
+    
+    UI.closeModal('close-friends-modal');
+    UI.showMessage('تم تحديث قائمة الكلوز 🟢');
+    App.resumeStoryTimer(); // إكمال الستوري إذا كنت داخله
+},
+
+showMyNoteOptions: (noteId, text) => {
+    App.closeStoryViewer(); // إيقاف وإغلاق الستوري المؤقت لفتح الخيارات براحة
+    const content = document.getElementById('action-modal-content');
+    content.innerHTML = `
+        <button onclick="App.openCloseFriendsManager()" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-green-50 btn-tap text-green-600 font-bold">
+            <span>الكلوز (Close)</span> <i class="ph-fill ph-users-three text-xl"></i>
+        </button>
+        <button onclick="UI.closeModal('action-modal'); App.openManageNote('${noteId}', '${escapeHTML(text).replace(/'/g, "\\'")}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-blue-50 btn-tap text-blue-600 font-bold">
+            <span>تعديل الملاحظة</span> <i class="ph-fill ph-pencil-simple text-xl"></i>
+        </button>
+        <button onclick="window.currentManageNoteId='${noteId}'; App.deleteNote(); UI.closeModal('action-modal');" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-500 font-bold">
+            <span>حذف الملاحظة</span> <i class="ph-fill ph-trash text-xl"></i>
+        </button>
+    `;
+    UI.openModal('action-modal');
+},
 
             openManageNote: (id, currentText) => {
                 window.currentManageNoteId = id;
@@ -3843,7 +4233,28 @@ await addDoc(collection(db, NOTIFS_PATH), {
 
             showMessageOptions: (msgId, isMe, text, isPinned) => {
                 const content = document.getElementById('action-modal-content');
-                let buttons = `
+                
+                // تم تقليل التفاعلات إلى 5 فقط
+                const emojis = ['👍🏻', '👎🏻', '❤️', '🔥', '😂'];
+                let emojiHtml = `<div class="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700" dir="ltr">`;
+                
+                emojis.forEach(emoji => {
+                    emojiHtml += `
+                        <button class="text-2xl shrink-0 btn-tap hover:scale-110 transition-transform" 
+                            onclick="App.reactToMessage('${msgId}', '${emoji}'); UI.closeModal('action-modal')">
+                            ${emoji}
+                        </button>
+                    `;
+                });
+                
+                // زر لفتح باقي التفاعلات (السادس)
+                emojiHtml += `
+                    <button class="w-8 h-8 shrink-0 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center btn-tap text-gray-600 dark:text-gray-300 ml-1" onclick="UI.closeModal('action-modal'); App.showReactionsModal('${msgId}')">
+                        <i class="ph ph-caret-down text-lg"></i>
+                    </button>
+                </div>`;
+
+                let buttons = emojiHtml + `
                     <button onclick="App.copyText('${escapeHTML(text).replace(/'/g, "\\'")}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
                         <span>نسخ النص</span> <i class="ph-fill ph-copy text-lg text-gray-500"></i>
                     </button>
@@ -3857,15 +4268,13 @@ await addDoc(collection(db, NOTIFS_PATH), {
                         <button onclick="App.editMessage('${msgId}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-green-50 btn-tap text-green-600">
                             <span>تعديل</span> <i class="ph-fill ph-pencil-simple text-lg"></i>
                         </button>
+                        <button onclick="App.deleteMessage('${msgId}', 'all')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-red-50 btn-tap text-red-500">
+                            <span>حذف للجميع</span> <i class="ph-fill ph-trash text-lg"></i>
+                        </button>
                     `;
                 }
                 
                 buttons += `
-                    ${isMe ? `
-                    <button onclick="App.deleteMessage('${msgId}', 'all')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-red-50 btn-tap text-red-500">
-                        <span>حذف للجميع</span> <i class="ph-fill ph-trash text-lg"></i>
-                    </button>
-                    ` : ''}
                     <button onclick="App.deleteMessage('${msgId}', 'me')" class="w-full flex justify-between items-center p-4 hover:bg-orange-50 btn-tap text-orange-500">
                         <span>حذف من عندي</span> <i class="ph-fill ph-trash-simple text-lg"></i>
                     </button>
@@ -3874,6 +4283,8 @@ await addDoc(collection(db, NOTIFS_PATH), {
                 content.innerHTML = buttons;
                 UI.openModal('action-modal');
             },
+            
+            
             
             editMessage: async (msgId) => {
                 const msg = Memory.messages.find(m => m.id === msgId);
@@ -3937,8 +4348,27 @@ await addDoc(collection(db, NOTIFS_PATH), {
             
             showReactionsModal: (msgId) => {
                 window.currentReactionMsgId = msgId;
+                const container = document.getElementById('full-reactions-grid');
+                
+                const allEmojis = ['👍🏻','👎🏻','❤️','🤣','💔','🌚','🥲','🔥','💕','😉','🙂','😢','😭','😒','😔','🥺','😐','🫣','💋','🤝'];
+                const defaultReact = localStorage.getItem('zailo_quick_react') || '👍🏻';
+                
+                container.innerHTML = allEmojis.map(e => {
+                    const isDefault = e === defaultReact;
+                    const activeClass = isDefault ? 'bg-blue-100 dark:bg-blue-900/50 border-2 border-blue-500 rounded-xl scale-110 shadow-sm' : 'border-2 border-transparent';
+                    
+                    return `
+                        <button onclick="App.handleEmojiClick('${e}', this)" 
+                                class="text-3xl btn-tap transition-all w-12 h-12 flex items-center justify-center ${activeClass}">
+                            ${e}
+                        </button>
+                    `;
+                }).join('');
+
                 UI.openModal('reactions-modal');
             },
+            
+            
 
             selectReaction: (emoji) => {
                 if(window.currentReactionMsgId) {
@@ -4193,33 +4623,58 @@ showChatOptions: (otherUid, event) => {
                 });
 
                 chatsArray.forEach(([otherUid, chatData]) => {
-                    const u = Memory.users[otherUid];
-                    if(!u) return;
-                    const isMuted = !!chatData.mute;
-                    const hasUnread = chatData.unreadCount > 0;
-                    const el = document.createElement('div');
-                    el.className = `flex items-center gap-3 p-3 border-b cursor-pointer theme-card ${hasUnread && !isMuted ? 'bg-blue-50/10' : ''}`;
-                    el.onclick = () => UI.openModal('chat-modal', u.uid);
-                    
-                    const badgeColorClass = isMuted ? 'bg-gray-400' : 'bg-blue-600';
+    const u = Memory.users[otherUid];
+    if(!u) return;
+    const isMuted = !!chatData.mute;
+    const hasUnread = chatData.unreadCount > 0;
+    const el = document.createElement('div');
+    el.className = `flex items-center gap-3 p-3 border-b cursor-pointer theme-card ${hasUnread && !isMuted ? 'bg-blue-50/10' : ''}`;
+    
+    // نظام الضغط المطول
+    let pressTimer;
+    let isLongPress = false;
+    
+    el.onmousedown = el.ontouchstart = (e) => {
+        isLongPress = false;
+        pressTimer = setTimeout(() => {
+            isLongPress = true;
+            App.showChatOptions(u.uid, e);
+        }, 600); // 600 ملي ثانية للضغط المطول
+    };
+    
+    el.onmouseup = el.ontouchend = el.ontouchcancel = el.onmouseleave = () => {
+        clearTimeout(pressTimer);
+    };
+    
+    el.oncontextmenu = (e) => {
+        e.preventDefault(); // منع قائمة المتصفح الافتراضية
+        App.showChatOptions(u.uid, e);
+    };
 
-                    el.innerHTML = `
-                        <div class="relative">
-                            <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border">
-                            ${chatData.pin ? '<span class="absolute -top-1 -right-1 bg-red-500 text-white p-1 rounded-full text-[8px]"><i class="ph-fill ph-push-pin"></i></span>' : ''}
-                        </div>
-                        <div class="flex-1 overflow-hidden pr-1">
-                            <div class="flex justify-between items-center">
-                                <h4 class="font-bold truncate ${hasUnread && !isMuted ? 'text-blue-600' : 'theme-text'}">${u.name} ${isMuted ? '🔕' : ''}</h4>
-                                <span class="text-xs opacity-60">${App.timeAgo(chatData.lastMsg.timestamp)}</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <p class="text-sm truncate opacity-60 theme-text">${chatData.lastMsg.text}</p>
-                                ${hasUnread ? `<span class="${badgeColorClass} text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">${chatData.unreadCount}</span>` : ''}
-                            </div>
-                        </div>`;
-                    container.appendChild(el);
-                });
+    el.onclick = (e) => {
+        if(!isLongPress) UI.openModal('chat-modal', u.uid);
+    };
+    
+    const badgeColorClass = isMuted ? 'bg-gray-400' : 'bg-blue-600';
+
+    el.innerHTML = `
+        <div class="relative shrink-0">
+            <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border pointer-events-none">
+            ${chatData.pin ? '<span class="absolute -top-1 -right-1 bg-red-500 text-white p-1 rounded-full text-[8px]"><i class="ph-fill ph-push-pin"></i></span>' : ''}
+        </div>
+        <div class="flex-1 overflow-hidden pr-2 pointer-events-none">
+            <div class="flex justify-between items-center">
+                <h4 class="font-bold truncate ${hasUnread && !isMuted ? 'text-blue-600' : 'theme-text'}">${u.name} ${isMuted ? '🔕' : ''}</h4>
+                <span class="text-xs opacity-60">${App.timeAgo(chatData.lastMsg.timestamp)}</span>
+            </div>
+            <div class="flex items-center justify-between mt-1">
+                <p class="text-sm truncate opacity-60 theme-text">${chatData.lastMsg.text}</p>
+                ${hasUnread ? `<span class="${badgeColorClass} text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0">${chatData.unreadCount}</span>` : ''}
+            </div>
+        </div>
+    `;
+    container.appendChild(el);
+});
 
                 const mainBadge = document.getElementById('badge-messages');
                 if(totalUnreadCount > 0) {
@@ -4350,12 +4805,13 @@ showChatOptions: (otherUid, event) => {
                         const timeDiff = currentTime - lastClickTime;
                         
                         if (timeDiff < 300) {
-                            // تم اكتشاف ضغط مزدوج! نلغي الضغط المفرد ونفتح التفاعلات
+                            // ضغط مزدوج (تفاعل سريع)
                             clearTimeout(clickTimer);
-                            App.showReactionsModal(m.id);
-                            lastClickTime = 0; // تصفير الوقت
+                            const defaultReact = localStorage.getItem('zailo_quick_react') || '👍🏻';
+                            App.reactToMessage(m.id, defaultReact);
+                            lastClickTime = 0;
                         } else {
-                            // ضغط مفرد (ننتظر قليلاً للتأكد أنه ليس ضغطاً مزدوجاً)
+                            // ضغط مفرد (إظهار الخيارات وشريط الإيموجي)
                             lastClickTime = currentTime;
                             clickTimer = setTimeout(() => {
                                 App.showMessageOptions(m.id, isMe, m.text, m.pinned);
