@@ -683,9 +683,11 @@
                 <button onclick="UI.switchTab('home')" class="nav-btn flex-1 py-3 flex flex-col items-center gap-1 text-blue-600 border-b-2 border-blue-600 transition-colors btn-tap">
                     <i class="ph-fill ph-house text-2xl"></i>
                 </button>
-                <button onclick="UI.switchTab('notes')" class="nav-btn flex-1 py-3 flex flex-col items-center gap-1 text-gray-500 border-b-2 border-transparent transition-colors relative btn-tap">
-                    <i class="ph ph-users text-2xl"></i>
-                    <span id="badge-requests" class="hidden absolute top-2 right-1/4 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+                <button onclick="UI.switchTab('notes')" class="nav-btn flex-1 py-3 flex flex-col items-center gap-1 text-gray-500 border-b-2 border-transparent transition-colors btn-tap">
+                    <div class="relative">
+                        <i class="ph ph-users text-2xl"></i>
+                        <span id="badge-requests" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-sm"></span>
+                    </div>
                 </button>
                 <button onclick="UI.switchTab('messages')" class="nav-btn flex-1 py-3 flex flex-col items-center gap-1 text-gray-500 border-b-2 border-transparent transition-colors relative btn-tap">
                     <i class="ph ph-chat-circle-text text-2xl"></i>
@@ -746,9 +748,11 @@
 
                 <div class="theme-card rounded-xl shadow-sm flex-1 flex flex-col overflow-hidden border">
                     <div class="flex border-b" style="border-color: var(--border-color);">
-                        <button onclick="App.switchFriendsSubTab('requests')" id="subtab-requests" class="flex-1 py-3 text-center text-sm font-bold sub-tab-active btn-tap transition-colors relative">
-                            الطلبات
-                            <span id="badge-requests-subtab" class="hidden absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        <button onclick="App.switchFriendsSubTab('requests')" id="subtab-requests" class="flex-1 py-3 text-center text-sm font-bold sub-tab-active btn-tap transition-colors">
+                            <span class="relative inline-block">
+                                الطلبات
+                                <span id="badge-requests-subtab" class="hidden absolute -top-1 -left-2 w-2 h-2 bg-red-500 rounded-full"></span>
+                            </span>
                         </button>
                         <button onclick="App.switchFriendsSubTab('friends')" id="subtab-friends" class="flex-1 py-3 text-center text-sm font-bold sub-tab-inactive btn-tap transition-colors">الأصدقاء</button>
                         <button onclick="App.switchFriendsSubTab('suggestions')" id="subtab-suggestions" class="flex-1 py-3 text-center text-sm font-bold sub-tab-inactive btn-tap transition-colors">اقتراحات</button>
@@ -1728,7 +1732,7 @@
                 
                 if(tabId === 'messages') App.renderChats(); 
                 if(tabId === 'notes') {
-                    document.getElementById('badge-requests').classList.add('hidden');
+                    // حذفنا سطر الإخفاء لضمان بقاء النقطة طالما يوجد طلب معلق
                     App.switchFriendsSubTab('friends');
                 }
                 if(tabId === 'notifications') document.getElementById('badge-notifications').classList.add('hidden');
@@ -2119,13 +2123,16 @@
                     Memory.requests = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     App.renderFriendsTab('requests'); 
                     
-                    // تحديث النقطة الحمراء
                     const myRequests = Memory.requests.filter(r => r.to === currentUser.uid);
-                    const badgeSubtab = document.getElementById('badge-requests-subtab');
+                    const badgeSubtab = document.getElementById('badge-requests-subtab'); // النقطة الداخلية
+                    const badgeMainNav = document.getElementById('badge-requests');    // النقطة الخارجية (زر الأصدقاء)
+                    
                     if(myRequests.length > 0) {
-                        badgeSubtab.classList.remove('hidden');
+                        if(badgeSubtab) badgeSubtab.classList.remove('hidden');
+                        if(badgeMainNav) badgeMainNav.classList.remove('hidden');
                     } else {
-                        badgeSubtab.classList.add('hidden');
+                        if(badgeSubtab) badgeSubtab.classList.add('hidden');
+                        if(badgeMainNav) badgeMainNav.classList.add('hidden');
                     }
                 }, errHandler);
 
@@ -2636,20 +2643,61 @@ renderReports: () => {
 
             banPostOwner: async (reportId, ownerUid) => {
                 if(confirm('هل أنت متأكد من حظر صاحب المنشور بشكل كامل من التطبيق؟')) {
-                    // جلب بيانات الإبلاغ لمعرفة من قام بالإبلاغ
                     const report = Memory.reports.find(r => r.id === reportId);
                     
-                    await banDevice(ownerUid); // دالة الحظر
-                    await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'processed' });
-                    
-                    // إرسال إشعار شكر للمبلغ
+                    // استخدام الإرسال المباشر لقاعدة البيانات لضمان الوصول حتى لو كنت تختبره من حسابك
                     if (report && report.reportedBy) {
-                        App.sendNotification(report.reportedBy, 'قمنا بمراجعة إبلاغك وتم اتخاذ الإجراء اللازم بحق المخالف. شكراً لمساهمتك في جعل زايلو مجتمعاً آمناً 🛡️', null);
+                        await addDoc(collection(db, NOTIFS_PATH), {
+                            to: report.reportedBy,
+                            from: currentUser.uid,
+                            text: 'قمنا بمراجعة إبلاغك وتم اتخاذ الإجراء اللازم بحق المخالف. شكراً لمساهمتك في جعل زايلو مجتمعاً آمناً 🛡️',
+                            linkId: null,
+                            timestamp: Date.now(),
+                            read: false
+                        });
                     }
 
+                    await banDevice(ownerUid); 
+                    await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'processed' });
+                    
                     UI.showMessage('تم حظر صاحب المنشور وإشعار المُبلغ');
                     App.renderReports();
                 }
+            },
+
+            rejectReport: async (reportId) => {
+                const report = Memory.reports.find(r => r.id === reportId);
+                
+                // استخدام الإرسال المباشر لقاعدة البيانات لضمان الوصول
+                if (report && report.reportedBy) {
+                    await addDoc(collection(db, NOTIFS_PATH), {
+                        to: report.reportedBy,
+                        from: currentUser.uid,
+                        text: 'قمنا بمراجعة إبلاغك ولم نجد أي انتهاك لمعايير المجتمع. شكراً لحرصك 🤍',
+                        linkId: null,
+                        timestamp: Date.now(),
+                        read: false
+                    });
+                }
+
+                await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'rejected' });
+                
+                UI.showMessage('تم رفض الإبلاغ وإشعار المُبلغ');
+                App.renderReports();
+            },
+
+            rejectReport: async (reportId) => {
+                const report = Memory.reports.find(r => r.id === reportId);
+                
+                // إرسال الإشعار أولاً لضمان وصوله
+                if (report && report.reportedBy) {
+                    await App.sendNotification(report.reportedBy, 'قمنا بمراجعة إبلاغك ولم نجد أي انتهاك لمعايير المجتمع. شكراً لحرصك 🤍', null);
+                }
+
+                await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'rejected' });
+                
+                UI.showMessage('تم رفض الإبلاغ وإشعار المُبلغ');
+                App.renderReports();
             },
 
             rejectReport: async (reportId) => {
@@ -4089,7 +4137,7 @@ showChatOptions: (otherUid, event) => {
                         
                         if(msg.senderId === otherUid && !msg.read) {
                             chatUsers[otherUid].unreadCount++;
-                            totalUnreadCount++;
+                            // تم حذف عداد (totalUnreadCount) من هنا لنقوم بحسابه بذكاء في الخطوة القادمة
                         }
                     }
                 });
@@ -4099,6 +4147,12 @@ showChatOptions: (otherUid, event) => {
                 chatsArray = chatsArray.map(([uid, data]) => {
                     const pin = Memory.pins.find(p => p.userId === currentUser.uid && p.chatId === uid);
                     const mute = Memory.mutes.find(m => m.userId === currentUser.uid && m.chatId === uid && m.until > Date.now());
+                    
+                    // التعديل هنا: إذا الشخص غير مكتوم وعنده رسائل، نضيفهم للعداد الرئيسي الخارجي
+                    if (!mute && data.unreadCount > 0) {
+                        totalUnreadCount += data.unreadCount;
+                    }
+
                     return [uid, {...data, pin, mute}];
                 });
                 
@@ -4123,6 +4177,7 @@ showChatOptions: (otherUid, event) => {
                     const u = Memory.users[otherUid];
                     if(!u) return;
 
+                    // هنا نخفي الفقاعة الزرقاء داخل المحادثة إذا كان الشخص مكتوم
                     const isUnread = chatData.unreadCount > 0 && !chatData.mute;
                     const isOnline = App.isOnline(u.lastActive);
                     const pin = chatData.pin;
@@ -4132,22 +4187,31 @@ showChatOptions: (otherUid, event) => {
                     const unreadClass = isUnread ? 'bg-blue-50/20' : 'hover:opacity-80';
                     el.className = `flex items-center gap-3 p-3 border-b cursor-pointer btn-tap transition-colors theme-card ${unreadClass}`;
                     
-                    // في دالة renderChats، استبدل جزء الضغط المطول بهذا:
-let pressTimer;
-const startPress = (e) => { 
-    e.stopPropagation();
-    pressTimer = setTimeout(() => App.showChatOptions(u.uid, e), 600); 
-};
-const cancelPress = () => clearTimeout(pressTimer);
-el.addEventListener('mousedown', startPress);
-el.addEventListener('touchstart', startPress, {passive: true});
-el.addEventListener('mouseup', cancelPress);
-el.addEventListener('mouseleave', cancelPress);
-el.addEventListener('touchend', cancelPress);
-el.addEventListener('touchmove', cancelPress);
+                    let pressTimer;
+                    let isLongPress = false; 
+                    
+                    const startPress = (e) => { 
+                        isLongPress = false;
+                        pressTimer = setTimeout(() => {
+                            isLongPress = true; 
+                            App.showChatOptions(u.uid, e);
+                        }, 600); 
+                    };
+                    const cancelPress = () => clearTimeout(pressTimer);
+                    
+                    el.addEventListener('mousedown', startPress);
+                    el.addEventListener('touchstart', startPress, {passive: true});
+                    el.addEventListener('mouseup', cancelPress);
+                    el.addEventListener('mouseleave', cancelPress);
+                    el.addEventListener('touchend', cancelPress);
+                    el.addEventListener('touchmove', cancelPress);
 
-                    el.onclick = () => {
+                    el.onclick = (e) => {
                         if(pressTimer) clearTimeout(pressTimer);
+                        if(isLongPress) {
+                            e.preventDefault();
+                            return; 
+                        }
                         UI.openModal('chat-modal', u.uid);
                     };
 
@@ -4156,19 +4220,18 @@ el.addEventListener('touchmove', cancelPress);
                         tickHtml = lastMsg.read ? '<i class="ph-fill ph-checks text-blue-500 text-[13px] ml-1"></i>' : '<i class="ph ph-check opacity-50 text-[13px] ml-1"></i>';
                     }
 
-                    let msgPreview = lastMsg.text;
+                    let msgPreview = lastMsg.text ? lastMsg.text.replace(/\n/g, ' ') : '';
                     if (lastMsg.isNoteReply) {
                         msgPreview = lastMsg.senderId === currentUser.uid ? 'رديت على الملاحظة' : 'تم الرد على ملاحظتك';
                     }
                     
-                    // التحقق الآمن مما إذا كان المستخدم يكتب الآن
-                    if (!Memory.typingStatus) Memory.typingStatus = {}; // حماية حتى لا تختفي المحادثات
+                    if (!Memory.typingStatus) Memory.typingStatus = {};
                     const typingData = Memory.typingStatus[`${otherUid}_${currentUser.uid}`];
                     let isTypingNow = false;
                     if(typingData && typingData.text && (Date.now() - typingData.timestamp < 5000)) {
                         isTypingNow = true;
                         msgPreview = `<span class="text-blue-500 font-bold animate-pulse">يكتب الآن...</span>`;
-                        tickHtml = ''; // إخفاء الصحين أثناء الكتابة
+                        tickHtml = ''; 
                     }
                     
                     let pinHtml = '';
@@ -4198,7 +4261,7 @@ el.addEventListener('touchmove', cancelPress);
                             </div>
                             <div class="flex items-center justify-between">
                                 <p class="text-sm truncate flex-1 flex items-center gap-0.5 ${isUnread ? 'text-unread' : (lastMsg.senderId !== currentUser.uid ? 'font-medium opacity-90' : 'opacity-60')}">
-                                    ${tickHtml} ${msgPreview.replace(/\n/g, ' ')}
+                                    ${tickHtml} ${msgPreview}
                                 </p>
                                 ${isUnread ? `<span class="bg-blue-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-sm mr-2">${chatData.unreadCount}</span>` : ''}
                             </div>
@@ -4207,6 +4270,7 @@ el.addEventListener('touchmove', cancelPress);
                     container.appendChild(el);
                 });
 
+                // تحديث العداد الرئيسي لزر الرسائل الخارجي (فقط للرسائل من أشخاص غير مكتومين)
                 if(totalUnreadCount > 0) {
                     const badge = document.getElementById('badge-messages');
                     badge.classList.remove('hidden');
