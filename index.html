@@ -940,12 +940,13 @@
     <div id="manage-note-modal" class="hidden fixed inset-0 bg-black/60 z-[110] flex items-center justify-center p-4">
         <div class="theme-card rounded-3xl w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative border">
             <div class="p-4 border-b text-center">
-                <h3 class="font-bold text-lg">تعديل الملاحظة</h3>
+                <h3 class="font-bold text-lg">إدارة الملاحظة</h3>
             </div>
             <div class="p-4 space-y-4">
                 <textarea id="edit-note-input" class="w-full theme-bg p-4 rounded-xl outline-none text-center font-bold text-lg resize-none border" rows="2" maxlength="60"></textarea>
                 <div class="flex flex-col gap-2">
                     <button onclick="App.updateNote()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl btn-tap">حفظ التعديل</button>
+                    <button onclick="App.deleteNote()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl btn-tap">حذف الملاحظة</button>
                     <button onclick="UI.closeModal('manage-note-modal')" class="w-full opacity-60 font-bold py-3 rounded-xl btn-tap">إلغاء</button>
                 </div>
             </div>
@@ -1238,11 +1239,10 @@
         
         <div id="chat-background" class="flex-1 overflow-hidden flex flex-col relative chat-container-bg">
             <div id="chat-messages-container" class="flex-1 overflow-y-auto smooth-scroll p-4 flex flex-col relative z-10 pb-4 overflow-x-hidden">
-    <button id="load-more-messages" class="load-more-btn hidden mt-2 mb-6" onclick="App.loadMoreMessages()">عرض الرسائل السابقة</button>
-    <div id="live-typing-bubble" class="hidden bubble-other rounded-2xl rounded-bl-sm p-3 shadow-sm self-start mb-2 text-[15px] opacity-70 w-fit max-w-[80%] transition-all duration-300">
-        <span class="typing-cursor font-medium"></span>
-    </div>
-</div>
+                <div id="live-typing-bubble" class="hidden bubble-other rounded-2xl rounded-bl-sm p-3 shadow-sm self-start mb-2 text-[15px] opacity-70 w-fit max-w-[80%] transition-all duration-300">
+                    <span class="typing-cursor font-medium"></span>
+                </div>
+            </div>
 
         <div id="replying-to-container" class="hidden theme-card border-t px-4 py-2 flex items-center justify-between shadow-[0_-2px_10px_rgba(0,0,0,0.02)] z-10 relative">
             <div class="flex flex-col border-r-4 border-blue-500 pr-3">
@@ -1355,6 +1355,33 @@
 
                 <!-- قائمة المحظورين (تظهر عند الضغط) -->
                 <div id="banned-users-list" class="mt-4 hidden space-y-2"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="reactions-modal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-[150] flex items-center justify-center" onclick="if(event.target === this) UI.closeModal('reactions-modal')">
+        <div class="theme-card rounded-3xl p-5 shadow-2xl modal-slide-in w-[90%] max-w-sm border border-[var(--border-color)]">
+            <h3 class="text-center font-bold mb-4 text-sm opacity-60">اختر تفاعلاً</h3>
+            <div class="grid grid-cols-5 gap-4 justify-items-center">
+                <button onclick="App.selectReaction('👍🏻')" class="text-3xl btn-tap hover:scale-125 transition-transform">👍🏻</button>
+                <button onclick="App.selectReaction('👎🏻')" class="text-3xl btn-tap hover:scale-125 transition-transform">👎🏻</button>
+                <button onclick="App.selectReaction('❤')" class="text-3xl btn-tap hover:scale-125 transition-transform">❤</button>
+                <button onclick="App.selectReaction('🤣')" class="text-3xl btn-tap hover:scale-125 transition-transform">🤣</button>
+                <button onclick="App.selectReaction('💔')" class="text-3xl btn-tap hover:scale-125 transition-transform">💔</button>
+                <button onclick="App.selectReaction('🌚')" class="text-3xl btn-tap hover:scale-125 transition-transform">🌚</button>
+                <button onclick="App.selectReaction('🥲')" class="text-3xl btn-tap hover:scale-125 transition-transform">🥲</button>
+                <button onclick="App.selectReaction('🔥')" class="text-3xl btn-tap hover:scale-125 transition-transform">🔥</button>
+                <button onclick="App.selectReaction('💕')" class="text-3xl btn-tap hover:scale-125 transition-transform">💕</button>
+                <button onclick="App.selectReaction('😉')" class="text-3xl btn-tap hover:scale-125 transition-transform">😉</button>
+                <button onclick="App.selectReaction('🙂')" class="text-3xl btn-tap hover:scale-125 transition-transform">🙂</button>
+                <button onclick="App.selectReaction('😢')" class="text-3xl btn-tap hover:scale-125 transition-transform">😢</button>
+                <button onclick="App.selectReaction('😭')" class="text-3xl btn-tap hover:scale-125 transition-transform">😭</button>
+                <button onclick="App.selectReaction('😒')" class="text-3xl btn-tap hover:scale-125 transition-transform">😒</button>
+                <button onclick="App.selectReaction('😔')" class="text-3xl btn-tap hover:scale-125 transition-transform">😔</button>
+                <button onclick="App.selectReaction('🥺')" class="text-3xl btn-tap hover:scale-125 transition-transform">🥺</button>
+                <button onclick="App.selectReaction('😐')" class="text-3xl btn-tap hover:scale-125 transition-transform">😐</button>
+                <button onclick="App.selectReaction('🫣')" class="text-3xl btn-tap hover:scale-125 transition-transform">🫣</button>
+                <button onclick="App.selectReaction('💋')" class="text-3xl btn-tap hover:scale-125 transition-transform">💋</button>
             </div>
         </div>
     </div>
@@ -3796,17 +3823,35 @@ renderReports: () => {
                 UI.closeModal('action-modal');
             },
             
-            reactToMessage: async (msgId, reactionEmoji = '❤️') => {
+            showReactionsModal: (msgId) => {
+                window.currentReactionMsgId = msgId;
+                UI.openModal('reactions-modal');
+            },
+
+            selectReaction: (emoji) => {
+                if(window.currentReactionMsgId) {
+                    App.reactToMessage(window.currentReactionMsgId, emoji);
+                    UI.closeModal('reactions-modal');
+                }
+            },
+
+            reactToMessage: async (msgId, reactionEmoji) => {
                 const msg = Memory.messages.find(m => m.id === msgId);
                 if(!msg) return;
                 const currentReactions = msg.reactions || {};
                 
+                // إذا ضغط على نفس الإيموجي يحذفه، وإذا اختار واحد جديد يستبدله
                 if(currentReactions[currentUser.uid] === reactionEmoji) {
                     delete currentReactions[currentUser.uid];
                 } else {
                     currentReactions[currentUser.uid] = reactionEmoji;
                 }
                 
+                // التحديث الوهمي السريع للواجهة
+                msg.reactions = currentReactions;
+                App.renderMessages(); 
+                
+                // التحديث في قاعدة البيانات
                 await updateDoc(doc(db, MESSAGES_PATH, msgId), { reactions: currentReactions });
             },
 
@@ -4206,89 +4251,24 @@ el.addEventListener('touchmove', cancelPress);
             },
 
             loadMessages: async () => {
-                const otherUid = window.currentChatUserId;
-                if(!otherUid) return;
-                
-                window.currentMessagePage = 0;
-                window.hasMoreMessages = true;
-                window.allMessages = [];
-                
-                await App.loadMoreMessages(true);
+                // تم حذف نظام التقييد (25 رسالة)
+                // نستدعي دالة الرسم فوراً لعرض كل الرسائل
+                App.renderMessages();
             },
 
-            loadMoreMessages: async (reset = false) => {
-                const otherUid = window.currentChatUserId;
-                if(!otherUid) return;
-                if(!window.hasMoreMessages && !reset) return;
-                
-                const container = document.getElementById('chat-messages-container');
-                const loadMoreBtn = document.getElementById('load-more-messages');
-                
-                if(reset) {
-                    window.lastVisibleMessage = null;
-                    window.allMessages = [];
-                }
-                
-                let q;
-                if(window.lastVisibleMessage) {
-                    q = query(
-                        collection(db, MESSAGES_PATH),
-                        orderBy('timestamp', 'desc'),
-                        startAfter(window.lastVisibleMessage),
-                        limit(window.messagesLimit)
-                    );
-                } else {
-                    q = query(
-                        collection(db, MESSAGES_PATH),
-                        orderBy('timestamp', 'desc'),
-                        limit(window.messagesLimit)
-                    );
-                }
-                
-                const snapshot = await getDocs(q);
-                
-                if(snapshot.empty) {
-                    window.hasMoreMessages = false;
-                    loadMoreBtn.classList.add('hidden');
-                    if(reset) {
-                        App.renderMessages(true);
-                    }
-                    return;
-                }
-                
-                window.lastVisibleMessage = snapshot.docs[snapshot.docs.length - 1];
-                
-                const newMessages = snapshot.docs
-                    .map(d => ({id: d.id, ...d.data()}))
-                    .filter(m => 
-                        m.participants.includes(currentUser.uid) && 
-                        m.participants.includes(otherUid) &&
-                        !(m.deletedFor && m.deletedFor.includes(currentUser.uid))
-                    );
-                
-                window.allMessages = [...newMessages, ...window.allMessages];
-                
-                if(snapshot.docs.length < window.messagesLimit) {
-                    window.hasMoreMessages = false;
-                    loadMoreBtn.classList.add('hidden');
-                } else {
-                    loadMoreBtn.classList.remove('hidden');
-                }
-                
-                App.renderMessages(reset);
+            loadMoreMessages: async () => {
+                // لم نعد نحتاج هذه الدالة، تركناها فارغة لتجنب أي أخطاء
+                return; 
             },
 
-            renderMessages: (keepScroll = false) => {
+            renderMessages: () => {
                 const otherUid = window.currentChatUserId;
                 if(!otherUid) return;
 
                 const container = document.getElementById('chat-messages-container');
-                const loadMoreBtn = document.getElementById('load-more-messages');
                 
-                let oldScrollHeight = container.scrollHeight;
-                
-                let msgs = window.allMessages.length > 0 ? window.allMessages : Memory.messages
-                    .filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid));
+                // جلب جميع رسائل المحادثة مباشرة من الذاكرة (بدون تقييد)
+                let msgs = Memory.messages.filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid));
                 
                 // الترتيب: الأقدم أولاً (من الأعلى للأسفل)
                 msgs = msgs.sort((a,b) => a.timestamp - b.timestamp);
@@ -4296,9 +4276,9 @@ el.addEventListener('touchmove', cancelPress);
 
                 App.updateChatPet(msgs);
 
-                // تفريغ الرسائل فقط مع إبقاء زر التحميل وفقاعة الكتابة
+                // تفريغ الرسائل فقط مع إبقاء فقاعة الكتابة
                 Array.from(container.children).forEach(child => {
-                    if(child.id !== 'load-more-messages' && child.id !== 'live-typing-bubble') child.remove();
+                    if(child.id !== 'live-typing-bubble') child.remove();
                 });
 
                 const pinnedMsg = msgs.find(m => m.pinned);
@@ -4318,28 +4298,50 @@ el.addEventListener('touchmove', cancelPress);
                 msgs.forEach(m => {
                     const isMe = m.senderId === currentUser.uid;
                     const row = document.createElement('div');
-                    row.className = `msg-row flex w-full mb-2 ${isMe ? 'justify-end' : 'justify-start'}`; // mb-2 للمسافة
+                    // مسافة سفلية أكبر لترك مجال لظهور التفاعلات
+                    row.className = `msg-row flex w-full mb-4 ${isMe ? 'justify-end' : 'justify-start'}`;
                     row.setAttribute('data-msg-id', m.id);
 
                     const el = document.createElement('div');
                     el.className = `max-w-[80%] rounded-2xl p-3 shadow-sm relative break-words ${isMe ? 'bubble-me rounded-br-sm' : 'bubble-other rounded-bl-sm'}`;
-                    el.onclick = () => { App.showMessageOptions(m.id, isMe, m.text, m.pinned); }; // اختصار للضغط
+                    
+                    // --- برمجة الضغط المزدوج والضغط المفرد ---
+                    let clickTimer = null;
+                    let lastClickTime = 0;
+                    
+                    el.onclick = (e) => {
+                        e.stopPropagation();
+                        const currentTime = new Date().getTime();
+                        const timeDiff = currentTime - lastClickTime;
+                        
+                        if (timeDiff < 300) {
+                            // تم اكتشاف ضغط مزدوج! نلغي الضغط المفرد ونفتح التفاعلات
+                            clearTimeout(clickTimer);
+                            App.showReactionsModal(m.id);
+                            lastClickTime = 0; // تصفير الوقت
+                        } else {
+                            // ضغط مفرد (ننتظر قليلاً للتأكد أنه ليس ضغطاً مزدوجاً)
+                            lastClickTime = currentTime;
+                            clickTimer = setTimeout(() => {
+                                App.showMessageOptions(m.id, isMe, m.text, m.pinned);
+                            }, 300); 
+                        }
+                    };
                     
                     let replyIcon = document.createElement('i');
                     replyIcon.className = `ph-fill ph-reply reply-icon-indicator ${isMe ? '-left-8' : '-right-8'}`;
                     row.appendChild(replyIcon);
 
-                    // دمج تعديل السحب لليسار فقط (التعديل الثالث) في نفس الدالة
                     let startX = 0, startY = 0, currentX = 0;
                     let isSwiping = false;
                     row.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isSwiping = false; }, {passive: true});
                     row.addEventListener('touchmove', (e) => {
                         if(!startX || !startY) return;
                         currentX = e.touches[0].clientX; let diffX = currentX - startX; let diffY = e.touches[0].clientY - startY;
-                        if (diffX < -10 && Math.abs(diffX) > Math.abs(diffY)) { // سحب لليسار فقط
+                        if (diffX < -10 && Math.abs(diffX) > Math.abs(diffY)) { 
                             isSwiping = true;
                             if(e.cancelable) e.preventDefault();
-                            let translate = Math.max(diffX, -70); // حد أقصى للسحب
+                            let translate = Math.max(diffX, -70); 
                             row.style.transform = `translateX(${translate}px)`;
                             replyIcon.style.opacity = Math.abs(translate) / 70;
                         }
@@ -4347,17 +4349,29 @@ el.addEventListener('touchmove', cancelPress);
                     row.addEventListener('touchend', (e) => {
                         if(!isSwiping) return;
                         row.style.transform = `translateX(0)`; replyIcon.style.opacity = 0;
-                        if (currentX - startX < -50) { // تم السحب لليسار للرد
+                        if (currentX - startX < -50) { 
                             App.setReplyMode(m.id, m.text, isMe ? 'نفسك' : Memory.users[m.senderId].name);
                         }
                         startX = 0; isSwiping = false;
                     });
-                    // -----------------------------------------------------------
 
-                    // الكود الآمن والجميل لعلامات الصح (بدون تخريب حجم الرسالة)
+                    // شكل الصحين المضبوط
                     const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-500 text-[16px] ml-1 drop-shadow-sm"></i>' : '<i class="ph ph-check opacity-70 text-[16px] ml-1"></i>') : '';
                     
-                    el.innerHTML = `<p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p><span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${tickHtml}</span>`;
+                    // --- تجهيز شريط التفاعلات أسفل الرسالة ---
+                    let reactionsHtml = '';
+                    if (m.reactions && Object.keys(m.reactions).length > 0) {
+                        const emojiCounts = {};
+                        Object.values(m.reactions).forEach(e => { emojiCounts[e] = (emojiCounts[e] || 0) + 1; });
+                        let bubbles = '';
+                        Object.entries(emojiCounts).forEach(([emoji, count]) => {
+                            bubbles += `<span class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100 shadow-sm border border-gray-200 dark:border-gray-600 rounded-full px-1.5 py-0.5 text-[11px]">${emoji}${count > 1 ? ' '+count : ''}</span>`;
+                        });
+                        // يظهر في الزاوية السفلية حسب المرسل
+                        reactionsHtml = `<div class="absolute -bottom-3 ${isMe ? 'right-2' : 'left-2'} flex gap-1 z-10">${bubbles}</div>`;
+                    }
+                    
+                    el.innerHTML = `<p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p><span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${tickHtml}</span>${reactionsHtml}`;
                     
                     row.appendChild(el);
                     container.appendChild(row);
@@ -4366,15 +4380,9 @@ el.addEventListener('touchmove', cancelPress);
                 const typingBubble = document.getElementById('live-typing-bubble');
                 if(typingBubble) container.appendChild(typingBubble);
 
-                // تأخير لضمان رسم الرسائل في الشاشة قبل ضبط النزول
+                // النزول لأسفل المحادثة دائماً
                 setTimeout(() => {
-                    if(keepScroll === 'loadMore' && oldScrollHeight > 0) {
-                        // عند تحميل رسائل قديمة فقط، حافظ على موقعك لتتمكن من إكمال القراءة
-                        container.scrollTop = container.scrollHeight - oldScrollHeight;
-                    } else {
-                        // في حالة إرسال رسالة، أو استلام رسالة، أو فتح المحادثة: انزل للأسفل تماماً
-                        container.scrollTop = container.scrollHeight;
-                    }
+                    container.scrollTop = container.scrollHeight;
                 }, 50);
             },
 
