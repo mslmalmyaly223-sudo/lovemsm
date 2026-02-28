@@ -2636,16 +2636,34 @@ renderReports: () => {
 
             banPostOwner: async (reportId, ownerUid) => {
                 if(confirm('هل أنت متأكد من حظر صاحب المنشور بشكل كامل من التطبيق؟')) {
-                    await banDevice(ownerUid);
+                    // جلب بيانات الإبلاغ لمعرفة من قام بالإبلاغ
+                    const report = Memory.reports.find(r => r.id === reportId);
+                    
+                    await banDevice(ownerUid); // دالة الحظر
                     await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'processed' });
-                    UI.showMessage('تم حظر صاحب المنشور');
+                    
+                    // إرسال إشعار شكر للمبلغ
+                    if (report && report.reportedBy) {
+                        App.sendNotification(report.reportedBy, 'قمنا بمراجعة إبلاغك وتم اتخاذ الإجراء اللازم بحق المخالف. شكراً لمساهمتك في جعل زايلو مجتمعاً آمناً 🛡️', null);
+                    }
+
+                    UI.showMessage('تم حظر صاحب المنشور وإشعار المُبلغ');
                     App.renderReports();
                 }
             },
 
             rejectReport: async (reportId) => {
+                // جلب بيانات الإبلاغ لمعرفة من قام بالإبلاغ
+                const report = Memory.reports.find(r => r.id === reportId);
+                
                 await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'rejected' });
-                UI.showMessage('تم رفض الإبلاغ');
+                
+                // إرسال إشعار للمبلغ بأن المحتوى لا يخالف القوانين
+                if (report && report.reportedBy) {
+                    App.sendNotification(report.reportedBy, 'قمنا بمراجعة إبلاغك ولم نجد أي انتهاك لمعايير المجتمع. شكراً لحرصك 🤍', null);
+                }
+
+                UI.showMessage('تم رفض الإبلاغ وإشعار المُبلغ');
                 App.renderReports();
             },
 
@@ -4138,7 +4156,10 @@ el.addEventListener('touchmove', cancelPress);
                         tickHtml = lastMsg.read ? '<i class="ph-fill ph-checks text-blue-500 text-[13px] ml-1"></i>' : '<i class="ph ph-check opacity-50 text-[13px] ml-1"></i>';
                     }
 
-                    let msgPreview = lastMsg.isNoteReply ? `[رد على ملاحظة] ${lastMsg.text}` : lastMsg.text;
+                    let msgPreview = lastMsg.text;
+                    if (lastMsg.isNoteReply) {
+                        msgPreview = lastMsg.senderId === currentUser.uid ? 'رديت على الملاحظة' : 'تم الرد على ملاحظتك';
+                    }
                     
                     // التحقق الآمن مما إذا كان المستخدم يكتب الآن
                     if (!Memory.typingStatus) Memory.typingStatus = {}; // حماية حتى لا تختفي المحادثات
@@ -4358,20 +4379,56 @@ el.addEventListener('touchmove', cancelPress);
                     // شكل الصحين المضبوط
                     const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-500 text-[16px] ml-1 drop-shadow-sm"></i>' : '<i class="ph ph-check opacity-70 text-[16px] ml-1"></i>') : '';
                     
-                    // --- تجهيز شريط التفاعلات أسفل الرسالة ---
+// --- تجهيز شريط التفاعلات أسفل الرسالة (مع صور الحسابات) ---
                     let reactionsHtml = '';
                     if (m.reactions && Object.keys(m.reactions).length > 0) {
-                        const emojiCounts = {};
-                        Object.values(m.reactions).forEach(e => { emojiCounts[e] = (emojiCounts[e] || 0) + 1; });
-                        let bubbles = '';
-                        Object.entries(emojiCounts).forEach(([emoji, count]) => {
-                            bubbles += `<span class="bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100 shadow-sm border border-gray-200 dark:border-gray-600 rounded-full px-1.5 py-0.5 text-[11px]">${emoji}${count > 1 ? ' '+count : ''}</span>`;
+                        const reactionGroups = {}; // تجميع حسب الإيموجي { '❤️': ['uid1', 'uid2'] }
+                        Object.entries(m.reactions).forEach(([uid, emoji]) => {
+                            if (!reactionGroups[emoji]) reactionGroups[emoji] = [];
+                            reactionGroups[emoji].push(uid);
                         });
-                        // يظهر في الزاوية السفلية حسب المرسل
-                        reactionsHtml = `<div class="absolute -bottom-3 ${isMe ? 'right-2' : 'left-2'} flex gap-1 z-10">${bubbles}</div>`;
+
+                        let bubbles = '';
+                        Object.entries(reactionGroups).forEach(([emoji, uids]) => {
+                            let avatarsHtml = '';
+                            uids.forEach(uid => {
+                                const user = Memory.users[uid];
+                                if (user) {
+                                    // تم تثبيت الحجم لمنع التصغير
+                                    avatarsHtml += `<img src="${user.photo || App.getDefaultAvatar()}" class="w-5 h-5 min-w-[20px] shrink-0 rounded-full border border-blue-100 dark:border-blue-900 -ml-1.5 inline-block object-cover z-10 relative">`;
+                                }
+                            });
+                            
+                            // فقاعة التفاعل (خلفية زرقاء لطيفة مثل التلكرام)
+                            bubbles += `
+                                <div class="bg-blue-100 dark:bg-blue-900/60 border border-blue-200 dark:border-blue-800 rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1.5 shadow-sm cursor-pointer btn-tap" onclick="App.showReactionsModal('${m.id}')">
+                                    <span class="text-[14px] -mt-0.5">${emoji}</span>
+                                    <div class="flex pl-1">${avatarsHtml}</div>
+                                </div>
+                            `;
+                        });
+                        reactionsHtml = `<div class="absolute -bottom-3 ${isMe ? 'right-2' : 'left-2'} flex gap-1 z-20">${bubbles}</div>`;
                     }
                     
-                    el.innerHTML = `<p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p><span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${tickHtml}</span>${reactionsHtml}`;
+                    let messageContentHtml = '';
+                    if (m.isNoteReply && m.replyNoteText) {
+                        // تصميم يحاكي الرد على الستوري (خلفية سوداء في النهاري وبيضاء في الليلي)
+                        messageContentHtml = `
+                            <div class="flex items-center gap-2.5 mb-1 bg-black/5 dark:bg-white/10 p-1.5 rounded-xl border border-black/10 dark:border-white/10">
+                                <div class="w-9 h-12 rounded-lg bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 flex items-center justify-center p-1.5 overflow-hidden shrink-0 shadow-inner">
+                                    <span class="text-[7px] font-bold text-center leading-tight line-clamp-3">${escapeHTML(m.replyNoteText)}</span>
+                                </div>
+                                <div class="flex-1 overflow-hidden pr-1">
+                                    <span class="text-[11px] font-bold text-blue-500 block mb-0.5">ملاحظة</span>
+                                    <span class="text-[14px] truncate block theme-text">${parseTextWithLinks(m.text, true)}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        messageContentHtml = `<p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p>`;
+                    }
+
+                    el.innerHTML = `${messageContentHtml}<span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${tickHtml}</span>${reactionsHtml}`;
                     
                     row.appendChild(el);
                     container.appendChild(row);
