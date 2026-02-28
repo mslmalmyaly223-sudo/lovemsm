@@ -1108,10 +1108,11 @@
     <!-- الملف الشخصي -->
     <div id="profile-modal" class="hidden fixed inset-0 bg-gray-50 dark:bg-gray-900 z-[110] flex flex-col modal-slide-in">
         
-        <div class="p-3 border-b flex items-center gap-3 theme-card shadow-sm sticky top-0 z-30">
-            <button onclick="UI.closeModal('profile-modal')" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
-            <span class="font-bold text-lg flex-1">الملف الشخصي</span>
-        </div>
+        <div class="p-3 border-b flex items-center justify-between theme-card shadow-sm sticky top-0 z-30">
+    <button onclick="UI.closeModal('profile-modal')" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
+    <span class="font-bold text-lg">الملف الشخصي</span>
+    <button id="profile-options-btn" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-dots-three-outline-fill text-lg"></i></button>
+</div>
 
         <div class="flex-1 overflow-y-auto smooth-scroll pb-10 relative">
             <div class="flex flex-col items-center pt-6">
@@ -2120,21 +2121,27 @@
                 }, errHandler);
 
                 onSnapshot(collection(db, REQUESTS_PATH), (snap) => {
-                    Memory.requests = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                    App.renderFriendsTab('requests'); 
-                    
-                    const myRequests = Memory.requests.filter(r => r.to === currentUser.uid);
-                    const badgeSubtab = document.getElementById('badge-requests-subtab'); // النقطة الداخلية
-                    const badgeMainNav = document.getElementById('badge-requests');    // النقطة الخارجية (زر الأصدقاء)
-                    
-                    if(myRequests.length > 0) {
-                        if(badgeSubtab) badgeSubtab.classList.remove('hidden');
-                        if(badgeMainNav) badgeMainNav.classList.remove('hidden');
-                    } else {
-                        if(badgeSubtab) badgeSubtab.classList.add('hidden');
-                        if(badgeMainNav) badgeMainNav.classList.add('hidden');
-                    }
-                }, errHandler);
+    Memory.requests = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    
+    const myRequests = Memory.requests.filter(r => r.to === currentUser.uid);
+    const badgeSubtab = document.getElementById('badge-requests-subtab');
+    const badgeMainNav = document.getElementById('badge-requests');
+    
+    if(myRequests.length > 0) {
+        // إظهار النقطة الحمراء في القائمة السفلية وقسم الطلبات
+        if(badgeMainNav) badgeMainNav.style.display = 'block';
+        if(badgeSubtab) badgeSubtab.style.display = 'inline-block';
+    } else {
+        // إخفاء النقطة الحمراء فقط عند عدم وجود أي طلب معلق (سواء تم القبول أو الرفض)
+        if(badgeMainNav) badgeMainNav.style.display = 'none';
+        if(badgeSubtab) badgeSubtab.style.display = 'none';
+    }
+
+    // تحديث الواجهة إذا كان المستخدم داخل قسم الطلبات
+    if(!document.getElementById('subtab-content-requests').classList.contains('hidden')) {
+        App.renderFriendsTab('requests');
+    }
+}, errHandler);
 
                 onSnapshot(collection(db, FRIENDS_PATH), (snap) => {
                     Memory.friends = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -2508,6 +2515,45 @@
                 
                 content.innerHTML = buttons;
                 UI.openModal('action-modal');
+            },
+            
+            showProfileOptions: (targetUid) => {
+                if(targetUid === currentUser.uid) return; 
+                const content = document.getElementById('action-modal-content');
+                content.innerHTML = `
+                    <button onclick="App.openReportUserModal('${targetUid}')" class="w-full flex justify-between items-center p-4 text-red-600 font-bold btn-tap">
+                        <span>الإبلاغ عن الحساب</span> <i class="ph-fill ph-warning-octagon text-xl"></i>
+                    </button>
+                `;
+                UI.openModal('action-modal');
+            },
+
+            openReportUserModal: (uid) => {
+                UI.closeModal('action-modal');
+                const reasons = [
+                    { id: 'sexual', text: 'حساب جنسي أو صورة غير ملائمة' },
+                    { id: 'political', text: 'كلام أو منشورات سياسية' },
+                    { id: 'blackmail', text: 'مبتز إلكتروني (يتطلب دليل)' }
+                ];
+                const content = document.getElementById('action-modal-content');
+                content.innerHTML = '<div class="p-4 border-b text-center font-bold theme-text">سبب الإبلاغ</div>';
+                reasons.forEach(r => {
+                    content.innerHTML += `<button onclick="App.submitUserReport('${uid}', '${r.id}')" class="w-full text-right p-4 border-b hover:bg-gray-50 dark:hover:bg-gray-800 btn-tap text-sm theme-text">${r.text}</button>`;
+                });
+                UI.openModal('action-modal');
+            },
+
+            submitUserReport: async (uid, reasonId) => {
+                let evidence = "";
+                if(reasonId === 'blackmail') {
+                    evidence = prompt("يرجى كتابة نص الرسالة أو الدليل هنا:");
+                    if(!evidence) return UI.showMessage("لا يمكن إرسال إبلاغ ابتزاز بدون دليل");
+                }
+                await addDoc(collection(db, REPORTS_PATH), {
+                    type: 'user_profile', targetId: uid, reportedBy: currentUser.uid, reason: reasonId, evidence: evidence, timestamp: Date.now(), status: 'pending'
+                });
+                UI.closeModal('action-modal');
+                UI.showMessage("تم إرسال إبلاغك للإدارة بنجاح");
             },
 
             // دالة جديدة: تعديل منشور
@@ -3342,15 +3388,14 @@ renderReports: () => {
                 inputEl.value = '';
                 inputEl.focus();
 
-                await addDoc(collection(db, MESSAGES_PATH), {
-                    participants: [currentUser.uid, window.noteViewAuthorId],
-                    senderId: currentUser.uid,
-                    text: text,
-                    timestamp: Date.now(),
-                    read: false,
-                    isNoteReply: true,
-                    replyNoteText: note.text 
-                });
+                // استبدل كود الإرسال بهذا
+await addDoc(collection(db, NOTIFS_PATH), {
+    to: report.reportedBy,
+    from: "SYSTEM", // هويّة النظام
+    text: 'قمنا بمراجعة إبلاغك ولم نجد أي انتهاك... شكراً لك 🤍',
+    timestamp: Date.now(),
+    read: false
+});
 
                 UI.showMessage('تم إرسال الرد للخاص');
                 UI.closeModal('note-view-modal');
@@ -3671,6 +3716,7 @@ renderReports: () => {
                 if(!u) return;
 
                 document.getElementById('vp-name').innerText = u.name;
+                document.getElementById('profile-options-btn').onclick = () => App.showProfileOptions(uid);
                 document.getElementById('vp-username').innerText = '@' + u.username;
                 document.getElementById('vp-bio').innerText = u.bio || 'لا توجد نبذة';
                 document.getElementById('vp-image').src = u.photo || App.getDefaultAvatar();
@@ -4119,7 +4165,6 @@ showChatOptions: (otherUid, event) => {
             renderChats: () => {
                 const container = document.getElementById('chats-container');
                 container.innerHTML = '';
-                
                 const chatUsers = {};
                 let totalUnreadCount = 0; 
 
@@ -4128,155 +4173,60 @@ showChatOptions: (otherUid, event) => {
                         const otherUid = msg.participants.find(id => id !== currentUser.uid);
                         if(App.isBlocked(otherUid)) return;
                         if(msg.deletedFor && msg.deletedFor.includes(currentUser.uid)) return;
-
                         if(!chatUsers[otherUid]) chatUsers[otherUid] = { lastMsg: msg, unreadCount: 0 };
-                        
-                        if(chatUsers[otherUid].lastMsg.timestamp < msg.timestamp) {
-                            chatUsers[otherUid].lastMsg = msg;
-                        }
-                        
-                        if(msg.senderId === otherUid && !msg.read) {
-                            chatUsers[otherUid].unreadCount++;
-                            // تم حذف عداد (totalUnreadCount) من هنا لنقوم بحسابه بذكاء في الخطوة القادمة
-                        }
+                        if(chatUsers[otherUid].lastMsg.timestamp < msg.timestamp) chatUsers[otherUid].lastMsg = msg;
+                        if(msg.senderId === otherUid && !msg.read) chatUsers[otherUid].unreadCount++;
                     }
                 });
 
-                let chatsArray = Object.entries(chatUsers);
-                
-                chatsArray = chatsArray.map(([uid, data]) => {
+                let chatsArray = Object.entries(chatUsers).map(([uid, data]) => {
                     const pin = Memory.pins.find(p => p.userId === currentUser.uid && p.chatId === uid);
                     const mute = Memory.mutes.find(m => m.userId === currentUser.uid && m.chatId === uid && m.until > Date.now());
-                    
-                    // التعديل هنا: إذا الشخص غير مكتوم وعنده رسائل، نضيفهم للعداد الرئيسي الخارجي
-                    if (!mute && data.unreadCount > 0) {
-                        totalUnreadCount += data.unreadCount;
-                    }
-
+                    if (!mute) { totalUnreadCount += data.unreadCount; }
                     return [uid, {...data, pin, mute}];
                 });
-                
+
                 chatsArray.sort((a, b) => {
                     if(a[1].pin && !b[1].pin) return -1;
                     if(!a[1].pin && b[1].pin) return 1;
-                    if(a[1].pin && b[1].pin) {
-                        if(a[1].pin.type === 'love' && b[1].pin.type !== 'love') return -1;
-                        if(a[1].pin.type !== 'love' && b[1].pin.type === 'love') return 1;
-                    }
                     return b[1].lastMsg.timestamp - a[1].lastMsg.timestamp;
                 });
 
-                if(chatsArray.length === 0) {
-                    container.innerHTML = '<div class="text-center opacity-50 py-10 mt-10"><i class="ph ph-chat-circle-dots text-4xl mb-2 block mx-auto"></i>لا توجد رسائل بعد</div>';
-                    document.getElementById('badge-messages').classList.add('hidden');
-                    return;
-                }
-
                 chatsArray.forEach(([otherUid, chatData]) => {
-                    const lastMsg = chatData.lastMsg;
                     const u = Memory.users[otherUid];
                     if(!u) return;
-
-                    // هنا نخفي الفقاعة الزرقاء داخل المحادثة إذا كان الشخص مكتوم
-                    const isUnread = chatData.unreadCount > 0 && !chatData.mute;
-                    const isOnline = App.isOnline(u.lastActive);
-                    const pin = chatData.pin;
-                    const mute = chatData.mute;
-
+                    const isMuted = !!chatData.mute;
+                    const hasUnread = chatData.unreadCount > 0;
                     const el = document.createElement('div');
-                    const unreadClass = isUnread ? 'bg-blue-50/20' : 'hover:opacity-80';
-                    el.className = `flex items-center gap-3 p-3 border-b cursor-pointer btn-tap transition-colors theme-card ${unreadClass}`;
+                    el.className = `flex items-center gap-3 p-3 border-b cursor-pointer theme-card ${hasUnread && !isMuted ? 'bg-blue-50/10' : ''}`;
+                    el.onclick = () => UI.openModal('chat-modal', u.uid);
                     
-                    let pressTimer;
-                    let isLongPress = false; 
-                    
-                    const startPress = (e) => { 
-                        isLongPress = false;
-                        pressTimer = setTimeout(() => {
-                            isLongPress = true; 
-                            App.showChatOptions(u.uid, e);
-                        }, 600); 
-                    };
-                    const cancelPress = () => clearTimeout(pressTimer);
-                    
-                    el.addEventListener('mousedown', startPress);
-                    el.addEventListener('touchstart', startPress, {passive: true});
-                    el.addEventListener('mouseup', cancelPress);
-                    el.addEventListener('mouseleave', cancelPress);
-                    el.addEventListener('touchend', cancelPress);
-                    el.addEventListener('touchmove', cancelPress);
-
-                    el.onclick = (e) => {
-                        if(pressTimer) clearTimeout(pressTimer);
-                        if(isLongPress) {
-                            e.preventDefault();
-                            return; 
-                        }
-                        UI.openModal('chat-modal', u.uid);
-                    };
-
-                    let tickHtml = '';
-                    if(lastMsg.senderId === currentUser.uid) {
-                        tickHtml = lastMsg.read ? '<i class="ph-fill ph-checks text-blue-500 text-[13px] ml-1"></i>' : '<i class="ph ph-check opacity-50 text-[13px] ml-1"></i>';
-                    }
-
-                    let msgPreview = lastMsg.text ? lastMsg.text.replace(/\n/g, ' ') : '';
-                    if (lastMsg.isNoteReply) {
-                        msgPreview = lastMsg.senderId === currentUser.uid ? 'رديت على الملاحظة' : 'تم الرد على ملاحظتك';
-                    }
-                    
-                    if (!Memory.typingStatus) Memory.typingStatus = {};
-                    const typingData = Memory.typingStatus[`${otherUid}_${currentUser.uid}`];
-                    let isTypingNow = false;
-                    if(typingData && typingData.text && (Date.now() - typingData.timestamp < 5000)) {
-                        isTypingNow = true;
-                        msgPreview = `<span class="text-blue-500 font-bold animate-pulse">يكتب الآن...</span>`;
-                        tickHtml = ''; 
-                    }
-                    
-                    let pinHtml = '';
-                    if(pin) {
-                        if(pin.type === 'love') {
-                            pinHtml = '<span class="pin-love"><i class="ph-fill ph-heart"></i> الحب</span>';
-                        } else {
-                            pinHtml = '<span class="pin-normal"><i class="ph-fill ph-push-pin"></i></span>';
-                        }
-                    }
-                    
-                    let muteHtml = '';
-                    if(mute) {
-                        muteHtml = '<span class="mute-badge mr-1"><i class="ph-fill ph-bell-simple-slash"></i></span>';
-                    }
+                    const badgeColorClass = isMuted ? 'bg-gray-400' : 'bg-blue-600';
 
                     el.innerHTML = `
                         <div class="relative">
-                            <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border border-gray-100">
-                            ${isOnline ? '<span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>' : ''}
-                            ${pinHtml}
+                            <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border">
+                            ${chatData.pin ? '<span class="absolute -top-1 -right-1 bg-red-500 text-white p-1 rounded-full text-[8px]"><i class="ph-fill ph-push-pin"></i></span>' : ''}
                         </div>
-                        <div class="flex-1 overflow-hidden pr-1 relative">
-                            <div class="flex justify-between items-center mb-0.5">
-                                <h4 class="font-bold truncate text-[15px] flex items-center gap-1 ${isUnread ? 'theme-text' : 'opacity-90'}">${u.name} ${muteHtml}</h4>
-                                <span class="text-xs ${isUnread ? 'font-bold text-blue-600' : 'opacity-60'} whitespace-nowrap">${App.timeAgo(lastMsg.timestamp)}</span>
+                        <div class="flex-1 overflow-hidden pr-1">
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-bold truncate ${hasUnread && !isMuted ? 'text-blue-600' : 'theme-text'}">${u.name} ${isMuted ? '🔕' : ''}</h4>
+                                <span class="text-xs opacity-60">${App.timeAgo(chatData.lastMsg.timestamp)}</span>
                             </div>
                             <div class="flex items-center justify-between">
-                                <p class="text-sm truncate flex-1 flex items-center gap-0.5 ${isUnread ? 'text-unread' : (lastMsg.senderId !== currentUser.uid ? 'font-medium opacity-90' : 'opacity-60')}">
-                                    ${tickHtml} ${msgPreview}
-                                </p>
-                                ${isUnread ? `<span class="bg-blue-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0 shadow-sm mr-2">${chatData.unreadCount}</span>` : ''}
+                                <p class="text-sm truncate opacity-60 theme-text">${chatData.lastMsg.text}</p>
+                                ${hasUnread ? `<span class="${badgeColorClass} text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center">${chatData.unreadCount}</span>` : ''}
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                     container.appendChild(el);
                 });
 
-                // تحديث العداد الرئيسي لزر الرسائل الخارجي (فقط للرسائل من أشخاص غير مكتومين)
+                const mainBadge = document.getElementById('badge-messages');
                 if(totalUnreadCount > 0) {
-                    const badge = document.getElementById('badge-messages');
-                    badge.classList.remove('hidden');
-                    badge.innerText = totalUnreadCount > 9 ? '+9' : totalUnreadCount;
+                    mainBadge.classList.remove('hidden');
+                    mainBadge.innerText = totalUnreadCount > 9 ? '+9' : totalUnreadCount;
                 } else {
-                    document.getElementById('badge-messages').classList.add('hidden');
+                    mainBadge.classList.add('hidden');
                 }
             },
 
@@ -4562,53 +4512,42 @@ showChatOptions: (otherUid, event) => {
             renderNotifications: () => {
                 const container = document.getElementById('notifications-container');
                 container.innerHTML = '';
-                
                 const notifs = [...Memory.notifications].sort((a,b) => b.timestamp - a.timestamp);
-                const unreadExists = notifs.some(n => !n.read && !App.isBlocked(n.from));
-                
-                if(notifs.length > 0 && unreadExists) document.getElementById('badge-notifications').classList.remove('hidden');
-                else document.getElementById('badge-notifications').classList.add('hidden');
                 
                 if(notifs.length === 0) {
-                    container.innerHTML = '<div class="text-center opacity-50 py-10 mt-10"><i class="ph ph-bell-ringing text-4xl mb-2 block mx-auto"></i>لا توجد إشعارات</div>';
+                    container.innerHTML = '<div class="text-center opacity-50 py-10 mt-10">لا توجد إشعارات</div>';
                     return;
                 }
 
                 notifs.forEach(n => {
-                    const fromUser = Memory.users[n.from];
-                    if(!fromUser || App.isBlocked(n.from)) return; 
+                    let sName, sPhoto, canClick = true;
+
+                    if(n.from === "SYSTEM") {
+                        sName = "إدارة زايلو";
+                        sPhoto = "https://cdn-icons-png.flaticon.com/512/3936/3936411.png"; 
+                        canClick = false;
+                    } else {
+                        const u = Memory.users[n.from];
+                        if(!u || App.isBlocked(n.from)) return;
+                        sName = u.name;
+                        sPhoto = u.photo || App.getDefaultAvatar();
+                    }
 
                     const el = document.createElement('div');
-                    const isUnread = !n.read;
-                    el.className = `flex items-center gap-3 p-3.5 border-b cursor-pointer transition-colors btn-tap theme-card ${isUnread ? 'bg-blue-50/20' : 'hover:opacity-80'}`;
-                    
-                    let pressTimer;
-                    const startPress = () => { pressTimer = setTimeout(() => App.showNotifOptions(n.id), 600); };
-                    const cancelPress = () => clearTimeout(pressTimer);
-                    el.addEventListener('mousedown', startPress);
-                    el.addEventListener('touchstart', startPress, {passive: true});
-                    el.addEventListener('mouseup', cancelPress);
-                    el.addEventListener('mouseleave', cancelPress);
-                    el.addEventListener('touchend', cancelPress);
-                    el.addEventListener('touchmove', cancelPress);
-
+                    el.className = `flex items-center gap-3 p-3.5 border-b cursor-pointer theme-card ${!n.read ? 'bg-blue-50/10' : ''}`;
                     el.onclick = () => {
-                        if(pressTimer) clearTimeout(pressTimer);
-                        if(isUnread) App.markNotificationRead(n.id);
+                        if(!n.read) App.markNotificationRead(n.id);
+                        if(!canClick) return UI.showMessage("إشعار من النظام");
                         if(n.linkId) UI.openModal('comments-modal', n.linkId);
                         else UI.openModal('profile-modal', n.from);
                     };
 
                     el.innerHTML = `
-                        <div class="relative">
-                            <img src="${fromUser.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-100">
-                            ${isUnread ? '<div class="absolute top-0 right-0 w-3 h-3 bg-blue-600 rounded-full border-2 border-white"></div>' : ''}
-                        </div>
+                        <img src="${sPhoto}" class="w-12 h-12 rounded-full border">
                         <div class="flex-1">
-                            <p class="text-[15px] leading-tight ${isUnread ? 'theme-text font-bold' : 'opacity-80'}"><span class="font-bold flex items-center gap-1">${fromUser.name}</span> ${n.text}</p>
-                            <span class="text-xs font-semibold ${isUnread ? 'text-blue-600' : 'opacity-60'} mt-1 block">${App.timeAgo(n.timestamp)}</span>
-                        </div>
-                    `;
+                            <p class="text-sm"><span class="font-bold">${sName}</span> ${n.text}</p>
+                            <span class="text-[10px] opacity-50">${App.timeAgo(n.timestamp)}</span>
+                        </div>`;
                     container.appendChild(el);
                 });
             },
