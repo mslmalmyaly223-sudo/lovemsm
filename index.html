@@ -1191,19 +1191,15 @@
                 <h3 class="font-bold text-lg">تثبيت المحادثة</h3>
             </div>
             <div class="p-4 flex flex-col gap-3">
-                <button onclick="App.pinChat('love'); UI.closeModal('pin-chat-popup')" class="pin-option w-full bg-red-50 text-red-600 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
-                    <span>تثبيت (الحب 🌚♥)</span>
-                    <i class="ph-fill ph-heart text-xl"></i>
-                </button>
-                <button onclick="App.pinChat('normal'); UI.closeModal('pin-chat-popup')" class="pin-option w-full bg-gray-100 text-gray-700 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
-                    <span>تثبيت (شخص عادي 🙄)</span>
-                    <i class="ph-fill ph-push-pin text-xl"></i>
-                </button>
-                <button onclick="App.unpinChat(); UI.closeModal('pin-chat-popup')" class="pin-option w-full bg-gray-200 text-gray-800 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
-                    <span>إلغاء التثبيت</span>
-                    <i class="ph-fill ph-push-pin-slash text-xl"></i>
-                </button>
-            </div>
+    <button onclick="App.pinChat('love'); UI.closeModal('pin-chat-popup')" class="pin-option w-full bg-red-50 text-red-600 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+        <span>تثبيت (الحب 🌚❤️)</span>
+        <i class="ph-fill ph-heart text-xl"></i>
+    </button>
+    <button onclick="App.pinChat('normal'); UI.closeModal('pin-chat-popup')" class="pin-option w-full bg-gray-100 text-gray-700 p-4 rounded-2xl flex items-center justify-between font-bold btn-tap">
+        <span>تثبيت (شخص عادي 🙄)</span>
+        <i class="ph-fill ph-push-pin text-xl"></i>
+    </button>
+</div>
         </div>
     </div>
 
@@ -4398,9 +4394,10 @@ showMyNoteOptions: (noteId, text) => {
             },
 
             showPinChatPopup: (otherUid) => {
-                window.pinChatTarget = otherUid;
-                UI.openModal('pin-chat-popup');
-            },
+    window.pinChatTarget = otherUid;
+    UI.closeModal('action-modal'); // هذا السطر يغلق القائمة الأولى فوراً
+    UI.openModal('pin-chat-popup');
+},
             
             pinChat: async (type) => {
                 const otherUid = window.pinChatTarget;
@@ -4656,23 +4653,27 @@ showChatOptions: (otherUid, event) => {
     };
     
     const badgeColorClass = isMuted ? 'bg-gray-400' : 'bg-blue-600';
+    const isLastMsgMe = chatData.lastMsg.senderId === currentUser.uid;
+const tickHtml = isLastMsgMe ? (chatData.lastMsg.read ? '<i class="ph-fill ph-checks text-blue-500 text-[16px] ml-1"></i>' : '<i class="ph ph-check opacity-70 text-[16px] ml-1"></i>') : '';
 
-    el.innerHTML = `
-        <div class="relative shrink-0">
-            <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border pointer-events-none">
-            ${chatData.pin ? '<span class="absolute -top-1 -right-1 bg-red-500 text-white p-1 rounded-full text-[8px]"><i class="ph-fill ph-push-pin"></i></span>' : ''}
+el.innerHTML = `
+    <div class="relative shrink-0">
+        <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border pointer-events-none">
+        ${chatData.pin ? '<span class="absolute -top-1 -right-1 bg-red-500 text-white p-1 rounded-full text-[8px]"><i class="ph-fill ph-push-pin"></i></span>' : ''}
+    </div>
+    <div class="flex-1 overflow-hidden pr-2 pointer-events-none">
+        <div class="flex justify-between items-center">
+            <h4 class="font-bold truncate ${hasUnread && !isMuted ? 'text-blue-600' : 'theme-text'}">${u.name} ${isMuted ? '🔕' : ''}</h4>
+            <span class="text-xs opacity-60">${App.timeAgo(chatData.lastMsg.timestamp)}</span>
         </div>
-        <div class="flex-1 overflow-hidden pr-2 pointer-events-none">
-            <div class="flex justify-between items-center">
-                <h4 class="font-bold truncate ${hasUnread && !isMuted ? 'text-blue-600' : 'theme-text'}">${u.name} ${isMuted ? '🔕' : ''}</h4>
-                <span class="text-xs opacity-60">${App.timeAgo(chatData.lastMsg.timestamp)}</span>
-            </div>
-            <div class="flex items-center justify-between mt-1">
-                <p class="text-sm truncate opacity-60 theme-text">${chatData.lastMsg.text}</p>
-                ${hasUnread ? `<span class="${badgeColorClass} text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0">${chatData.unreadCount}</span>` : ''}
-            </div>
+        <div class="flex items-center justify-between mt-1">
+            <p class="text-sm truncate opacity-60 theme-text flex items-center">
+                ${tickHtml} ${chatData.lastMsg.text}
+            </p>
+            ${hasUnread ? `<span class="${badgeColorClass} text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0">${chatData.unreadCount}</span>` : ''}
         </div>
-    `;
+    </div>
+`;
     container.appendChild(el);
 });
 
