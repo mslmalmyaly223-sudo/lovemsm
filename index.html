@@ -602,6 +602,34 @@
             animation: pulseAura 2s ease-in-out infinite;
         }
         
+        /* --- أكواد حركة السنفور 3D المضافة حديثاً --- */
+        @keyframes floatPet {
+            0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+            50% { transform: translateY(-6px) rotate(1deg) scale(1.02); }
+        }
+        @keyframes breathePet {
+            0%, 100% { transform: scaleX(1) scaleY(1); }
+            50% { transform: scaleX(1.02) scaleY(0.98); } /* حركة تنفس للبطن */
+        }
+        .pet-animate { 
+            /* دمج الحركتين لواقعية أكبر */
+            animation: floatPet 4s cubic-bezier(0.4, 0, 0.2, 1) infinite; 
+            transform-origin: center bottom;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2)); /* ظل خلفي للكائن بالكامل */
+            transition: all 0.3s ease;
+        }
+        .pet-animate:hover {
+            transform: scale(1.1) translateY(-5px);
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.3));
+        }
+        
+        /* ضبط حجم حاوية الكائن لتناسب أبعاد 200x250 بدقة عالية */
+        #chat-pet-container {
+            width: 55px !important;
+            height: 68px !important;
+            margin-bottom: 5px;
+        }
+        
         
     </style>
 </head>
@@ -1838,8 +1866,9 @@
                     window.currentChatUserId = data;
                     App.cancelReply(); 
                     App.renderChatInfo(data);
-                    App.loadMessages(); // تحميل أول 25 رسالة
+                    App.loadMessages(); 
                     App.markChatAsRead(data); 
+                    App.setChatPresence(data); // السطر السحري للدخول
                 } else if (modalId === 'comments-modal' && data) {
                     window.currentPostIdForComment = data;
                     document.getElementById('comment-my-avatar').src = currentUser.photo || App.getDefaultAvatar();
@@ -1860,7 +1889,6 @@
                         usernameInput.disabled = false;
                     }
                     
-                    // تعيين الجنس في التعديل
                     window.selectedEditGender = currentUser.gender || 'male';
                     document.getElementById('edit-gender-male').classList.remove('selected');
                     document.getElementById('edit-gender-female').classList.remove('selected');
@@ -1891,6 +1919,11 @@
                 }
             },
             closeModal: (modalId) => {
+                // مسح حالة التواجد عند إغلاق المحادثة
+                if (modalId === 'chat-modal') {
+                    App.setChatPresence(null);
+                }
+
                 const modal = document.getElementById(modalId);
                 if (modal.firstElementChild && modal.firstElementChild.classList.contains('modal-slide-in')) {
                     modal.firstElementChild.classList.remove('modal-slide-in');
@@ -2098,6 +2131,22 @@
                 }
             },
             
+setChatPresence: async (chatUid) => {
+                if (!window.currentUser) return;
+                try {
+                    // تحديث الذاكرة المحلية فوراً لتسريع الواجهة
+                    window.currentUser.currentChatWith = chatUid;
+                    if (Memory.users[window.currentUser.uid]) {
+                        Memory.users[window.currentUser.uid].currentChatWith = chatUid;
+                    }
+                    
+                    // الإرسال لقاعدة البيانات
+                    await updateDoc(doc(db, USERS_PATH, window.currentUser.uid), { 
+                        currentChatWith: chatUid || null 
+                    });
+                } catch(e) { console.error("Error setting chat presence:", e); }
+            },
+            
             emojiClickTimer: null,
             emojiClicks: 0,
             handleEmojiClick: (emoji, btnElement) => {
@@ -2226,6 +2275,11 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                     });
                     App.renderChats(); 
                     App.renderFeed(); 
+                    
+                    // السطرين الجديدين: تحديث الهيدر فوراً إذا كنت داخل محادثة والشخص الآخر دخل أو خرج
+                    if (!document.getElementById('chat-modal').classList.contains('hidden') && window.currentChatUserId) {
+                        App.renderChatInfo(window.currentChatUserId);
+                    }
                 }, errHandler);
                 
                 
@@ -2416,132 +2470,197 @@ window.handleReactBtnClick = (emoji, btnElement) => {
             },
 
             getPetCharacterSVG: (level) => {
-                // 1. تعريف الفلاتر والتدرجات اللونية (لإعطاء بُعد 3D واقعي ومجسم)
+                // تعريف الفلاتر والتدرجات اللونية المتقدمة جداً لمحاكاة 3D للصورة
                 const defs = `
                     <defs>
-                        <filter id="smurf-shadow" x="-20%" y="-20%" width="140%" height="140%">
-                            <feDropShadow dx="0" dy="2.5" stdDeviation="2.5" flood-color="#000000" flood-opacity="0.35"/>
+                        <filter id="ultra-3d-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.4"/>
                         </filter>
-                        <filter id="smurf-glow" x="-50%" y="-50%" width="200%" height="200%">
-                            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <filter id="inner-glow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="6" result="blur"/>
+                            <feComposite in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowDiff"/>
+                            <feFlood flood-color="#ffffff" flood-opacity="0.6"/>
+                            <feComposite in2="shadowDiff" operator="in"/>
+                            <feComposite in2="SourceGraphic" operator="over"/>
+                        </filter>
+                        <filter id="magic-glow" x="-50%" y="-50%" width="200%" height="200%">
+                            <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
                             <feMerge>
                                 <feMergeNode in="coloredBlur"/>
                                 <feMergeNode in="SourceGraphic"/>
                             </feMerge>
                         </filter>
-                        <radialGradient id="smurfSkin" cx="35%" cy="30%" r="65%">
-                            <stop offset="0%" stop-color="#93c5fd" />
-                            <stop offset="60%" stop-color="#3b82f6" />
-                            <stop offset="100%" stop-color="#1d4ed8" />
+                        
+                        <radialGradient id="smurfSkin3D" cx="40%" cy="30%" r="70%">
+                            <stop offset="0%" stop-color="#8DB6F9" /> <stop offset="50%" stop-color="#4A90E2" /> <stop offset="90%" stop-color="#2A6ABF" /> <stop offset="100%" stop-color="#18498F" /> </radialGradient>
+                        
+                        <radialGradient id="smurfNose3D" cx="30%" cy="30%" r="60%">
+                            <stop offset="0%" stop-color="#C5DFFF" />
+                            <stop offset="40%" stop-color="#5B9DF0" />
+                            <stop offset="100%" stop-color="#1E5AA5" />
                         </radialGradient>
-                        <radialGradient id="smurfNose" cx="30%" cy="30%" r="70%">
-                            <stop offset="0%" stop-color="#bfdbfe" />
-                            <stop offset="80%" stop-color="#2563eb" />
-                            <stop offset="100%" stop-color="#1e40af" />
+
+                        <radialGradient id="smurfCloth3D" cx="50%" cy="10%" r="90%">
+                            <stop offset="0%" stop-color="#FFFFFF" />
+                            <stop offset="60%" stop-color="#E2E8F0" />
+                            <stop offset="100%" stop-color="#94A3B8" />
                         </radialGradient>
-                        <linearGradient id="smurfWhite" x1="0%" y1="0%" x2="0%" y2="100%">
-                            <stop offset="0%" stop-color="#ffffff" />
-                            <stop offset="85%" stop-color="#e2e8f0" />
-                            <stop offset="100%" stop-color="#94a3b8" />
-                        </linearGradient>
-                        <linearGradient id="smurfGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#fef08a" />
-                            <stop offset="50%" stop-color="#eab308" />
-                            <stop offset="100%" stop-color="#a16207" />
+
+                        <linearGradient id="smurfGold3D" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#FEF08A" />
+                            <stop offset="40%" stop-color="#EAB308" />
+                            <stop offset="60%" stop-color="#CA8A04" />
+                            <stop offset="100%" stop-color="#854D0E" />
                         </linearGradient>
                     </defs>
                 `;
 
-                // 2. الهيكل الأساسي للسنفور
+                // الأجزاء الأساسية (تمت معايرتها لتطابق الصورة بنظام 200x250 بكسل للدقة العالية)
                 let aura = "";
                 let cape = "";
                 let accessories = "";
                 
-                // الأجزاء الأساسية
-                let hat = `<path d="M 20 40 Q 30 10 55 12 Q 75 15 65 35 Z" fill="url(#smurfWhite)" filter="url(#smurf-shadow)"/><path d="M 55 12 Q 40 -5 20 15 Q 30 25 40 12" fill="url(#smurfWhite)"/>`;
-                let body = `<ellipse cx="50" cy="65" rx="15" ry="17" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
-                let pants = `<path d="M 35 65 Q 50 60 65 65 L 68 85 L 58 85 L 50 78 L 42 85 L 32 85 Z" fill="url(#smurfWhite)" filter="url(#smurf-shadow)"/>`;
-                let feet = `<ellipse cx="38" cy="87" rx="9" ry="5" fill="url(#smurfWhite)" filter="url(#smurf-shadow)"/><ellipse cx="62" cy="87" rx="9" ry="5" fill="url(#smurfWhite)" filter="url(#smurf-shadow)"/>`;
-                let leftArm = `<path d="M 38 55 Q 22 65 27 80" fill="none" stroke="url(#smurfSkin)" stroke-width="7" stroke-linecap="round" filter="url(#smurf-shadow)"/><circle cx="27" cy="80" r="4" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
-                let rightArm = `<path d="M 62 55 Q 78 65 73 80" fill="none" stroke="url(#smurfSkin)" stroke-width="7" stroke-linecap="round" filter="url(#smurf-shadow)"/><circle cx="73" cy="80" r="4" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
-                let head = `<circle cx="50" cy="45" r="17" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
-                let nose = `<circle cx="50" cy="50" r="5" fill="url(#smurfNose)" filter="url(#smurf-shadow)"/>`;
-                
-                // ملامح الوجه الافتراضية
-                let eyes = `
-                    <ellipse cx="44" cy="42" rx="3.5" ry="5.5" fill="#ffffff" filter="url(#smurf-shadow)"/>
-                    <circle cx="45" cy="42" r="1.8" fill="#0f172a"/><circle cx="45.5" cy="41" r="0.8" fill="#ffffff"/>
-                    <ellipse cx="56" cy="42" rx="3.5" ry="5.5" fill="#ffffff" filter="url(#smurf-shadow)"/>
-                    <circle cx="55" cy="42" r="1.8" fill="#0f172a"/><circle cx="54.5" cy="41" r="0.8" fill="#ffffff"/>
+                // الأقدام والأحذية (كبيرة ومستديرة مثل الصورة)
+                let feet = `
+                    <ellipse cx="75" cy="225" rx="25" ry="15" fill="url(#smurfCloth3D)" filter="url(#ultra-3d-shadow)"/>
+                    <ellipse cx="125" cy="225" rx="25" ry="15" fill="url(#smurfCloth3D)" filter="url(#ultra-3d-shadow)"/>
                 `;
-                let mouth = `<path d="M 45 57 Q 50 61 55 57" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>`;
+                
+                // البنطال الأبيض
+                let pants = `
+                    <path d="M 65 160 Q 100 170 135 160 L 130 215 C 130 220, 120 220, 115 215 L 100 180 L 85 215 C 80 220, 70 220, 70 215 Z" fill="url(#smurfCloth3D)" filter="url(#ultra-3d-shadow)"/>
+                    <path d="M 80 165 Q 100 175 120 165" fill="none" stroke="#CBD5E1" stroke-width="2" opacity="0.6"/>
+                `;
 
-                // 3. التطور حسب المستويات (1 إلى 15)
+                // الجسد والذراعين
+                let body = `<ellipse cx="100" cy="140" rx="35" ry="30" fill="url(#smurfSkin3D)" filter="url(#ultra-3d-shadow)"/>`;
+                let leftArm = `
+                    <path d="M 65 130 Q 30 150 40 185" fill="none" stroke="url(#smurfSkin3D)" stroke-width="12" stroke-linecap="round" filter="url(#ultra-3d-shadow)"/>
+                    <circle cx="40" cy="185" r="8" fill="url(#smurfSkin3D)"/> `;
+                let rightArm = `
+                    <path d="M 135 130 Q 170 150 160 185" fill="none" stroke="url(#smurfSkin3D)" stroke-width="12" stroke-linecap="round" filter="url(#ultra-3d-shadow)"/>
+                    <circle cx="160" cy="185" r="8" fill="url(#smurfSkin3D)"/> `;
+
+                // الرأس والأذنين
+                let ears = `
+                    <path d="M 60 100 C 30 80, 25 120, 55 110" fill="url(#smurfSkin3D)" filter="url(#ultra-3d-shadow)"/>
+                    <path d="M 140 100 C 170 80, 175 120, 145 110" fill="url(#smurfSkin3D)" filter="url(#ultra-3d-shadow)"/>
+                    <path d="M 50 100 C 35 95, 35 105, 52 105" fill="none" stroke="#1E5AA5" stroke-width="2" opacity="0.5"/>
+                    <path d="M 150 100 C 165 95, 165 105, 148 105" fill="none" stroke="#1E5AA5" stroke-width="2" opacity="0.5"/>
+                `;
+                let head = `<circle cx="100" cy="90" r="45" fill="url(#smurfSkin3D)" filter="url(#ultra-3d-shadow)"/>`;
+                
+                // ملامح الوجه الأساسية
+                let nose = `<circle cx="100" cy="100" r="14" fill="url(#smurfNose3D)" filter="url(#ultra-3d-shadow)"/>`;
+                
+                // العيون (واقعية بلمعة)
+                let eyes = `
+                    <ellipse cx="85" cy="85" rx="8" ry="12" fill="#ffffff" filter="url(#ultra-3d-shadow)"/>
+                    <circle cx="87" cy="86" r="4.5" fill="#0f172a"/>
+                    <circle cx="88" cy="84" r="1.5" fill="#ffffff"/> <ellipse cx="115" cy="85" rx="8" ry="12" fill="#ffffff" filter="url(#ultra-3d-shadow)"/>
+                    <circle cx="113" cy="86" r="4.5" fill="#0f172a"/>
+                    <circle cx="112" cy="84" r="1.5" fill="#ffffff"/> `;
+                
+                // الفم (ابتسامة لطيفة افتراضية)
+                let mouth = `<path d="M 88 120 Q 100 130 112 120" fill="none" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>`;
+
+                // القبعة المجسمة (مطابقة للصورة، مطوية للأمام)
+                let hat = `
+                    <path d="M 50 65 C 50 10, 150 10, 150 65 C 165 80, 35 80, 50 65 Z" fill="url(#smurfCloth3D)" filter="url(#ultra-3d-shadow)"/>
+                    <path d="M 70 30 C 90 -10, 140 10, 120 40 C 100 60, 60 50, 70 30 Z" fill="url(#smurfCloth3D)" filter="url(#ultra-3d-shadow)"/>
+                    <path d="M 90 20 Q 100 35 110 25" fill="none" stroke="#CBD5E1" stroke-width="2" opacity="0.5"/>
+                    <path d="M 60 70 Q 100 80 140 70" fill="none" stroke="#CBD5E1" stroke-width="3" opacity="0.6"/>
+                `;
+
+                // --- منطق المستويات (التعديلات بناءً على مستوى التفاعل) ---
                 if (level === 1) {
-                    // حزين وفقير
-                    mouth = `<path d="M 45 59 Q 50 55 55 59" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>`;
+                    // حزين جداً وعيونه للأسفل
+                    mouth = `<path d="M 88 125 Q 100 115 112 125" fill="none" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>`;
                     eyes = `
-                        <ellipse cx="44" cy="43" rx="3.5" ry="4.5" fill="#ffffff" filter="url(#smurf-shadow)"/>
-                        <circle cx="45" cy="44" r="1.8" fill="#0f172a"/>
-                        <path d="M 39 39 Q 44 37 49 41" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
-                        <ellipse cx="56" cy="43" rx="3.5" ry="4.5" fill="#ffffff" filter="url(#smurf-shadow)"/>
-                        <circle cx="55" cy="44" r="1.8" fill="#0f172a"/>
-                        <path d="M 61 39 Q 56 37 51 41" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+                        <ellipse cx="85" cy="88" rx="8" ry="10" fill="#ffffff" filter="url(#ultra-3d-shadow)"/>
+                        <circle cx="85" cy="92" r="4" fill="#0f172a"/>
+                        <path d="M 75 80 Q 85 75 95 82" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/> <ellipse cx="115" cy="88" rx="8" ry="10" fill="#ffffff" filter="url(#ultra-3d-shadow)"/>
+                        <circle cx="115" cy="92" r="4" fill="#0f172a"/>
+                        <path d="M 125 80 Q 115 75 105 82" fill="none" stroke="#0f172a" stroke-width="2" stroke-linecap="round"/> <path d="M 80 95 C 80 105, 85 105, 85 95 Z" fill="#60A5FA" opacity="0.8"/>
+                        <path d="M 120 95 C 120 105, 115 105, 115 95 Z" fill="#60A5FA" opacity="0.8"/>
                     `;
                 }
                 
                 if (level >= 3) {
-                    mouth = `<path d="M 44 57 Q 50 62 56 57 Q 50 59 44 57 Z" fill="#0f172a"/>`; // ابتسامة مفتوحة
+                    // ابتسامة عريضة مفتوحة
+                    mouth = `<path d="M 85 118 Q 100 135 115 118 Q 100 125 85 118 Z" fill="#0F172A"/>
+                             <path d="M 90 122 Q 100 130 110 122 Z" fill="#EF4444"/> `;
                 }
                 
                 if (level >= 4) {
-                    // نظارات 3D
-                    accessories += `<path d="M 36 41 L 64 41 L 61 48 L 39 48 Z" fill="#1e293b" filter="url(#smurf-shadow)"/><path d="M 38 43 L 46 43 L 44 46 L 40 46 Z" fill="#ffffff" opacity="0.3"/><path d="M 54 43 L 62 43 L 60 46 L 56 46 Z" fill="#ffffff" opacity="0.3"/>`;
+                    // نظارات 3D مجسمة
+                    accessories += `
+                        <path d="M 68 80 L 132 80 L 125 95 L 75 95 Z" fill="#1E293B" filter="url(#ultra-3d-shadow)"/>
+                        <polygon points="73,83 95,83 92,92 77,92" fill="#EF4444" opacity="0.7"/>
+                        <polygon points="75,85 85,85 83,88 77,88" fill="#ffffff" opacity="0.4"/> <polygon points="105,83 127,83 123,92 108,92" fill="#3B82F6" opacity="0.7"/>
+                        <polygon points="115,85 125,85 123,88 117,88" fill="#ffffff" opacity="0.4"/>
+                    `;
                 }
 
                 if (level >= 6) {
-                    // حزام بطل
-                    accessories += `<rect x="36" y="62" width="28" height="5" fill="#1e293b" filter="url(#smurf-shadow)"/><rect x="46" y="60" width="8" height="9" fill="url(#smurfGold)" stroke="#fef08a" stroke-width="1"/>`;
+                    // حزام البطل بلمعة معدنية
+                    accessories += `
+                        <rect x="68" y="155" width="64" height="10" fill="#1E293B" filter="url(#ultra-3d-shadow)"/>
+                        <rect x="90" y="152" width="20" height="16" rx="2" fill="url(#smurfGold3D)" filter="url(#ultra-3d-shadow)"/>
+                        <circle cx="100" cy="160" r="4" fill="#CA8A04"/>
+                    `;
                 }
 
                 if (level >= 8) {
-                    // عباءة خلفية
-                    cape = `<path d="M 35 50 L 20 85 L 80 85 L 65 50 Z" fill="#ef4444" filter="url(#smurf-shadow)" opacity="0.95"/>`;
+                    // عباءة خلفية حمراء
+                    cape = `<path d="M 70 120 C 30 160, 40 220, 50 220 L 150 220 C 160 220, 170 160, 130 120 Z" fill="#DC2626" filter="url(#ultra-3d-shadow)" opacity="0.95"/>`;
                 }
 
                 if (level >= 10) {
-                    // عصا سحرية في يده اليمنى
-                    rightArm = `<path d="M 62 55 Q 85 50 80 30" fill="none" stroke="url(#smurfSkin)" stroke-width="7" stroke-linecap="round" filter="url(#smurf-shadow)"/><circle cx="80" cy="30" r="4" fill="url(#smurfSkin)" filter="url(#smurf-shadow)"/>`;
+                    // عصا سحرية في يده اليمنى متوهجة
+                    rightArm = `
+                        <path d="M 135 130 Q 180 120 170 80" fill="none" stroke="url(#smurfSkin3D)" stroke-width="12" stroke-linecap="round" filter="url(#ultra-3d-shadow)"/>
+                        <circle cx="170" cy="80" r="8" fill="url(#smurfSkin3D)"/>
+                    `;
                     accessories += `
-                        <line x1="80" y1="55" x2="80" y2="10" stroke="#78350f" stroke-width="3" filter="url(#smurf-shadow)"/>
-                        <circle cx="80" cy="10" r="7" fill="#38bdf8" filter="url(#smurf-glow)"/>
-                        <circle cx="80" cy="10" r="3" fill="#ffffff"/>
+                        <line x1="170" y1="120" x2="170" y2="40" stroke="#78350F" stroke-width="6" stroke-linecap="round" filter="url(#ultra-3d-shadow)"/>
+                        <circle cx="170" cy="40" r="14" fill="#38BDF8" filter="url(#magic-glow)"/>
+                        <circle cx="170" cy="40" r="6" fill="#ffffff"/>
                     `;
                 }
 
                 if (level >= 12) {
                     // تاج ذهبي 3D فوق القبعة
-                    accessories += `<path d="M 37 20 L 43 10 L 50 18 L 57 10 L 63 20 L 58 28 L 42 28 Z" fill="url(#smurfGold)" filter="url(#smurf-shadow)"/>
-                                    <circle cx="43" cy="10" r="2.5" fill="#ef4444"/><circle cx="50" cy="18" r="2.5" fill="#3b82f6"/><circle cx="57" cy="10" r="2.5" fill="#ef4444"/>`;
+                    accessories += `
+                        <path d="M 75 40 L 85 20 L 100 35 L 115 20 L 125 40 Z" fill="url(#smurfGold3D)" filter="url(#ultra-3d-shadow)"/>
+                        <circle cx="85" cy="20" r="5" fill="#EF4444" filter="url(#magic-glow)"/>
+                        <circle cx="100" cy="35" r="5" fill="#3B82F6" filter="url(#magic-glow)"/>
+                        <circle cx="115" cy="20" r="5" fill="#EF4444" filter="url(#magic-glow)"/>
+                    `;
                 }
 
                 if (level >= 14) {
                     // هالة طاقة متوهجة خلفه
-                    aura = `<circle cx="50" cy="50" r="45" fill="#60a5fa" opacity="0.25" filter="url(#smurf-glow)" class="pulse-aura"/>
-                            <circle cx="50" cy="50" r="35" fill="#818cf8" opacity="0.2" filter="url(#smurf-glow)"/>`;
+                    aura = `
+                        <circle cx="100" cy="120" r="90" fill="#60A5FA" opacity="0.25" filter="url(#magic-glow)" class="pulse-aura"/>
+                        <circle cx="100" cy="120" r="70" fill="#818CF8" opacity="0.2" filter="url(#magic-glow)"/>
+                    `;
                 }
 
                 if (level === 15) {
-                    // السنفور الأسطوري: هالة ذهبية، أجنحة، عصا ذهبية متوهجة بالكامل
-                    aura = `<circle cx="50" cy="50" r="48" fill="url(#smurfGold)" opacity="0.35" filter="url(#smurf-glow)" class="pulse-aura"/>`;
-                    cape = `<path d="M 40 55 Q 15 35 10 65 Q 25 75 40 65 Z" fill="url(#smurfGold)" opacity="0.8" filter="url(#smurf-glow)"/><path d="M 60 55 Q 85 35 90 65 Q 75 75 60 65 Z" fill="url(#smurfGold)" opacity="0.8" filter="url(#smurf-glow)"/>`;
-                    accessories += `<circle cx="80" cy="10" r="9" fill="#fde047" filter="url(#smurf-glow)"/>`;
-                    accessories += `<path d="M 10 50 A 40 40 0 0 1 90 50 A 40 40 0 0 1 10 50" fill="none" stroke="url(#smurfGold)" stroke-width="1.5" stroke-dasharray="12 6" class="spin-ring"/>`;
+                    // السنفور الأسطوري: هالة ذهبية، عباءة مطورة، عصا ذهبية متوهجة بالكامل
+                    aura = `<circle cx="100" cy="120" r="100" fill="url(#smurfGold3D)" opacity="0.35" filter="url(#magic-glow)" class="pulse-aura"/>`;
+                    cape = `
+                        <path d="M 70 120 C 10 160, 20 230, 50 230 L 150 230 C 180 230, 190 160, 130 120 Z" fill="url(#smurfGold3D)" opacity="0.8" filter="url(#magic-glow)"/>
+                    `;
+                    accessories += `<circle cx="170" cy="40" r="18" fill="#FDE047" filter="url(#magic-glow)"/>`;
+                    // حلقات دوارة سحرية حوله
+                    accessories += `<ellipse cx="100" cy="150" rx="90" ry="25" fill="none" stroke="url(#smurfGold3D)" stroke-width="3" stroke-dasharray="20 10" class="spin-ring" opacity="0.8"/>`;
                 }
 
-                // 4. دمج كل الطبقات (Layers) بترتيب 3D دقيق
+                // تجميع كل الطبقات بترتيب صحيح ليظهر كـ 3D (الخلفية أولاً ثم الأمام)
                 return `
-                <svg class="w-full h-full pet-animate" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <svg class="w-full h-full pet-animate" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
                     ${defs}
                     ${aura}
                     ${cape}
@@ -2550,6 +2669,7 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                     ${feet}
                     ${pants}
                     ${body}
+                    ${ears}
                     ${head}
                     ${eyes}
                     ${nose}
@@ -3722,14 +3842,19 @@ renderNotes: () => {
                 inputEl.value = '';
                 inputEl.focus();
 
-                // استبدل كود الإرسال بهذا
-await addDoc(collection(db, NOTIFS_PATH), {
-    to: report.reportedBy,
-    from: "SYSTEM", // هويّة النظام
-    text: 'قمنا بمراجعة إبلاغك ولم نجد أي انتهاك... شكراً لك 🤍',
-    timestamp: Date.now(),
-    read: false
-});
+                // الكود الصحيح: إرسال الرد كرسالة محادثة خاصة (مع إرفاق نص الملاحظة)
+                const payload = {
+                    participants: [currentUser.uid, window.noteViewAuthorId],
+                    senderId: currentUser.uid,
+                    text: text,
+                    timestamp: Date.now(),
+                    read: false,
+                    isNoteReply: true,
+                    replyNoteText: note.text // حفظ نص الستوري ليظهر بشكل جميل في المحادثة
+                };
+
+                // إرسال لقاعدة البيانات
+                await addDoc(collection(db, MESSAGES_PATH), payload);
 
                 UI.showMessage('تم إرسال الرد للخاص');
                 UI.closeModal('note-view-modal');
@@ -4408,31 +4533,25 @@ showMyNoteOptions: (noteId, text) => {
                 await updateDoc(doc(db, MESSAGES_PATH, msgId), { reactions: currentReactions });
             },
 
-            showPinChatPopup: (otherUid) => {
-    window.pinChatTarget = otherUid;
-    UI.closeModal('action-modal'); // هذا السطر يغلق القائمة الأولى فوراً
-    UI.openModal('pin-chat-popup');
-},
-            
-            pinChat: async (type) => {
-                const otherUid = window.pinChatTarget;
-                if(!otherUid) return;
+            // دالة جديدة للتثبيت المباشر بضغطة واحدة
+            pinChatFromOptions: async (otherUid) => {
+                UI.closeModal('action-modal'); // إغلاق القائمة فوراً
                 
                 const existingPin = Memory.pins.find(p => 
                     p.userId === currentUser.uid && p.chatId === otherUid
                 );
-                if(existingPin) {
-                    await deleteDoc(doc(db, PINS_PATH, existingPin.id));
+                
+                // إذا لم تكن المحادثة مثبتة بالفعل، قم بتثبيتها
+                if(!existingPin) {
+                    await addDoc(collection(db, PINS_PATH), {
+                        userId: currentUser.uid,
+                        chatId: otherUid,
+                        type: 'normal', // نوع افتراضي
+                        timestamp: Date.now()
+                    });
+                    
+                    UI.showMessage('تم تثبيت المحادثة 📌');
                 }
-                
-                await addDoc(collection(db, PINS_PATH), {
-                    userId: currentUser.uid,
-                    chatId: otherUid,
-                    type: type,
-                    timestamp: Date.now()
-                });
-                
-                UI.showMessage('تم تثبيت المحادثة');
             },
             
             unpinChat: async () => {
@@ -4482,55 +4601,55 @@ showMyNoteOptions: (noteId, text) => {
                 }
             },
 
-            // استبدل دالة showChatOptions بهذا الكود:
 showChatOptions: (otherUid, event) => {
-    if (event) {
-        event.stopPropagation();
-    }
-    
-    const isMyFriend = App.isFriend(currentUser.uid, otherUid);
-    const content = document.getElementById('action-modal-content');
-    
-    const isPinned = Memory.pins.some(p => 
-        p.userId === currentUser.uid && p.chatId === otherUid
-    );
-    
-    let buttons = '';
-    
-    if(isPinned) {
-        buttons += `
-            <button onclick="App.unpinChatFromOptions('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
-                <span>إلغاء تثبيت المحادثة</span> <i class="ph-fill ph-push-pin-slash text-lg text-gray-500"></i>
-            </button>
-        `;
-    } else {
-        buttons += `
-            <button onclick="App.showPinChatPopup('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
-                <span>تثبيت المحادثة</span> <i class="ph-fill ph-push-pin text-lg text-gray-500"></i>
-            </button>
-        `;
-    }
-    
-    buttons += `
-        <button onclick="App.toggleMutePermanent('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
-<span>${App.isMuted(otherUid) ? 'إلغاء الكتم' : 'كتم المحادثة'}</span> <i class="ph-fill ${App.isMuted(otherUid) ? 'ph-bell-simple-slash' : 'ph-bell-simple-z'} text-lg text-gray-500"></i>
-</button>
-        ${isMyFriend ? `
-        <button onclick="App.unfriend('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
-            <span>إزالة من الأصدقاء</span> <i class="ph-fill ph-user-minus text-lg text-gray-500"></i>
-        </button>
-        ` : ''}
-        <button onclick="App.blockUser('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-orange-50 btn-tap text-orange-500">
-            <span>حظر المستخدم</span> <i class="ph-fill ph-prohibit text-lg"></i>
-        </button>
-        <button onclick="App.showDeleteChatPopup('${otherUid}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-500">
-            <span>حذف المحادثة</span> <i class="ph-fill ph-trash text-lg"></i>
-        </button>
-    `;
-    
-    content.innerHTML = buttons;
-    UI.openModal('action-modal');
-},
+                if (event) {
+                    event.stopPropagation();
+                }
+                
+                const isMyFriend = App.isFriend(currentUser.uid, otherUid);
+                const content = document.getElementById('action-modal-content');
+                
+                const isPinned = Memory.pins.some(p => 
+                    p.userId === currentUser.uid && p.chatId === otherUid
+                );
+                
+                let buttons = '';
+                
+                if(isPinned) {
+                    buttons += `
+                        <button onclick="App.unpinChatFromOptions('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
+                            <span>إلغاء تثبيت المحادثة</span> <i class="ph-fill ph-push-pin-slash text-lg text-gray-500"></i>
+                        </button>
+                    `;
+                } else {
+                    // التعديل هنا: استدعاء دالة التثبيت المباشر
+                    buttons += `
+                        <button onclick="App.pinChatFromOptions('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
+                            <span>تثبيت المحادثة</span> <i class="ph-fill ph-push-pin text-lg text-gray-500"></i>
+                        </button>
+                    `;
+                }
+                
+                buttons += `
+                    <button onclick="App.toggleMutePermanent('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
+                        <span>${App.isMuted(otherUid) ? 'إلغاء الكتم' : 'كتم المحادثة'}</span> <i class="ph-fill ${App.isMuted(otherUid) ? 'ph-bell-simple-slash' : 'ph-bell-simple-z'} text-lg text-gray-500"></i>
+                    </button>
+                    ${isMyFriend ? `
+                    <button onclick="App.unfriend('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
+                        <span>إزالة من الأصدقاء</span> <i class="ph-fill ph-user-minus text-lg text-gray-500"></i>
+                    </button>
+                    ` : ''}
+                    <button onclick="App.blockUser('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-orange-50 btn-tap text-orange-500">
+                        <span>حظر المستخدم</span> <i class="ph-fill ph-prohibit text-lg"></i>
+                    </button>
+                    <button onclick="App.showDeleteChatPopup('${otherUid}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-500">
+                        <span>حذف المحادثة</span> <i class="ph-fill ph-trash text-lg"></i>
+                    </button>
+                `;
+                
+                content.innerHTML = buttons;
+                UI.openModal('action-modal');
+            },
             
             unpinChatFromOptions: async (otherUid) => {
                 const existingPin = Memory.pins.find(p => 
@@ -4635,63 +4754,82 @@ showChatOptions: (otherUid, event) => {
                 });
 
                 chatsArray.forEach(([otherUid, chatData]) => {
-    const u = Memory.users[otherUid];
-    if(!u) return;
-    const isMuted = !!chatData.mute;
-    const hasUnread = chatData.unreadCount > 0;
-    const el = document.createElement('div');
-    el.className = `flex items-center gap-3 p-3 border-b cursor-pointer theme-card ${hasUnread && !isMuted ? 'bg-blue-50/10' : ''}`;
-    
-    // نظام الضغط المطول
-    let pressTimer;
-    let isLongPress = false;
-    
-    el.onmousedown = el.ontouchstart = (e) => {
-        isLongPress = false;
-        pressTimer = setTimeout(() => {
-            isLongPress = true;
-            App.showChatOptions(u.uid, e);
-        }, 600); // 600 ملي ثانية للضغط المطول
-    };
-    
-    el.onmouseup = el.ontouchend = el.ontouchcancel = el.onmouseleave = () => {
-        clearTimeout(pressTimer);
-    };
-    
-    el.oncontextmenu = (e) => {
-        e.preventDefault(); // منع قائمة المتصفح الافتراضية
-        App.showChatOptions(u.uid, e);
-    };
+                    const u = Memory.users[otherUid];
+                    if(!u) return;
+                    const isMuted = !!chatData.mute;
+                    const hasUnread = chatData.unreadCount > 0;
+                    const el = document.createElement('div');
+                    el.className = `flex items-center gap-3 p-3 border-b cursor-pointer theme-card ${hasUnread && !isMuted ? 'bg-blue-50/10 dark:bg-blue-900/20' : ''}`;
+                    
+                    // --- بداية منطق حالة الاتصال (النقطة الخضراء أو الوقت) ---
+                    let statusBadgeHtml = '';
+                    const now = Date.now();
+                    const lastActive = u.lastActive || 0;
+                    const diffMs = now - lastActive;
+                    const diffMins = Math.floor(diffMs / 60000);
+                    const diffHours = Math.floor(diffMins / 60);
 
-    el.onclick = (e) => {
-        if(!isLongPress) UI.openModal('chat-modal', u.uid);
-    };
-    
-    const badgeColorClass = isMuted ? 'bg-gray-400' : 'bg-blue-600';
-    const isLastMsgMe = chatData.lastMsg.senderId === currentUser.uid;
-const tickHtml = isLastMsgMe ? (chatData.lastMsg.read ? '<i class="ph-fill ph-checks text-blue-500 text-[16px] ml-1"></i>' : '<i class="ph ph-check opacity-70 text-[16px] ml-1"></i>') : '';
-const isTyping = Memory.typing[otherUid]; // التحقق من حالة الكتابة لهذا المستخدم
-el.innerHTML = `
-    <div class="relative shrink-0">
-        <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border pointer-events-none">
-        ${chatData.pin ? '<span class="absolute -top-1 -right-1 bg-red-500 text-white p-1 rounded-full text-[8px]"><i class="ph-fill ph-push-pin"></i></span>' : ''}
-    </div>
-    <div class="flex-1 overflow-hidden pr-2 pointer-events-none">
-        <div class="flex justify-between items-center">
-            <h4 class="font-bold truncate ${hasUnread && !isMuted ? 'text-blue-600' : 'theme-text'}">${u.name} ${isMuted ? '🔕' : ''}</h4>
-            <span class="text-xs opacity-60">${App.timeAgo(chatData.lastMsg.timestamp)}</span>
-        </div>
-        <div class="flex items-center justify-between mt-1">
-            ${isTyping ? 
-                `<p class="text-sm truncate text-blue-500 font-bold animate-pulse">يكتب الآن...</p>` : 
-                `<p class="text-sm truncate opacity-60 theme-text flex items-center">${tickHtml} ${chatData.lastMsg.text}</p>`
-            }
-            ${hasUnread ? `<span class="${badgeColorClass} text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center shrink-0">${chatData.unreadCount}</span>` : ''}
-        </div>
-    </div>
-`;
-    container.appendChild(el);
-});
+                    if (diffMins < 5) {
+                        // متصل الآن (أقل من 5 دقائق) -> نقطة خضراء
+                        statusBadgeHtml = '<span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full z-10 shadow-sm"></span>';
+                    } else if (diffHours < 6) {
+                        // غير متصل منذ فترة قريبة (أقل من 6 ساعات) -> وقت (مثلاً: 15د أو 2س)
+                        let timeText = diffHours > 0 ? `${diffHours}س` : `${diffMins}د`;
+                        statusBadgeHtml = `<span class="absolute -bottom-1 -right-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-[9px] font-bold px-1.5 py-0.5 border-2 border-white dark:border-gray-800 rounded-full z-10 shadow-sm" dir="rtl">${timeText}</span>`;
+                    }
+                    // إذا كان أكثر من 6 ساعات، statusBadgeHtml سيبقى فارغاً ولن يظهر شيء
+                    // --- نهاية منطق حالة الاتصال ---
+
+                    let pressTimer;
+                    let isLongPress = false;
+                    
+                    el.onmousedown = el.ontouchstart = (e) => {
+                        isLongPress = false;
+                        pressTimer = setTimeout(() => {
+                            isLongPress = true;
+                            App.showChatOptions(u.uid, e);
+                        }, 600);
+                    };
+                    
+                    el.onmouseup = el.ontouchend = el.ontouchcancel = el.onmouseleave = () => {
+                        clearTimeout(pressTimer);
+                    };
+                    
+                    el.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        App.showChatOptions(u.uid, e);
+                    };
+
+                    el.onclick = (e) => {
+                        if(!isLongPress) UI.openModal('chat-modal', u.uid);
+                    };
+                    
+                    const badgeColorClass = isMuted ? 'bg-gray-400 dark:bg-gray-600' : 'bg-blue-600';
+                    const isLastMsgMe = chatData.lastMsg.senderId === currentUser.uid;
+                    const tickHtml = isLastMsgMe ? (chatData.lastMsg.read ? '<i class="ph-fill ph-checks text-blue-500 text-[16px] ml-1"></i>' : '<i class="ph ph-check opacity-70 text-[16px] ml-1"></i>') : '';
+                    const isTyping = Memory.typing[otherUid]; 
+                    
+                    el.innerHTML = `
+                        <div class="relative shrink-0">
+                            <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border border-gray-200 dark:border-gray-700 pointer-events-none">
+                            ${chatData.pin ? '<span class="absolute -top-1 -left-1 bg-blue-600 text-white p-1 rounded-full text-[8px] z-10 shadow-sm"><i class="ph-fill ph-push-pin"></i></span>' : ''}
+                            ${statusBadgeHtml} </div>
+                        <div class="flex-1 overflow-hidden pr-2 pointer-events-none">
+                            <div class="flex justify-between items-center">
+                                <h4 class="font-bold truncate ${hasUnread && !isMuted ? 'text-blue-600 dark:text-blue-400' : 'theme-text'}">${u.name} ${isMuted ? '<i class="ph-fill ph-bell-simple-slash text-gray-400 text-sm ml-1"></i>' : ''}</h4>
+                                <span class="text-xs opacity-60">${App.timeAgo(chatData.lastMsg.timestamp)}</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-1">
+                                ${isTyping ? 
+                                    `<p class="text-sm truncate text-blue-500 font-bold animate-pulse">يكتب الآن...</p>` : 
+                                    `<p class="text-sm truncate opacity-60 theme-text flex items-center">${tickHtml} <span class="truncate">${escapeHTML(chatData.lastMsg.text)}</span></p>`
+                                }
+                                ${hasUnread ? `<span class="${badgeColorClass} text-white text-[10px] font-bold min-w-[20px] h-5 px-1 rounded-full flex items-center justify-center shrink-0 shadow-sm">${chatData.unreadCount}</span>` : ''}
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(el);
+                });
 
                 const mainBadge = document.getElementById('badge-messages');
                 if(totalUnreadCount > 0) {
@@ -4722,7 +4860,15 @@ el.innerHTML = `
                 
                 const isOnline = App.isOnline(u.lastActive);
                 document.getElementById('chat-online-dot').style.display = isOnline ? 'block' : 'none';
-                document.getElementById('chat-user-status').innerText = isOnline ? 'نشط الآن' : `آخر ظهور ${App.timeAgo(u.lastActive)}`;
+                
+                const statusEl = document.getElementById('chat-user-status');
+                
+                // التحقق الدقيق: هل الشخص الآخر متصل + فاتح محادثتي أنا بالذات؟
+                if (isOnline && u.currentChatWith === currentUser.uid) {
+                    statusEl.innerHTML = '<span class="text-green-500 font-bold" style="animation: pulseAura 1.5s infinite;">(داخل المحادثة)</span>';
+                } else {
+                    statusEl.innerText = isOnline ? 'نشط الآن' : `آخر ظهور ${App.timeAgo(u.lastActive)}`;
+                }
                 
                 const isMuted = App.isMuted(uid);
                 const muteBtnIcon = document.getElementById('chat-mute-btn').querySelector('i');
@@ -4774,10 +4920,10 @@ el.innerHTML = `
 
                 const container = document.getElementById('chat-messages-container');
                 
-                // جلب جميع رسائل المحادثة مباشرة من الذاكرة (بدون تقييد)
+                // جلب جميع رسائل المحادثة مباشرة من الذاكرة
                 let msgs = Memory.messages.filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid));
                 
-                // الترتيب: الأقدم أولاً (من الأعلى للأسفل)
+                // الترتيب: الأقدم أولاً
                 msgs = msgs.sort((a,b) => a.timestamp - b.timestamp);
                 msgs = msgs.filter(m => !(m.deletedFor && m.deletedFor.includes(currentUser.uid)));
 
@@ -4805,7 +4951,6 @@ el.innerHTML = `
                 msgs.forEach(m => {
                     const isMe = m.senderId === currentUser.uid;
                     const row = document.createElement('div');
-                    // مسافة سفلية أكبر لترك مجال لظهور التفاعلات
                     row.className = `msg-row flex w-full mb-4 ${isMe ? 'justify-end' : 'justify-start'}`;
                     row.setAttribute('data-msg-id', m.id);
 
@@ -4822,13 +4967,11 @@ el.innerHTML = `
                         const timeDiff = currentTime - lastClickTime;
                         
                         if (timeDiff < 300) {
-                            // ضغط مزدوج (تفاعل سريع)
                             clearTimeout(clickTimer);
                             const defaultReact = localStorage.getItem('zailo_quick_react') || '👍🏻';
                             App.reactToMessage(m.id, defaultReact);
                             lastClickTime = 0;
                         } else {
-                            // ضغط مفرد (إظهار الخيارات وشريط الإيموجي)
                             lastClickTime = currentTime;
                             clickTimer = setTimeout(() => {
                                 App.showMessageOptions(m.id, isMe, m.text, m.pinned);
@@ -4863,13 +5006,11 @@ el.innerHTML = `
                         startX = 0; isSwiping = false;
                     });
 
-                    // شكل الصحين المضبوط
                     const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-500 text-[16px] ml-1 drop-shadow-sm"></i>' : '<i class="ph ph-check opacity-70 text-[16px] ml-1"></i>') : '';
                     
-// --- تجهيز شريط التفاعلات أسفل الرسالة (مع صور الحسابات) ---
                     let reactionsHtml = '';
                     if (m.reactions && Object.keys(m.reactions).length > 0) {
-                        const reactionGroups = {}; // تجميع حسب الإيموجي { '❤️': ['uid1', 'uid2'] }
+                        const reactionGroups = {}; 
                         Object.entries(m.reactions).forEach(([uid, emoji]) => {
                             if (!reactionGroups[emoji]) reactionGroups[emoji] = [];
                             reactionGroups[emoji].push(uid);
@@ -4881,12 +5022,10 @@ el.innerHTML = `
                             uids.forEach(uid => {
                                 const user = Memory.users[uid];
                                 if (user) {
-                                    // تم تثبيت الحجم لمنع التصغير
                                     avatarsHtml += `<img src="${user.photo || App.getDefaultAvatar()}" class="w-5 h-5 min-w-[20px] shrink-0 rounded-full border border-blue-100 dark:border-blue-900 -ml-1.5 inline-block object-cover z-10 relative">`;
                                 }
                             });
                             
-                            // فقاعة التفاعل (خلفية زرقاء لطيفة مثل التلكرام)
                             bubbles += `
                                 <div class="bg-blue-100 dark:bg-blue-900/60 border border-blue-200 dark:border-blue-800 rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1.5 shadow-sm cursor-pointer btn-tap" onclick="App.showReactionsModal('${m.id}')">
                                     <span class="text-[14px] -mt-0.5">${emoji}</span>
@@ -4898,8 +5037,9 @@ el.innerHTML = `
                     }
                     
                     let messageContentHtml = '';
+                    
                     if (m.isNoteReply && m.replyNoteText) {
-                        // تصميم يحاكي الرد على الستوري (خلفية سوداء في النهاري وبيضاء في الليلي)
+                        // تصميم الرد على الستوري
                         messageContentHtml = `
                             <div class="flex items-center gap-2.5 mb-1 bg-black/5 dark:bg-white/10 p-1.5 rounded-xl border border-black/10 dark:border-white/10">
                                 <div class="w-9 h-12 rounded-lg bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 flex items-center justify-center p-1.5 overflow-hidden shrink-0 shadow-inner">
@@ -4911,11 +5051,36 @@ el.innerHTML = `
                                 </div>
                             </div>
                         `;
+                    } else if (m.replyToId) {
+                        // --- الكود الجديد: تصميم الرد على الرسائل العادية داخل المحادثة ---
+                        // البحث عن الرسالة الأصلية لمعرفة نصها واسم مرسلها
+                        const repliedMsg = window.allMessages.find(x => x.id === m.replyToId) || Memory.messages.find(x => x.id === m.replyToId);
+                        let repliedText = 'رسالة محذوفة';
+                        let repliedName = 'مستخدم';
+                        
+                        if (repliedMsg) {
+                            repliedText = repliedMsg.text;
+                            const repliedUser = Memory.users[repliedMsg.senderId];
+                            if (repliedUser) {
+                                repliedName = repliedMsg.senderId === currentUser.uid ? 'أنت' : repliedUser.name;
+                            }
+                        }
+
+                        messageContentHtml = `
+                            <div class="flex flex-col">
+                                <div class="mb-1.5 p-2 rounded-xl bg-black/10 dark:bg-white/10 border-r-4 border-blue-500 cursor-pointer hover:opacity-80 transition-opacity" onclick="App.highlightMessage('${m.replyToId}')">
+                                    <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400 block mb-0.5">${repliedName}</span>
+                                    <span class="text-[12px] opacity-80 truncate block theme-text max-w-[200px]">${escapeHTML(repliedText)}</span>
+                                </div>
+                                <p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p>
+                            </div>
+                        `;
                     } else {
+                        // رسالة عادية جداً
                         messageContentHtml = `<p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p>`;
                     }
 
-                    el.innerHTML = `${messageContentHtml}<span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">${new Date(m.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${tickHtml}</span>${reactionsHtml}`;
+                    el.innerHTML = `${messageContentHtml}<span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">${new Date(m.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})} ${tickHtml}</span>${reactionsHtml}`;
                     
                     row.appendChild(el);
                     container.appendChild(row);
