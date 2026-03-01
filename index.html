@@ -1981,8 +1981,11 @@
                         });
 
                         if (typeof ZailoApp !== 'undefined') {
-                            ZailoApp.loginToOneSignal(user.uid);
-                        }
+    alert("ممتاز! الموقع متصل بنظام الأندرويد ديستلم الـ UID");
+    ZailoApp.loginToOneSignal(user.uid);
+} else {
+    console.log("التطبيق مفتوح من المتصفح، وليس من الأندرويد.");
+}
 
                         const isBanned = await isDeviceBanned(user.uid);
                         if(isBanned) {
