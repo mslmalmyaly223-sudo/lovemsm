@@ -643,7 +643,7 @@
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
-          appId: "39ef2d78-a617-4282-93b7-9b9c94bb9888",
+          appId: "b152bc5b-7cf5-4b41-9f4a-b55a3d5f717f",
           allowLocalhostAsSecureOrigin: true
         });
       });
@@ -655,7 +655,7 @@
     <div id="splash-screen" class="fixed inset-0 z-[100] flex flex-col items-center justify-center transition-opacity duration-500">
         <div class="splash-content flex flex-col items-center justify-center">
             <div class="elegant-z">Z</div>
-            <h1 class="text-6xl font-black elegant-text mt-2">زايو</h1>
+            <h1 class="text-6xl font-black elegant-text mt-2">زايلو</h1>
         </div>
     </div>
 
@@ -2156,10 +2156,11 @@
                 }
             },
             
-            // دالة إرسال الإشعار الخارجي (Push Notification)
+// دالة إرسال الإشعار الخارجي (Push Notification)
             sendPushNotification: async (targetUid, title, message) => {
-                const appId = "39ef2d78-a617-4282-93b7-9b9c94bb9888";
-                const restApiKey = "os_v2_app_hhxs26fgc5bife5xtoojjo4yrchthpn4d3wualmedz4hosub6v2tq7wqsoh6ynur2awhys732jqsrxvkcalv7llgl5ueb4t4hbnjebi";
+                // تم تغيير المفاتيح للجديدة
+                const appId = "b152bc5b-7cf5-4b41-9f4a-b55a3d5f717f";
+                const restApiKey = "os_v2_app_wfjlyw346vfudh2kwvnd2x3rp7wyla2iyerugwm7ehphtkxi5r6mvw3ocdhp3sbq5dd2ex4xzw74364nhvxhqq77zlhbjij5shajdaa";
 
                 const options = {
                     method: 'POST',
