@@ -631,7 +631,23 @@
         }
         
         
+    .pulse-aura {
+            transform-origin: center;
+            animation: pulseAura 2s ease-in-out infinite;
+        }
+        
     </style>
+
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "ca6faf8e-28d1-4f19-98ef-a6b94e45d11d",
+          allowLocalhostAsSecureOrigin: true
+        });
+      });
+    </script>
 </head>
 <body class="h-screen w-screen flex flex-col antialiased pb-safe theme-bg">
 
@@ -1958,6 +1974,11 @@
 
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
+                        // ربط جهاز المستخدم بخدمة الإشعارات باستخدام الـ UID مالته
+                        window.OneSignalDeferred.push(async function(OneSignal) {
+                            await OneSignal.login(user.uid);
+                        });
+
                         // التحقق من حظر الجهاز
                         const isBanned = await isDeviceBanned(user.uid);
                         if(isBanned) {
@@ -2128,6 +2149,33 @@
                     document.getElementById('gender-male').classList.add('selected');
                 } else {
                     document.getElementById('gender-female').classList.add('selected');
+                }
+            },
+            
+            // دالة إرسال الإشعار الخارجي (Push Notification)
+            sendPushNotification: async (targetUid, title, message) => {
+                const appId = "ca6faf8e-28d1-4f19-98ef-a6b94e45d11d";
+                const restApiKey = "os_v2_app_zjx27dri2fhrtghpu24u4rordu7pz6rxtvluie4azeihxde4f4fcmzdjcc7e3olxpzyjwalcouf53d5sa4gmvjq6ztbxsrryptymz5i";
+
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Basic ${restApiKey}`
+                    },
+                    body: JSON.stringify({
+                        app_id: appId,
+                        include_aliases: { external_id: [targetUid] },
+                        target_channel: "push",
+                        headings: { "en": title, "ar": title },
+                        contents: { "en": message, "ar": message }
+                    })
+                };
+
+                try {
+                    await fetch('https://onesignal.com/api/v1/notifications', options);
+                } catch (e) {
+                    console.error("خطأ في إرسال الإشعار:", e);
                 }
             },
             
@@ -5120,8 +5168,18 @@ showChatOptions: (otherUid, event) => {
                     App.cancelReply();
                 }
                 
-                await addDoc(collection(db, MESSAGES_PATH), payload);
-                // Firebase سيقوم بتحديث الشاشة فوراً وبشكل تلقائي عبر onSnapshot
+                // إرسال الرسالة الحقيقية لقاعدة البيانات في الخلفية بهدوء
+                try {
+                    await addDoc(collection(db, MESSAGES_PATH), payload);
+                    
+                    // إرسال الإشعار الخارجي (Push) للموبايل الثاني
+                    if (!App.isMuted(otherUid)) {
+                        App.sendPushNotification(otherUid, currentUser.name, text);
+                    }
+                } catch(error) {
+                    console.error("Error sending:", error);
+                    UI.showMessage("حدث خطأ، يرجى التأكد من اتصالك بالإنترنت");
+                }
             },
 
             sendNotification: async (toUid, text, linkId) => {
