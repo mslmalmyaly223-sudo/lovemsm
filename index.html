@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>زايلو - Zailo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -28,31 +28,31 @@
         }
 
         :root {
-            --bg-color: #f3f4f6;
-            --text-color: #1f2937;
-            --nav-bg: #ffffff;
-            --card-bg: #ffffff;
-            --chat-bg: #e0f2fe;
-            --bubble-me-bg: #22c55e;
-            --bubble-me-text: #ffffff;
-            --bubble-other-bg: #ffffff;
-            --bubble-other-text: #1f2937;
-            --border-color: #f3f4f6;
+            /* ألوان زايلو الفخمة والليلية حسب طلبك */
+            --bg-color: #0D1117; /* أسود كحلي عميق جداً مريح للعين */
+            --text-color: #C9D1D9; /* أبيض دخاني لا يسبب وهج */
+            --nav-bg: #0D1117;
+            --card-bg: #161B22; /* رمادي مزرق غامق للبطاقات */
+            --chat-bg: #0D1117; 
+            --bubble-me-bg: #238636; /* أخضر زمردي هادئ للرسائل المرسلة */
+            --bubble-me-text: #FFFFFF;
+            --bubble-other-bg: #161B22; /* رمادي مزرق غامق للرسائل المستلمة */
+            --bubble-other-text: #C9D1D9;
+            --border-color: #21262D; /* حدود متناسقة مع الكحلي */
             --vh: 1vh;
         }
         
-        body.dark-theme {
-            --bg-color: #111827;
-            --text-color: #f9fafb;
-            --nav-bg: #1f2937;
-            --card-bg: #1f2937;
-            --chat-bg: #030712;
-            --bubble-me-bg: #2563eb;
-            --bubble-me-text: #ffffff;
-            --bubble-other-bg: #374151;
-            --bubble-other-text: #f9fafb;
-            --border-color: #374151;
-        }
+        /* تعديل كلاسات الألوان الأساسية لتتناسب مع الأزرق السماوي المشرق */
+        .bg-xylo { background-color: #58A6FF !important; }
+        .text-xylo { color: #58A6FF !important; }
+        .text-blue-600 { color: #58A6FF !important; }
+        .bg-blue-600 { background-color: #58A6FF !important; color: #0D1117 !important; font-weight: bold; }
+        .border-blue-600 { border-color: #58A6FF !important; }
+        .bg-blue-50 { background-color: rgba(88, 166, 255, 0.1) !important; color: #58A6FF !important; }
+        
+        /* إجبار لون النصوص في كل التطبيق */
+        input, textarea, select { background-color: var(--card-bg) !important; color: var(--text-color) !important; border-color: var(--border-color) !important; }
+        input::placeholder, textarea::placeholder { color: rgba(201, 209, 217, 0.5) !important; }
 
         .theme-bg { background-color: var(--bg-color); }
         .theme-card { background-color: var(--card-bg); color: var(--text-color); border-color: var(--border-color); }
@@ -636,18 +636,37 @@
             animation: pulseAura 2s ease-in-out infinite;
         }
         
-    </style>
+        /* تسريع الأجهزة الضعيفة عبر إيقاف الفلاتر الثقيلة وإجبار معالجة الجرافيك (GPU) */
+.modal-slide-in, .smooth-scroll, .msg-row {
+    will-change: transform, opacity;
+}
+/* إزالة تشويش الخلفية (Blur) للأجهزة الضعيفة واستبداله بلون صلب شفاف */
+.bg-black\/60.backdrop-blur-sm, .bg-black\/40.backdrop-blur-sm {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: rgba(0, 0, 0, 0.75) !important;
+}
+/* تأثير التلاشي الجميل عند حذف رسالة */
+.fade-out-delete {
+    opacity: 0 !important;
+    transform: scale(0.9) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    pointer-events: none;
+}
+/* تحسينات الوضع الليلي لتشمل كل القوائم المنبثقة */
+body.dark-theme .bg-white, 
+body.dark-theme .bg-gray-50, 
+body.dark-theme .bg-gray-100 {
+    background-color: var(--card-bg) !important;
+    color: var(--text-color) !important;
+}
 
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "461dedc1-753f-43d1-bb9e-e0abd43a4c4d",
-          allowLocalhostAsSecureOrigin: true
-        });
-      });
-    </script>
+@keyframes storyFillAnim {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        
+    </style>
 </head>
 <body class="h-screen w-screen flex flex-col antialiased pb-safe theme-bg">
 
@@ -660,40 +679,40 @@
     </div>
 
     <!-- 2. قسم المصادقة -->
-    <div id="auth-screen" class="hidden fixed inset-0 z-50 bg-white overflow-y-auto hide-scrollbar smooth-scroll">
-        <div class="min-h-screen flex flex-col items-center justify-center p-6">
-            <h1 class="text-6xl font-black xylo-brand mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600" style="font-family: 'Cairo', sans-serif;">زايلو</h1>
-            
-            <div id="login-form" class="w-full max-w-sm space-y-4">
-                <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">تسجيل الدخول</h2>
-                <input type="email" id="login-email" placeholder="البريد الإلكتروني" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
-                <input type="password" id="login-password" placeholder="كلمة السر" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
-                <button onclick="Auth.login()" class="btn-tap w-full bg-xylo text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30">تسجيل الدخول</button>
-                <div class="flex justify-between text-sm text-blue-600 font-semibold mt-4">
-                    <button onclick="UI.switchAuth('register')" class="p-2 btn-tap">إنشاء حساب جديد</button>
-                    <button onclick="UI.switchAuth('forgot')" class="p-2 btn-tap">نسيت كلمة السر؟</button>
-                </div>
-            </div>
+    <div id="auth-screen" class="hidden fixed inset-0 z-50 theme-bg overflow-y-auto hide-scrollbar smooth-scroll">
+        <div class="min-h-screen flex flex-col items-center justify-center p-6">
+            <h1 class="text-6xl font-black xylo-brand mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600" style="font-family: 'Cairo', sans-serif;">زايلو</h1>
+            
+            <div id="login-form" class="w-full max-w-sm space-y-4">
+                <h2 class="text-2xl font-bold text-center mb-6 theme-text">تسجيل الدخول</h2>
+                <input type="email" id="login-email" placeholder="البريد الإلكتروني" class="w-full theme-bg theme-text border border-[var(--border-color)] p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
+                <input type="password" id="login-password" placeholder="كلمة السر" class="w-full theme-bg theme-text border border-[var(--border-color)] p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
+                <button onclick="Auth.login()" class="btn-tap w-full bg-xylo text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30">تسجيل الدخول</button>
+                <div class="flex justify-between text-sm text-blue-600 font-semibold mt-4">
+                    <button onclick="UI.switchAuth('register')" class="p-2 btn-tap">إنشاء حساب جديد</button>
+                    <button onclick="UI.switchAuth('forgot')" class="p-2 btn-tap">نسيت كلمة السر؟</button>
+                </div>
+            </div>
 
-            <div id="register-form" class="hidden w-full max-w-sm space-y-4">
-                <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">حساب جديد</h2>
-                <input type="text" id="reg-name" placeholder="اسم الحساب" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
-                <input type="email" id="reg-email" placeholder="البريد الإلكتروني" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
-                <input type="password" id="reg-password" placeholder="كلمة السر" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
-                <button onclick="Auth.register()" class="btn-tap w-full bg-xylo text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30">إنشاء حساب مباشرة</button>
-                
-                <button onclick="UI.switchAuth('login')" class="w-full text-center text-blue-600 font-semibold mt-4 p-2 btn-tap">لدي حساب بالفعل</button>
-            </div>
+            <div id="register-form" class="hidden w-full max-w-sm space-y-4">
+                <h2 class="text-2xl font-bold text-center mb-6 theme-text">حساب جديد</h2>
+                <input type="text" id="reg-name" placeholder="اسم الحساب" class="w-full theme-bg theme-text border border-[var(--border-color)] p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
+                <input type="email" id="reg-email" placeholder="البريد الإلكتروني" class="w-full theme-bg theme-text border border-[var(--border-color)] p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
+                <input type="password" id="reg-password" placeholder="كلمة السر" class="w-full theme-bg theme-text border border-[var(--border-color)] p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
+                <button onclick="Auth.register()" class="btn-tap w-full bg-xylo text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30">إنشاء حساب مباشرة</button>
+                
+                <button onclick="UI.switchAuth('login')" class="w-full text-center text-blue-600 font-semibold mt-4 p-2 btn-tap">لدي حساب بالفعل</button>
+            </div>
 
-            <div id="forgot-form" class="hidden w-full max-w-sm space-y-4">
-                <h2 class="text-2xl font-bold text-center mb-6 text-gray-700">استعادة كلمة السر</h2>
-                <p class="text-sm text-gray-500 text-center mb-4">أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة السر.</p>
-                <input type="email" id="forgot-email" placeholder="البريد الإلكتروني" class="w-full bg-gray-100 p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
-                <button onclick="Auth.resetPassword()" class="btn-tap w-full bg-xylo text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30">إرسال الرمز</button>
-                <button onclick="UI.switchAuth('login')" class="w-full text-center text-blue-600 font-semibold mt-4 p-2 btn-tap">العودة لتسجيل الدخول</button>
-            </div>
-        </div>
-    </div>
+            <div id="forgot-form" class="hidden w-full max-w-sm space-y-4">
+                <h2 class="text-2xl font-bold text-center mb-6 theme-text">استعادة كلمة السر</h2>
+                <p class="text-sm opacity-60 theme-text text-center mb-4">أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة السر.</p>
+                <input type="email" id="forgot-email" placeholder="البريد الإلكتروني" class="w-full theme-bg theme-text border border-[var(--border-color)] p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-right dir-rtl">
+                <button onclick="Auth.resetPassword()" class="btn-tap w-full bg-xylo text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-500/30">إرسال الرمز</button>
+                <button onclick="UI.switchAuth('login')" class="w-full text-center text-blue-600 font-semibold mt-4 p-2 btn-tap">العودة لتسجيل الدخول</button>
+            </div>
+        </div>
+    </div>
 
     <!-- 3. إعداد الصورة الشخصية مع اختيار الجنس -->
     <div id="setup-profile-screen" class="hidden fixed inset-0 z-[60] bg-white flex flex-col items-center justify-center p-6 smooth-scroll">
@@ -733,7 +752,7 @@
     <div id="main-app" class="hidden flex-1 flex flex-col h-screen w-full relative">
         
         <header class="theme-nav px-4 py-3 flex justify-between items-center z-20 relative shadow-sm border-b">
-            <h1 class="text-3xl font-black text-blue-600" style="font-family: 'Cairo', sans-serif;">زيلو</h1>
+            <h1 class="text-3xl font-black text-blue-600" style="font-family: 'Cairo', sans-serif;">زايلو</h1>
             <div class="flex gap-3">
                 <button onclick="UI.openModal('search-modal')" class="w-10 h-10 rounded-full theme-card flex items-center justify-center btn-tap border">
                     <i class="ph ph-magnifying-glass text-xl"></i>
@@ -757,9 +776,9 @@
                     <span id="badge-messages" class="hidden absolute top-1 right-1/4 bg-blue-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white"></span>
                 </button>
                 <button onclick="UI.switchTab('notifications')" class="nav-btn flex-1 py-3 flex flex-col items-center gap-1 text-gray-500 border-b-2 border-transparent transition-colors relative btn-tap">
-                    <i class="ph ph-bell text-2xl"></i>
-                    <span id="badge-notifications" class="hidden absolute top-2 right-1/4 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
+    <i class="ph ph-bell text-2xl"></i>
+    <span id="badge-notifications" class="hidden absolute top-1 right-1/4 bg-blue-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border-2 border-white">0</span>
+</button>
                 <button onclick="UI.switchTab('settings')" class="nav-btn flex-1 py-3 flex flex-col items-center gap-1 text-gray-500 border-b-2 border-transparent transition-colors btn-tap">
                     <i class="ph ph-list text-2xl"></i>
                 </button>
@@ -849,16 +868,7 @@
                 </div>
 
                 <div class="space-y-3">
-                    <div class="w-full theme-card p-4 rounded-xl shadow-sm border flex items-center justify-between">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center"><i class="ph-fill ph-moon text-xl"></i></div>
-                            <span id="theme-text-label" class="font-semibold text-right theme-text">الوضع الليلي</span>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="theme-toggle" class="sr-only peer" onchange="App.toggleTheme(this.checked)">
-                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        </label>
-                    </div>
+                    
 
                     <button onclick="UI.openModal('edit-profile-modal')" class="w-full theme-card p-4 rounded-xl shadow-sm border flex items-center gap-4 btn-tap">
                         <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center"><i class="ph-fill ph-user-pen text-xl"></i></div>
@@ -935,21 +945,35 @@
     </div>
 
     <div id="create-note-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] flex items-center justify-center p-4">
-    <div class="w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative rounded-3xl" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-        <div class="p-4 flex items-center justify-between w-full">
+    <div id="create-note-bg" class="w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative rounded-3xl transition-all duration-300" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 400px; display: flex; flex-direction: column;">
+        <div class="p-4 flex items-center justify-between w-full z-10 bg-black/20 backdrop-blur-md">
             <button onclick="UI.closeModal('create-note-modal')" class="p-2 text-white font-bold btn-tap drop-shadow-md">إلغاء</button>
-            <span class="font-bold text-white text-lg">ملاحظة جديدة</span>
-            <button onclick="App.createNote()" class="bg-white text-purple-700 px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">مشاركة</button>
+            <span class="font-bold text-white text-lg drop-shadow-md">ستوري جديد</span>
+            <div class="flex items-center gap-2">
+                <label for="story-image-upload" id="story-image-btn" class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center cursor-pointer btn-tap border border-white/40 shadow-sm text-white hover:bg-white/30 transition-colors">
+                    <i class="ph-fill ph-image text-xl"></i>
+                </label>
+                <input type="file" id="story-image-upload" accept="image/*" class="hidden" onchange="App.handleStoryImage(event)">
+                <button onclick="App.createNote()" class="bg-white text-purple-700 px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">نشر</button>
+            </div>
         </div>
-        <div class="p-6 flex flex-col items-center justify-center">
+        
+        <div id="note-text-container" class="p-6 flex-1 flex flex-col items-center justify-center z-10">
             <img id="create-note-preview-avatar" src="" class="w-20 h-20 rounded-full border-4 border-white shadow-lg mb-4">
-            <textarea id="note-text-input" placeholder="اكتب ملاحظة لـ 24 ساعة..." class="w-full bg-transparent border-none text-white text-2xl font-bold text-center outline-none resize-none placeholder-white/60" rows="3" maxlength="60"></textarea>
+            <textarea id="note-text-input" placeholder="اكتب ملاحظة أو شارك صورة..." class="w-full bg-transparent border-none text-white text-2xl font-bold text-center outline-none resize-none placeholder-white/60" rows="3" maxlength="100"></textarea>
             
             <label class="flex items-center gap-2 bg-black/20 p-3 rounded-xl mt-4 cursor-pointer btn-tap border border-white/30 w-full justify-center">
                 <input type="checkbox" id="is-close-note" class="w-5 h-5 accent-green-500 rounded">
                 <span class="text-white font-bold text-sm">مشاركة مع الكلوز فقط 🟢</span>
             </label>
-            <p class="text-white/50 text-xs mt-2">الحد الأقصى 60 حرفاً</p>
+        </div>
+
+        <div id="note-image-caption-container" class="hidden w-full p-3 bg-black/50 backdrop-blur-md z-10 mt-auto border-t border-white/20 flex gap-2 items-center">
+            <input type="text" id="note-caption-input" placeholder="إضافة وصف للصورة..." class="flex-1 bg-white/10 text-white placeholder-white/60 border border-white/20 rounded-full px-4 py-3 outline-none text-sm focus:bg-white/20 transition-colors">
+            <label class="flex items-center justify-center bg-green-500/20 p-3 rounded-full cursor-pointer btn-tap border border-green-500/50 shrink-0" title="مشاركة للكلوز فقط">
+                <input type="checkbox" id="is-close-note" class="w-5 h-5 accent-green-500 rounded">
+                <span class="text-white text-xs ml-1 font-bold">🟢</span>
+            </label>
         </div>
     </div>
 </div>
@@ -998,11 +1022,11 @@
     </div>
 
     <!-- نافذة المشاهدين المنبثقة -->
-    <div id="viewers-list-modal" class="hidden fixed inset-0 z-[110] flex flex-col justify-end bg-black/50">
+    <div id="viewers-list-modal" class="hidden fixed inset-0 z-[110] flex flex-col justify-end bg-black/50" onclick="if(event.target === this) { UI.closeModal('viewers-list-modal'); App.resumeStoryTimer(); }">
         <div class="theme-card w-full h-[60vh] rounded-t-3xl flex flex-col modal-slide-in shadow-2xl relative">
             <div class="p-4 flex justify-between items-center border-b">
                 <span class="font-bold text-lg"><i class="ph ph-eye"></i> المشاهدون</span>
-                <button onclick="UI.closeModal('viewers-list-modal')" class="w-8 h-8 theme-bg rounded-full flex items-center justify-center btn-tap"><i class="ph ph-x"></i></button>
+                <button onclick="UI.closeModal('viewers-list-modal'); App.resumeStoryTimer();" class="w-8 h-8 theme-bg rounded-full flex items-center justify-center btn-tap"><i class="ph ph-x"></i></button>
             </div>
             <div id="viewers-list-container" class="flex-1 overflow-y-auto smooth-scroll p-2"></div>
         </div>
@@ -1071,6 +1095,14 @@
                     <textarea id="edit-bio" class="w-full bg-transparent border-b border-gray-300 py-2 outline-none focus:border-blue-600 resize-none transition-colors theme-text" rows="3" placeholder="اكتب نبذة عن نفسك..."></textarea>
                 </div>
                 
+                <div>
+                    <label class="text-xs font-bold opacity-60 block mb-1">تاريخ الميلاد (يوم / شهر)</label>
+                    <div class="flex gap-3">
+                        <input type="number" id="edit-birth-day" placeholder="اليوم (1-31)" min="1" max="31" class="w-1/2 bg-transparent border-b border-gray-300 py-2 outline-none focus:border-blue-600 text-center font-bold text-lg transition-colors theme-text">
+                        <input type="number" id="edit-birth-month" placeholder="الشهر (1-12)" min="1" max="12" class="w-1/2 bg-transparent border-b border-gray-300 py-2 outline-none focus:border-blue-600 text-center font-bold text-lg transition-colors theme-text">
+                    </div>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -1128,6 +1160,29 @@
                     <option value="only_me">أنا فقط</option>
                 </select>
             </div>
+            <div class="theme-card p-4 rounded-2xl shadow-sm space-y-3 border">
+                <h4 class="font-bold border-b pb-2">من يمكنه ذكري (Mentions @)</h4>
+                <select id="priv-mentions" class="w-full theme-bg p-3 rounded-xl outline-none border focus:border-blue-500 theme-text" onchange="App.updatePrivacy('mentionPrivacy', this.value)">
+                    <option value="all">الجميع</option>
+                    <option value="none">لا أحد</option>
+                </select>
+            </div>
+            <div class="theme-card p-4 rounded-2xl shadow-sm space-y-3 border">
+                <h4 class="font-bold border-b pb-2">من يمكنه رؤية صورتي الشخصية</h4>
+                <select id="priv-photo-vis" class="w-full theme-bg p-3 rounded-xl outline-none border focus:border-blue-500 theme-text" onchange="App.updatePrivacy('photoVisibility', this.value)">
+                    <option value="all">الجميع</option>
+                    <option value="friends">الأصدقاء فقط</option>
+                    <option value="only_me">أنا فقط</option>
+                </select>
+            </div>
+            <div class="theme-card p-4 rounded-2xl shadow-sm space-y-3 border">
+                <h4 class="font-bold border-b pb-2">من يمكنه رؤية النبذة (البايو)</h4>
+                <select id="priv-bio-vis" class="w-full theme-bg p-3 rounded-xl outline-none border focus:border-blue-500 theme-text" onchange="App.updatePrivacy('bioVisibility', this.value)">
+                    <option value="all">الجميع</option>
+                    <option value="friends">الأصدقاء فقط</option>
+                    <option value="only_me">أنا فقط</option>
+                </select>
+            </div>
         </div>
     </div>
 
@@ -1147,17 +1202,14 @@
                 <i class="ph ph-caret-left opacity-50"></i>
             </button>
 
-            <div class="theme-card rounded-2xl shadow-sm border overflow-hidden">
-                <button onclick="document.getElementById('password-section-content').classList.toggle('hidden'); this.querySelector('.chevron').classList.toggle('-rotate-90')" class="w-full p-5 flex items-center gap-4 btn-tap">
-                    <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center"><i class="ph-fill ph-shield-warning text-2xl"></i></div>
-                    <div class="flex-1 text-right">
-                        <h3 class="font-bold text-lg">تغيير كلمة السر</h3>
-                    </div>
-                    <i class="ph ph-caret-down opacity-50 chevron transition-transform duration-300"></i>
-                </button>
-                <div id="password-section-content" class="hidden px-5 pb-5 pt-2 border-t">
-                    <p class="text-sm opacity-60 mb-4">سيتم إرسال رابط لبريدك الإلكتروني لإعادة تعيين كلمة السر الخاصة بك بأمان.</p>
-                    <button onclick="Auth.resetPasswordFromSettings()" class="w-full bg-red-50 text-red-600 font-bold py-3.5 rounded-xl border border-red-100 btn-tap">إرسال رابط التغيير</button>
+            <button onclick="UI.openModal('change-password-modal')" class="w-full theme-card p-5 rounded-2xl shadow-sm border flex items-center gap-4 btn-tap mt-4">
+                <div class="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center"><i class="ph-fill ph-shield-warning text-2xl"></i></div>
+                <div class="flex-1 text-right">
+                    <h3 class="font-bold text-lg">تغيير كلمة السر</h3>
+                    <p class="text-xs opacity-60 mt-0.5">تحديث كلمة المرور الحالية</p>
+                </div>
+                <i class="ph ph-caret-left opacity-50"></i>
+            </button>
                 </div>
             </div>
         </div>
@@ -1174,56 +1226,58 @@
     </div>
 
     <!-- الملف الشخصي -->
-    <div id="profile-modal" class="hidden fixed inset-0 bg-gray-50 dark:bg-gray-900 z-[110] flex flex-col modal-slide-in">
+    <div id="profile-modal" class="hidden fixed inset-0 theme-bg z-[110] flex flex-col modal-slide-in">
         
-        <div class="p-3 border-b flex items-center justify-between theme-card shadow-sm sticky top-0 z-30">
-    <button onclick="UI.closeModal('profile-modal')" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
-    <span class="font-bold text-lg">الملف الشخصي</span>
-    <button id="profile-options-btn" class="w-9 h-9 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 rounded-full flex items-center justify-center btn-tap shadow-sm border border-gray-200 dark:border-gray-700">
-        <i class="ph-bold ph-dots-three text-xl"></i>
-    </button>
-</div>
+        <div class="p-3 border-b border-[var(--border-color)] flex items-center justify-between theme-card shadow-sm sticky top-0 z-30">
+            <button onclick="UI.closeModal('profile-modal')" class="p-2 theme-bg rounded-full btn-tap"><i class="ph ph-arrow-right text-lg"></i></button>
+            <span class="font-bold text-lg">الملف الشخصي</span>
+            <button id="profile-options-btn" class="w-9 h-9 theme-bg text-[var(--text-color)] rounded-full flex items-center justify-center btn-tap shadow-sm border border-[var(--border-color)]">
+                <i class="ph-bold ph-dots-three text-xl"></i>
+            </button>
+        </div>
 
         <div class="flex-1 overflow-y-auto smooth-scroll pb-10 relative">
             <div class="flex flex-col items-center pt-6">
-                <img id="vp-image" src="" class="w-24 h-24 rounded-full object-cover shadow-sm border-2 border-white dark:border-gray-800">
-                <h2 id="vp-name" class="text-xl font-bold text-gray-900 dark:text-white mt-3">...</h2>
-                <p id="vp-last-seen" class="text-gray-500 dark:text-gray-400 text-xs mt-1">آخر ظهور ...</p>
+                <img id="vp-image" src="" class="w-24 h-24 rounded-full object-cover shadow-sm border-2 border-[var(--border-color)]">
+                <h2 id="vp-name" class="text-xl font-bold theme-text mt-3">...</h2>
+                <p id="vp-last-seen" class="text-xs mt-1 opacity-60">آخر ظهور ...</p>
             </div>
             
             <div class="flex justify-center gap-2.5 mt-5 px-4" id="vp-action-container">
-                </div>
+            </div>
 
-            <div class="mt-6 w-full">
-                <div class="bg-white dark:bg-gray-800 p-4 shadow-sm border-y border-gray-100 dark:border-gray-700 w-full text-center flex flex-col gap-3">
-                    <div class="pb-3 border-b border-gray-100 dark:border-gray-700">
-                        <p class="text-[10px] text-gray-400 mb-1.5">النبذة</p>
-                        <p id="vp-bio" class="text-gray-800 dark:text-gray-200 text-[14px] font-medium whitespace-pre-wrap leading-relaxed inline-block">...</p>
+            <div class="mt-6 w-full px-4">
+                <div class="theme-card p-4 shadow-sm border border-[var(--border-color)] rounded-2xl w-full text-center flex flex-col gap-3">
+                    <div class="pb-3 border-b border-[var(--border-color)]">
+                        <p class="text-[10px] opacity-60 mb-1.5">النبذة</p>
+                        <p id="vp-bio" class="text-[14px] font-medium whitespace-pre-wrap leading-relaxed inline-block theme-text">...</p>
                     </div>
-                    <div>
-                        <p class="text-[10px] text-gray-400 mb-1.5">اسم المستخدم</p>
-                        <p id="vp-username" class="text-gray-800 dark:text-gray-200 text-[14px] font-bold dir-ltr inline-block text-blue-600">@...</p>
+                    <div id="vp-username-container" class="pt-1 pb-3 border-b border-[var(--border-color)] cursor-pointer btn-tap transition-opacity hover:opacity-70">
+                        <p class="text-[10px] opacity-60 mb-1.5">اسم المستخدم</p>
+                        <p id="vp-username" class="text-[14px] font-bold dir-ltr inline-block text-blue-500">@...</p>
+                    </div>
+                    <div id="vp-birthday-container" class="pt-1 hidden flex-col items-center">
+                        <p class="text-[10px] opacity-60 mb-1.5">تاريخ الميلاد</p>
+                        <div class="text-[14px] font-bold inline-flex items-center justify-center gap-1 text-pink-500">
+                            <i class="ph-fill ph-cake text-lg"></i> <span id="vp-birthday">...</span>
+                        </div>
                     </div>
                 </div>
             </div>
             
             <div class="px-4 mt-6">
-               
-                
-                <!-- الأصدقاء -->
-                <div class="mt-6">
+                <div class="mt-2">
                     <div class="flex justify-between items-end mb-4">
                         <h3 class="font-bold text-xl theme-text">الأصدقاء</h3>
-                        <span class="text-gray-500 font-bold" id="vp-friends-count-text">0</span>
+                        <span class="opacity-60 font-bold" id="vp-friends-count-text">0</span>
                     </div>
                     <div class="friends-grid" id="vp-friends-grid"></div>
                 </div>
+            </div>
+        </div>
+    </div>
                 
-                <!-- منشورات المستخدم -->
-                <div class="mt-8" id="vp-posts-container">
-                    <h3 class="font-bold text-xl theme-text mb-4">المنشورات</h3>
-                    <div class="text-center opacity-50 py-4">لا توجد منشورات</div>
-                </div>
+                
             </div>
         </div>
     </div>
@@ -1287,9 +1341,9 @@
     </div>
 
     <div id="chat-modal" class="hidden fixed inset-0 theme-bg z-[90] flex flex-col modal-slide-in">
-        <div class="theme-card p-3 border-b flex items-center justify-between shadow-sm z-20 relative">
+        <div id="normal-chat-header" class="theme-card p-3 border-b flex items-center justify-between shadow-sm z-20 relative transition-all">
             <div class="flex items-center gap-3 flex-1">
-                <button onclick="UI.closeModal('chat-modal')" class="p-2 theme-bg border rounded-full btn-tap shrink-0" id="chat-back-button"><i class="ph ph-arrow-right text-lg"></i></button>
+                <button onclick="UI.closeModal('chat-modal'); App.clearMessageSelection();" class="p-2 theme-bg border rounded-full btn-tap shrink-0" id="chat-back-button"><i class="ph ph-arrow-right text-lg"></i></button>
                 <div class="relative cursor-pointer shrink-0" onclick="UI.openModal('profile-modal', window.currentChatUserId)">
                     <img id="chat-user-img" src="" class="w-11 h-11 rounded-full object-cover">
                     <span id="chat-online-dot" class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full hidden"></span>
@@ -1306,6 +1360,16 @@
                 </button>
                 <div id="chat-pet-container" class="w-12 h-12 flex items-center justify-center relative shrink-0 cursor-pointer btn-tap"></div>
             </div>
+        </div>
+
+        <div id="selection-chat-header" class="hidden theme-card p-3 border-b items-center justify-between shadow-sm z-20 relative bg-blue-50 dark:bg-gray-800 transition-all">
+            <div class="flex items-center gap-4">
+                <button onclick="App.clearMessageSelection()" class="p-2 text-gray-600 dark:text-gray-300 rounded-full btn-tap shrink-0"><i class="ph ph-x text-xl font-bold"></i></button>
+                <span class="font-bold text-lg text-blue-600 dark:text-blue-400"><span id="selection-count">1</span> محدد</span>
+            </div>
+            <button onclick="App.showBulkDeleteOptions()" class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center btn-tap shrink-0 shadow-sm">
+                <i class="ph-fill ph-trash text-xl"></i>
+            </button>
         </div>
         
         <div id="chat-background" class="flex-1 overflow-hidden flex flex-col relative chat-container-bg">
@@ -1377,17 +1441,17 @@
 
     <!-- نافذة تعديل المنشور (جديدة) -->
     <div id="edit-post-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[120] flex items-center justify-center p-4">
-        <div class="theme-card rounded-3xl w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative border">
-            <div class="p-4 border-b flex items-center justify-between">
-                <button onclick="UI.closeModal('edit-post-modal')" class="p-2 font-bold text-gray-500 btn-tap rounded-lg">إلغاء</button>
-                <span class="font-bold text-lg">تعديل المنشور</span>
-                <button onclick="App.updatePost()" class="bg-blue-600 text-white px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">حفظ</button>
-            </div>
-            <div class="p-5">
-                <textarea id="edit-post-input" class="w-full bg-gray-50 dark:bg-gray-800 border rounded-2xl p-4 text-center font-semibold text-lg outline-none resize-none theme-text min-h-[120px]" rows="4"></textarea>
-            </div>
-        </div>
-    </div>
+        <div class="theme-card rounded-3xl w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative border">
+            <div class="p-4 border-b flex items-center justify-between">
+                <button onclick="UI.closeModal('edit-post-modal')" class="p-2 font-bold opacity-60 theme-text btn-tap rounded-lg">إلغاء</button>
+                <span class="font-bold text-lg theme-text">تعديل المنشور</span>
+                <button onclick="App.updatePost()" class="bg-blue-600 text-white px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">حفظ</button>
+            </div>
+            <div class="p-5">
+                <textarea id="edit-post-input" class="w-full theme-bg border border-[var(--border-color)] rounded-2xl p-4 text-center font-semibold text-lg outline-none resize-none theme-text min-h-[120px]" rows="4"></textarea>
+            </div>
+        </div>
+    </div>
 
     <!-- نافذة لوحة التحكم للمالك (جديدة) -->
     <div id="admin-panel-modal" class="hidden fixed inset-0 theme-bg z-[130] flex flex-col modal-slide-in">
@@ -1462,10 +1526,51 @@
             <div class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
         </div>
     </div>
+    
+    <div id="alias-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[150] flex items-center justify-center p-4">
+        <div class="theme-card rounded-3xl w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative border">
+            <div class="p-4 border-b flex items-center justify-between z-10">
+                <button onclick="UI.closeModal('alias-modal')" class="p-2 font-bold text-gray-500 btn-tap rounded-lg">إلغاء</button>
+                <span class="font-bold text-lg">اقتراح/تغيير اسم</span>
+                <button onclick="App.saveAlias()" class="bg-blue-600 text-white px-5 py-1.5 rounded-full font-bold btn-tap shadow-md">حفظ</button>
+            </div>
+            <div class="p-5 flex flex-col items-center space-y-4">
+                <p class="text-sm opacity-70 text-center theme-text">هذا الاسم سيظهر لك فقط، وسيتم إشعار المستخدم بتغيير اسمه.</p>
+                <input type="text" id="alias-input" placeholder="الاسم الجديد..." class="w-full theme-bg border border-[var(--border-color)] rounded-2xl p-4 text-center font-bold text-lg outline-none theme-text">
+            </div>
+        </div>
+    </div>
+    
+    
+            
+            <div id="change-password-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[150] flex items-center justify-center p-4">
+        <div class="theme-card rounded-3xl w-full max-w-sm overflow-hidden modal-slide-in shadow-2xl relative border">
+            <div class="p-4 border-b flex items-center justify-between z-10">
+                <button onclick="UI.closeModal('change-password-modal')" class="p-2 font-bold text-gray-500 btn-tap rounded-lg">إلغاء</button>
+                <span class="font-bold text-lg">تغيير كلمة المرور</span>
+                <div class="w-8"></div>
+            </div>
+            <div class="p-5 flex flex-col space-y-4">
+                <div>
+                    <label class="text-xs font-bold opacity-60 block mb-1">كلمة المرور الحالية</label>
+                    <input type="password" id="cp-current" class="w-full theme-bg border border-[var(--border-color)] rounded-xl p-3 outline-none focus:border-blue-500 theme-text text-left dir-ltr">
+                </div>
+                <div>
+                    <label class="text-xs font-bold opacity-60 block mb-1">كلمة المرور الجديدة</label>
+                    <input type="password" id="cp-new" class="w-full theme-bg border border-[var(--border-color)] rounded-xl p-3 outline-none focus:border-blue-500 theme-text text-left dir-ltr">
+                </div>
+                <div>
+                    <label class="text-xs font-bold opacity-60 block mb-1">تأكيد كلمة المرور الجديدة</label>
+                    <input type="password" id="cp-confirm" class="w-full theme-bg border border-[var(--border-color)] rounded-xl p-3 outline-none focus:border-blue-500 theme-text text-left dir-ltr">
+                </div>
+                <button onclick="Auth.changePasswordDirectly()" class="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl btn-tap shadow-md mt-2">تأكيد التغيير</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, deleteDoc, arrayUnion, query, orderBy, limit, startAfter, getDocs, where, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig;
@@ -1591,8 +1696,7 @@
             return bannedDoc.exists();
         };
 
-        // حظر جهاز بالكامل
-        const banDevice = async (uid) => {
+const banDevice = async (uid) => {
             const user = Memory.users[uid];
             if(!user) return;
             
@@ -1602,8 +1706,9 @@
                 timestamp: Date.now()
             });
             
-            // تسجيل خروج المستخدم إذا كان مسجلاً حالياً
+            // وضع بصمة حظر دائمية في متصفح الشخص المحظور (إذا كان هو من نُفذ عليه الكود حالياً)
             if(auth.currentUser && auth.currentUser.uid === uid) {
+                localStorage.setItem('_xylo_device_banned', 'true');
                 await signOut(auth);
             }
         };
@@ -1615,50 +1720,82 @@
 
         window.PullToRefresh = {
             startY: 0, isPulling: false, spinner: null, container: null,
+            // دالة جديدة تفحص هل مسموح السحب أو لا
+            canPull: () => {
+                const isHome = !document.getElementById('tab-home').classList.contains('hidden');
+                const isNotifs = !document.getElementById('tab-notifications').classList.contains('hidden');
+                
+                // التأكد من عدم وجود أي نافذة منبثقة مفتوحة (محادثة، تعليقات، بروفايل، الخ)
+                const isModalOpen = !document.getElementById('chat-modal').classList.contains('hidden') || 
+                                    !document.getElementById('comments-modal').classList.contains('hidden') ||
+                                    !document.getElementById('profile-modal').classList.contains('hidden') ||
+                                    !document.getElementById('single-post-modal').classList.contains('hidden') ||
+                                    !document.getElementById('note-view-modal').classList.contains('hidden');
+                
+                // مسموح السحب فقط إذا كنت في الرئيسية أو الإشعارات، وبدون أي نوافذ مفتوحة
+                return (isHome || isNotifs) && !isModalOpen;
+            },
             init: () => {
                 PullToRefresh.container = document.getElementById('main-content-area');
                 PullToRefresh.spinner = document.getElementById('ptr-spinner');
                 
-                PullToRefresh.container.addEventListener('touchstart', e => {
-                    if (PullToRefresh.container.scrollTop <= 0) {
+                document.body.addEventListener('touchstart', e => {
+                    // إذا كان غير مسموح السحب، أوقف العملية فوراً
+                    if (!PullToRefresh.canPull()) return;
+                    // فقط إذا كان السكرول في الأعلى تماماً
+                    if (PullToRefresh.container.scrollTop <= 5) {
                         PullToRefresh.startY = e.touches[0].clientY;
                         PullToRefresh.isPulling = true;
                         PullToRefresh.spinner.style.transition = 'none';
                     }
                 }, {passive: true});
-
-                PullToRefresh.container.addEventListener('touchmove', e => {
+                document.body.addEventListener('touchmove', e => {
                     if (!PullToRefresh.isPulling) return;
+                    
+                    // إذا انتقل لصفحة أخرى أثناء السحب، ألغِ السحب
+                    if (!PullToRefresh.canPull()) {
+                        PullToRefresh.isPulling = false;
+                        return;
+                    }
                     const y = e.touches[0].clientY;
                     const diff = y - PullToRefresh.startY;
-                    if (diff > 0 && PullToRefresh.container.scrollTop <= 0) {
-                        e.preventDefault();
+                    // تفعيل السحب فقط اذا السكرول في الأعلى والسحب للأسفل بشكل واضح
+                    if (diff > 20 && PullToRefresh.container.scrollTop <= 5) {
+                        if(e.cancelable) e.preventDefault(); 
                         let pullDistance = Math.min(diff * 0.4, 70); 
                         PullToRefresh.spinner.style.transform = `translate(-50%, ${pullDistance}px) rotate(${pullDistance*2}deg)`;
                         PullToRefresh.spinner.style.opacity = Math.min(pullDistance / 50, 1);
+                    } else if (diff <= 0) {
+                        PullToRefresh.isPulling = false; // إلغاء فوري إذا صعد لفوق
                     }
                 }, {passive: false});
-
-                PullToRefresh.container.addEventListener('touchend', e => {
+                document.body.addEventListener('touchend', e => {
                     if (!PullToRefresh.isPulling) return;
                     PullToRefresh.isPulling = false;
                     PullToRefresh.spinner.style.transition = 'transform 0.3s, opacity 0.3s';
                     
+                    if (!PullToRefresh.canPull()) {
+                        PullToRefresh.spinner.style.transform = `translate(-50%, -50px)`;
+                        PullToRefresh.spinner.style.opacity = 0;
+                        return;
+                    }
                     const y = e.changedTouches[0].clientY;
                     const diff = y - PullToRefresh.startY;
                     
-                    if (diff > 80 && PullToRefresh.container.scrollTop <= 0) {
+                    if (diff > 60 && PullToRefresh.container.scrollTop <= 5) {
                         PullToRefresh.spinner.style.transform = `translate(-50%, 50px) rotate(360deg)`;
                         PullToRefresh.spinner.classList.add('animate-spin');
                         
                         setTimeout(() => {
+                            // التحديث سيشمل المنشورات والإشعارات فقط لأن السحب معطل في الباقي
                             App.renderFeed();
                             App.renderNotifications();
+                            
                             PullToRefresh.spinner.classList.remove('animate-spin');
                             PullToRefresh.spinner.style.transform = `translate(-50%, -50px)`;
                             PullToRefresh.spinner.style.opacity = 0;
                             UI.showMessage('تم التحديث');
-                        }, 1000);
+                        }, 800); 
                     } else {
                         PullToRefresh.spinner.style.transform = `translate(-50%, -50px)`;
                         PullToRefresh.spinner.style.opacity = 0;
@@ -1705,6 +1842,7 @@
                 let results = Object.values(Memory.users).filter(u => 
                     u.uid !== currentUser.uid && 
                     friendsIds.includes(u.uid) &&
+                    u.mentionPrivacy !== 'none' && // تطبيق حماية المينشن
                     (u.username.toLowerCase().includes(query) || u.name.toLowerCase().includes(query))
                 );
 
@@ -1861,10 +1999,10 @@
                 
                 if(tabId === 'messages') App.renderChats(); 
                 if(tabId === 'notes') {
-                    // حذفنا سطر الإخفاء لضمان بقاء النقطة طالما يوجد طلب معلق
                     App.switchFriendsSubTab('friends');
                 }
-                if(tabId === 'notifications') document.getElementById('badge-notifications').classList.add('hidden');
+                // تم إزالة السطر الذي يخفي الإشعارات بمجرد فتح التبويب
+                if(tabId === 'notifications') App.renderNotifications(); // تحديث القائمة لإعادة حساب المقروء
 
                 document.getElementById('main-content-area').scrollTop = 0;
             },
@@ -1877,6 +2015,7 @@
                 }
 
                 if (modalId === 'profile-modal' && data) {
+                    window.currentProfileViewUid = data; // السطر الجديد
                     App.renderUserProfile(data);
                 } else if (modalId === 'chat-modal' && data) {
                     window.currentChatUserId = data;
@@ -1890,6 +2029,8 @@
                     document.getElementById('comment-my-avatar').src = currentUser.photo || App.getDefaultAvatar();
                     App.renderComments();
                 } else if (modalId === 'edit-profile-modal') {
+                document.getElementById('edit-birth-day').value = currentUser.birthDay || '';
+document.getElementById('edit-birth-month').value = currentUser.birthMonth || '';
                     document.getElementById('edit-name').value = currentUser.name || '';
                     document.getElementById('edit-bio').value = currentUser.bio || '';
                     document.getElementById('edit-profile-img').src = currentUser.photo || App.getDefaultAvatar();
@@ -1919,6 +2060,9 @@
                     document.getElementById('priv-show-suggestions').checked = currentUser.showInSuggestions !== false;
                     document.getElementById('priv-friends-vis').value = currentUser.friendsVisibility || 'all';
                     document.getElementById('priv-msgs').value = currentUser.messagePrivacy || 'all';
+                    document.getElementById('priv-mentions').value = currentUser.mentionPrivacy || 'all';
+                    document.getElementById('priv-photo-vis').value = currentUser.photoVisibility || 'all';
+                    document.getElementById('priv-bio-vis').value = currentUser.bioVisibility || 'all';
                 } else if (modalId === 'create-note-modal') {
                     document.getElementById('create-note-preview-avatar').src = currentUser.photo || App.getDefaultAvatar();
                     document.getElementById('note-text-input').value = '';
@@ -1975,17 +2119,6 @@
                 onAuthStateChanged(auth, async (user) => {
                     if (user) {
                         
-                        // كود إشعارات الويب (القديم)
-                        window.OneSignalDeferred.push(async function(OneSignal) {
-                            await OneSignal.login(user.uid);
-                        });
-
-                        if (typeof ZailoApp !== 'undefined') {
-    alert("ممتاز! الموقع متصل بنظام الأندرويد ديستلم الـ UID");
-    ZailoApp.loginToOneSignal(user.uid);
-} else {
-    console.log("التطبيق مفتوح من المتصفح، وليس من الأندرويد.");
-}
 
                         const isBanned = await isDeviceBanned(user.uid);
                         if(isBanned) {
@@ -2028,6 +2161,11 @@
                 });
             },
             register: async () => {
+                // فحص بصمة الحظر في الجهاز لمنعه من إنشاء حساب
+                if(localStorage.getItem('_xylo_device_banned') === 'true') {
+                    return UI.showMessage('عذراً، هذا الجهاز محظور من استخدام زايلو لانتهاك الشروط.');
+                }
+
                 const name = document.getElementById('reg-name').value;
                 const email = document.getElementById('reg-email').value;
                 const password = document.getElementById('reg-password').value;
@@ -2068,6 +2206,36 @@
                         await sendPasswordResetEmail(auth, auth.currentUser.email);
                         UI.showMessage('تم إرسال الرابط لبريدك');
                     } catch(e) { UI.showMessage('حدث خطأ'); }
+                }
+            },
+            changePasswordDirectly: async () => {
+                const currentPass = document.getElementById('cp-current').value;
+                const newPass = document.getElementById('cp-new').value;
+                const confirmPass = document.getElementById('cp-confirm').value;
+                if(!currentPass || !newPass || !confirmPass) return UI.showMessage('يرجى ملء جميع الحقول');
+                if(newPass !== confirmPass) return UI.showMessage('كلمة المرور الجديدة غير متطابقة');
+                if(newPass.length < 6) return UI.showMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                const user = auth.currentUser;
+                if(!user || !user.email) return UI.showMessage('حدث خطأ في المصادقة');
+                UI.showMessage('جاري التغيير...');
+                
+                try {
+                    const credential = EmailAuthProvider.credential(user.email, currentPass);
+                    await reauthenticateWithCredential(user, credential);
+                    await updatePassword(user, newPass);
+                    
+                    UI.closeModal('change-password-modal');
+                    document.getElementById('cp-current').value = '';
+                    document.getElementById('cp-new').value = '';
+                    document.getElementById('cp-confirm').value = '';
+                    UI.showMessage('تم تغيير كلمة المرور بنجاح ✅');
+                } catch (error) {
+                    console.error(error);
+                    if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password') {
+                        UI.showMessage('كلمة المرور الحالية غير صحيحة');
+                    } else {
+                        UI.showMessage('حدث خطأ، حاول مرة أخرى لاحقاً');
+                    }
                 }
             },
             logout: async () => {
@@ -2159,33 +2327,47 @@
                 }
             },
             
-// دالة إرسال الإشعار الخارجي (Push Notification)
-            sendPushNotification: async (targetUid, title, message) => {
-                // تم تغيير المفاتيح للجديدة
-                const appId = "461dedc1-753f-43d1-bb9e-e0abd43a4c4d";
-                const restApiKey = "os_v2_app_iyo63qlvh5b5do464cv5iosmjvwiuysr3q7e4rmsjudogazmbom6pm63mjmyac6u4mxusczuimavzkcb363gv2fdgmmcsfworvccrny";
-
-                const options = {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Basic ${restApiKey}`
-                    },
-                    body: JSON.stringify({
-                        app_id: appId,
-                        include_aliases: { external_id: [targetUid] },
-                        target_channel: "push",
-                        headings: { "en": title, "ar": title },
-                        contents: { "en": message, "ar": message }
-                    })
-                };
-
-                try {
-                    await fetch('https://onesignal.com/api/v1/notifications', options);
-                } catch (e) {
-                    console.error("خطأ في إرسال الإشعار:", e);
+            checkAndSendBirthdayNotifs: () => {
+                if(!currentUser.birthDay || !currentUser.birthMonth) return;
+                const today = new Date();
+                const currentMonth = today.getMonth() + 1;
+                const currentDay = today.getDate();
+                const currentYear = today.getFullYear();
+                
+                // إذا كان اليوم هو عيد ميلاد المستخدم
+                if(currentUser.birthMonth === currentMonth && currentUser.birthDay === currentDay) {
+                    const lastSentYear = currentUser.lastBirthdayNotifYear || 0;
+                    // لضمان إرسال الإشعارات مرة واحدة فقط في السنة
+                    if (lastSentYear !== currentYear) {
+                        const myFriendsRelations = Memory.friends.filter(f => f.user1 === currentUser.uid || f.user2 === currentUser.uid);
+                        myFriendsRelations.forEach(f => {
+                            const friendId = f.user1 === currentUser.uid ? f.user2 : f.user1;
+                            App.sendNotification(friendId, `اليوم هو عيد ميلاد صديقك ${currentUser.name} 🎂 نتمنى له سنة سعيدة!`, null);
+                        });
+                        updateDoc(doc(db, USERS_PATH, currentUser.uid), { lastBirthdayNotifYear: currentYear });
+                        currentUser.lastBirthdayNotifYear = currentYear;
+                    }
                 }
             },
+            
+            getUserName: (uid) => {
+                const u = Memory.users[uid];
+                if(!u) return "مستخدم";
+                if(currentUser && currentUser.aliases && currentUser.aliases[uid]) {
+                    return currentUser.aliases[uid];
+                }
+                return u.name;
+            },
+            
+sendPushNotification: (targetUid, title, message) => {
+    const targetUser = Memory.users[targetUid];
+    if (!targetUser || !targetUser.fcmToken) return;
+    
+    if (window.AndroidInterface) {
+        // التعديل: قمنا بإضافة رقمك (الراسل) ورقمك (المحادثة لكي يفتحها الطرف الآخر)
+        window.AndroidInterface.sendNotification(targetUser.fcmToken, title, message, currentUser.uid, currentUser.uid);
+    }
+},
             
 setChatPresence: async (chatUid) => {
                 if (!window.currentUser) return;
@@ -2293,6 +2475,15 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                         App.updateLastActive(true); // التطبيق في الخلفية
                     } else if (document.visibilityState === "visible") {
                         App.updateLastActive(false); // عاد للتطبيق
+                        // --- الكود الإضافي لحل مشكلة النشاط ---
+                // تحديث النشاط تلقائياً عند لمس الشاشة (بحد أقصى مرة كل دقيقة لمنع الضغط على السيرفر)
+                let lastTouchUpdate = Date.now();
+                document.body.addEventListener('touchstart', () => {
+                    if(Date.now() - lastTouchUpdate > 60000) {
+                        App.updateLastActive(false);
+                        lastTouchUpdate = Date.now();
+                    }
+                }, {passive: true});
                     }
                 });
             },
@@ -2320,6 +2511,7 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                 const errHandler = (e) => console.error("Firebase Read Error:", e);
 
                 onSnapshot(collection(db, USERS_PATH), (snap) => {
+                    let shouldUpdateChatHeader = false;
                     snap.docs.forEach(d => {
                         const data = d.data();
                         Memory.users[d.id] = data;
@@ -2328,18 +2520,26 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                             currentUser.mentionsCount = data.mentionsCount || {};
                             App.updateUIWithUserData();
                         }
+                        
+                        if (!document.getElementById('profile-modal').classList.contains('hidden') && window.currentProfileViewUid === d.id) {
+                            App.renderUserProfile(d.id);
+                        }
+                        
+                        // التعديل: التحقق إذا كان هذا المستخدم هو الشخص الذي نتحدث معه حالياً لتحديث نشاطه (متصل الآن/آخر ظهور) فوراً
+                        if (!document.getElementById('chat-modal').classList.contains('hidden') && window.currentChatUserId === d.id) {
+                            shouldUpdateChatHeader = true;
+                        }
                     });
+                    
                     App.renderChats(); 
                     App.renderFeed(); 
                     
-                    // السطرين الجديدين: تحديث الهيدر فوراً إذا كنت داخل محادثة والشخص الآخر دخل أو خرج
-                    if (!document.getElementById('chat-modal').classList.contains('hidden') && window.currentChatUserId) {
+                    // تحديث هيدر المحادثة فوراً إذا تغير نشاط الطرف الآخر
+                    if (shouldUpdateChatHeader) {
                         App.renderChatInfo(window.currentChatUserId);
                     }
                 }, errHandler);
                 
-                
-
                 onSnapshot(collection(db, POSTS_PATH), (snap) => {
                     Memory.posts = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     App.renderFeed();
@@ -2352,27 +2552,21 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                 }, errHandler);
 
                 onSnapshot(collection(db, REQUESTS_PATH), (snap) => {
-    Memory.requests = snap.docs.map(d => ({id: d.id, ...d.data()}));
-    
-    const myRequests = Memory.requests.filter(r => r.to === currentUser.uid);
-    const badgeSubtab = document.getElementById('badge-requests-subtab');
-    const badgeMainNav = document.getElementById('badge-requests');
-    
-    if(myRequests.length > 0) {
-        // إظهار النقطة الحمراء في القائمة السفلية وقسم الطلبات
-        if(badgeMainNav) badgeMainNav.style.display = 'block';
-        if(badgeSubtab) badgeSubtab.style.display = 'inline-block';
-    } else {
-        // إخفاء النقطة الحمراء فقط عند عدم وجود أي طلب معلق (سواء تم القبول أو الرفض)
-        if(badgeMainNav) badgeMainNav.style.display = 'none';
-        if(badgeSubtab) badgeSubtab.style.display = 'none';
-    }
-
-    // تحديث الواجهة إذا كان المستخدم داخل قسم الطلبات
-    if(!document.getElementById('subtab-content-requests').classList.contains('hidden')) {
-        App.renderFriendsTab('requests');
-    }
-}, errHandler);
+                    Memory.requests = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    const myRequests = Memory.requests.filter(r => r.to === currentUser.uid);
+                    const badgeSubtab = document.getElementById('badge-requests-subtab');
+                    const badgeMainNav = document.getElementById('badge-requests');
+                    if(myRequests.length > 0) {
+                        if(badgeMainNav) badgeMainNav.style.display = 'block';
+                        if(badgeSubtab) badgeSubtab.style.display = 'inline-block';
+                    } else {
+                        if(badgeMainNav) badgeMainNav.style.display = 'none';
+                        if(badgeSubtab) badgeSubtab.style.display = 'none';
+                    }
+                    if(!document.getElementById('subtab-content-requests').classList.contains('hidden')) {
+                        App.renderFriendsTab('requests');
+                    }
+                }, errHandler);
 
                 onSnapshot(collection(db, FRIENDS_PATH), (snap) => {
                     Memory.friends = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -2384,28 +2578,32 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                 onSnapshot(collection(db, NOTES_PATH), (snap) => {
                     const now = Date.now();
                     const oneDay = 24 * 60 * 60 * 1000;
-                    Memory.notes = snap.docs.map(d => ({id: d.id, ...d.data()}))
-                                        .filter(n => (now - n.timestamp) < oneDay);
+                    let validNotes = [];
+                    // التعديل: حذف الستوريات المنتهية (صورة أو ملاحظة) من القاعدة فوراً لمنع تراكمها واستهلاك المساحة
+                    snap.docs.forEach(d => {
+                        const data = d.data();
+                        if ((now - data.timestamp) >= oneDay) {
+                            deleteDoc(doc(db, NOTES_PATH, d.id)).catch(()=>{});
+                        } else {
+                            validNotes.push({id: d.id, ...data});
+                        }
+                    });
+                    Memory.notes = validNotes;
                     App.renderNotes();
                 }, errHandler);
 
                 onSnapshot(collection(db, MESSAGES_PATH), (snap) => {
+                    // التعديل: سحب الرسائل الجديدة وتحديث الذاكرة فوراً لضمان وصول الرسالة وأنت داخل التطبيق
                     Memory.messages = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                    App.renderChats();
+                    App.renderChats(); 
                     
-                    let needsRender = false;
                     const isChatOpen = !document.getElementById('chat-modal').classList.contains('hidden');
 
                     snap.docChanges().forEach(change => {
                         const msgData = {id: change.doc.id, ...change.doc.data()};
-                        
-                        // معالجة الإشعار الطافي (Toast)
                         if (change.type === 'added' && msgData.senderId !== currentUser.uid && msgData.participants.includes(currentUser.uid)) {
-                            // إذا كانت المحادثة مغلقة، أو مفتوحة لكن لشخص آخر
                             if (!isChatOpen || window.currentChatUserId !== msgData.senderId) {
-                                // التحقق مما إذا كان مكتوماً أو محظوراً
                                 if (!App.isMuted(msgData.senderId) && !App.isBlocked(msgData.senderId)) {
-                                    // إذا كانت الرسالة جديدة (منذ أقل من 10 ثواني) لكي لا تظهر الرسائل القديمة
                                     if(Date.now() - msgData.timestamp < 10000) {
                                         const sender = Memory.users[msgData.senderId];
                                         if (sender) {
@@ -2415,75 +2613,41 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                                 }
                             }
                         }
-
-                        // تحديث الرسائل المفتوحة حالياً
-                        if(window.currentChatUserId && msgData.participants.includes(currentUser.uid) && msgData.participants.includes(window.currentChatUserId)) {
-                            const existingIndex = window.allMessages.findIndex(m => m.id === msgData.id);
-                            
-                            if (change.type === 'added') {
-                                if(existingIndex === -1) {
-                                    window.allMessages.push(msgData);
-                                    needsRender = true;
-                                }
-                            } else if (change.type === 'modified') {
-                                if(existingIndex !== -1) {
-                                    window.allMessages[existingIndex] = msgData;
-                                    needsRender = true;
-                                }
-                            } else if (change.type === 'removed') {
-                                if(existingIndex !== -1) {
-                                    window.allMessages.splice(existingIndex, 1);
-                                    needsRender = true;
-                                }
-                            }
-                        }
                     });
 
-                    if(window.currentChatUserId) {
-                        if (isChatOpen) {
-                            const unreadInChat = snap.docs.filter(d => d.data().senderId === window.currentChatUserId && !d.data().read && d.data().participants.includes(currentUser.uid));
-                            if(unreadInChat.length > 0) {
-                                unreadInChat.forEach(d => updateDoc(d.ref, {read: true}));
-                            }
+                    // التعديل: إذا المحادثة مفتوحة، ارسم الرسائل فوراً واقرأها
+                    if(isChatOpen && window.currentChatUserId) {
+                        const unreadInChat = snap.docs.filter(d => d.data().senderId === window.currentChatUserId && !d.data().read && d.data().participants.includes(currentUser.uid));
+                        if(unreadInChat.length > 0) {
+                            unreadInChat.forEach(d => updateDoc(d.ref, {read: true}));
                         }
-                        if(needsRender) {
-                            window.allMessages = window.allMessages.filter(m => !m.id.startsWith('temp-'));
-                            window.allMessages.sort((a,b) => a.timestamp - b.timestamp);
-                            App.renderMessages(false);
-                        }
+                        App.renderMessages(); // تحديث فوري يجلب الرسائل الجديدة للشاشة
                     }
                 }, errHandler);
 
                 onSnapshot(collection(db, TYPING_PATH), (snap) => {
-    // تحديث الذاكرة لكل حالات الكتابة الموجهة لي
-    Memory.typing = {};
-    snap.docs.forEach(d => {
-        const data = d.data();
-        // إذا كانت الكتابة موجهة لي ولم تمر عليها أكثر من 5 ثواني
-        if (d.id.endsWith(`_${currentUser.uid}`) && (Date.now() - data.timestamp < 5000)) {
-            const senderId = d.id.split('_')[0];
-            Memory.typing[senderId] = data.text;
-        }
-    });
-
-    // 1. تحديث قائمة المحادثات بالخارج
-    App.renderChats();
-
-    // 2. تحديث الفقاعة داخل المحادثة إذا كانت مفتوحة
-    const bubble = document.getElementById('live-typing-bubble');
-    if(window.currentChatUserId && Memory.typing[window.currentChatUserId]) {
-        bubble.innerText = Memory.typing[window.currentChatUserId];
-        bubble.classList.remove('hidden');
-        const container = document.getElementById('chat-messages-container');
-        if(container) container.scrollTop = container.scrollHeight;
-    } else if(bubble) {
-        bubble.classList.add('hidden');
-    }
-}, errHandler);
+                    Memory.typing = {};
+                    snap.docs.forEach(d => {
+                        const data = d.data();
+                        if (d.id.endsWith(`_${currentUser.uid}`) && (Date.now() - data.timestamp < 5000)) {
+                            const senderId = d.id.split('_')[0];
+                            Memory.typing[senderId] = data.text;
+                        }
+                    });
+                    App.renderChats();
+                    const bubble = document.getElementById('live-typing-bubble');
+                    if(window.currentChatUserId && Memory.typing[window.currentChatUserId]) {
+                        bubble.innerText = Memory.typing[window.currentChatUserId];
+                        bubble.classList.remove('hidden');
+                        const container = document.getElementById('chat-messages-container');
+                        if(container) container.scrollTop = container.scrollHeight;
+                    } else if(bubble) {
+                        bubble.classList.add('hidden');
+                    }
+                }, errHandler);
 
                 onSnapshot(collection(db, NOTIFS_PATH), (snap) => {
-                    Memory.notifications = snap.docs.map(d => ({id: d.id, ...d.data()}))
-                                            .filter(n => n.to === currentUser.uid);
+                    Memory.notifications = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(n => n.to === currentUser.uid);
                     App.renderNotifications();
                 }, errHandler);
 
@@ -2497,7 +2661,6 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                     App.renderChats();
                 }, errHandler);
 
-                // استماع للإبلاغات (للمالك فقط)
                 onSnapshot(collection(db, REPORTS_PATH), (snap) => {
                     Memory.reports = snap.docs.map(d => ({id: d.id, ...d.data()}));
                     if(currentUser && currentUser.email === window.MASTER_EMAIL) {
@@ -2508,7 +2671,6 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                     }
                 }, errHandler);
 
-                // استماع للمحظورين
                 onSnapshot(collection(db, BANNED_PATH), (snap) => {
                     Memory.banned = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 }, errHandler);
@@ -2903,35 +3065,31 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                 const content = document.getElementById('action-modal-content');
                 const isMyPost = authorId === currentUser.uid;
                 
-                // التعديل هنا: جلب الإيميل بطريقة مضمونة جداً (من auth مباشرة إذا لم يوجد في currentUser)
                 const userEmail = (window.currentUser && window.currentUser.email) || (auth.currentUser && auth.currentUser.email) || '';
                 const isMaster = userEmail && window.MASTER_EMAIL && (userEmail.toLowerCase() === window.MASTER_EMAIL.toLowerCase());
                 
                 let buttons = '';
                 
+                // جميع الأزرار بخلفية رمادية
                 if (isMyPost) {
-                    // خيارات صاحب المنشور
                     buttons += `
-                        <button onclick="App.editPost('${postId}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-green-50 btn-tap text-green-600 font-bold">
-                            <span>تعديل المنشور</span> <i class="ph-fill ph-pencil-simple text-xl"></i>
+                        <button onclick="App.editPost('${postId}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                            <span>تعديل المنشور</span> <i class="ph-fill ph-pencil-simple text-xl opacity-70"></i>
                         </button>
-                        <button onclick="App.deletePost('${postId}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-600 font-bold">
-                            <span>حذف المنشور</span> <i class="ph-fill ph-trash text-xl"></i>
+                        <button onclick="App.deletePost('${postId}')" class="w-full flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                            <span>حذف المنشور</span> <i class="ph-fill ph-trash text-xl opacity-70 text-red-500"></i>
                         </button>
                     `;
                 } else {
-                    // خيارات منشورات الآخرين
                     buttons += `
-                        <button onclick="App.reportPost('${postId}')" class="w-full flex justify-between items-center p-4 ${isMaster ? 'border-b border-gray-200 dark:border-gray-700' : ''} hover:bg-orange-50 btn-tap text-orange-600 font-bold">
-                            <span>الإبلاغ عن المنشور</span> <i class="ph-fill ph-flag text-xl"></i>
+                        <button onclick="App.reportPost('${postId}')" class="w-full flex justify-between items-center p-4 ${isMaster ? 'border-b border-gray-200 dark:border-gray-700' : ''} bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                            <span>الإبلاغ عن المنشور</span> <i class="ph-fill ph-flag text-xl opacity-70 text-orange-500"></i>
                         </button>
                     `;
-                    
-                    // زر الحذف الإداري للمالك فقط
                     if (isMaster) {
                         buttons += `
-                            <button onclick="App.deletePost('${postId}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-600 font-bold">
-                                <span>حذف المنشور (إدارة)</span> <i class="ph-fill ph-trash text-xl"></i>
+                            <button onclick="App.deletePost('${postId}')" class="w-full flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                                <span>حذف المنشور (إدارة)</span> <i class="ph-fill ph-trash text-xl opacity-70 text-red-500"></i>
                             </button>
                         `;
                     }
@@ -2945,13 +3103,44 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                 if(targetUid === currentUser.uid) return; 
                 const content = document.getElementById('action-modal-content');
                 
-                // إضافة زر الإبلاغ الرئيسي
+                const hasAlias = currentUser.aliases && currentUser.aliases[targetUid];
+                let deleteAliasBtn = '';
+                
+                if (hasAlias) {
+                    deleteAliasBtn = `
+                    <button onclick="App.deleteAlias('${targetUid}')" class="w-full flex justify-between items-center p-4 theme-text font-bold btn-tap border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50">
+                        <span class="text-orange-500">حذف الاسم المقترح</span> <i class="ph-fill ph-trash text-xl text-orange-500"></i>
+                    </button>
+                    `;
+                }
+                
                 content.innerHTML = `
-                    <button onclick="App.openReportUserModal('${targetUid}')" class="w-full flex justify-between items-center p-4 text-red-600 font-bold btn-tap border-b border-gray-200 dark:border-gray-700 hover:bg-red-50">
+                    <button onclick="UI.closeModal('action-modal'); window.currentAliasTarget = '${targetUid}'; UI.openModal('alias-modal');" class="w-full flex justify-between items-center p-4 theme-text font-bold border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 btn-tap">
+                        <span>اقتراح / تغيير اسم</span> <i class="ph-fill ph-user-switch text-xl"></i>
+                    </button>
+                    ${deleteAliasBtn}
+                    <button onclick="App.openReportUserModal('${targetUid}')" class="w-full flex justify-between items-center p-4 text-red-600 font-bold btn-tap hover:bg-red-50">
                         <span>الإبلاغ عن الحساب</span> <i class="ph-fill ph-warning-octagon text-xl"></i>
                     </button>
                 `;
                 UI.openModal('action-modal');
+            },
+            deleteAlias: async (targetUid) => {
+                if (confirm('هل أنت متأكد من حذف الاسم المقترح؟ سيعود الاسم الأصلي للصديق.')) {
+                    let aliases = currentUser.aliases || {};
+                    delete aliases[targetUid];
+                    
+                    await updateDoc(doc(db, USERS_PATH, currentUser.uid), { aliases: aliases });
+                    currentUser.aliases = aliases;
+                    if(Memory.users[currentUser.uid]) Memory.users[currentUser.uid].aliases = aliases;
+                    
+                    UI.closeModal('action-modal');
+                    UI.showMessage('تم حذف الاسم المقترح وعودة الاسم الأصلي');
+                    App.renderChats();
+                    if(!document.getElementById('profile-modal').classList.contains('hidden') && window.currentProfileViewUid === targetUid){
+                        App.renderUserProfile(targetUid);
+                    }
+                }
             },
 
             // استبدل دالة openReportUserModal أيضاً بهذا الكود لضمان ظهور الأسباب المطلوبة:
@@ -3168,23 +3357,74 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                 if(confirm('هل أنت متأكد من حظر صاحب المنشور بشكل كامل من التطبيق؟')) {
                     const report = Memory.reports.find(r => r.id === reportId);
                     
-                    // استخدام الإرسال المباشر لقاعدة البيانات لضمان الوصول حتى لو كنت تختبره من حسابك
+                    // استخدام دالة النظام الجديدة
                     if (report && report.reportedBy) {
-                        await addDoc(collection(db, NOTIFS_PATH), {
-                            to: report.reportedBy,
-                            from: currentUser.uid,
-                            text: 'قمنا بمراجعة إبلاغك وتم اتخاذ الإجراء اللازم بحق المخالف. شكراً لمساهمتك في جعل زايلو مجتمعاً آمناً 🛡️',
-                            linkId: null,
-                            timestamp: Date.now(),
-                            read: false
-                        });
+                        await App.sendSystemNotification(report.reportedBy, 'قمنا بمراجعة إبلاغك وتم اتخاذ الإجراء اللازم بحق المخالف. شكراً لمساهمتك في جعل زايلو مجتمعاً آمناً 🛡️');
                     }
-
                     await banDevice(ownerUid); 
                     await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'processed' });
                     
                     UI.showMessage('تم حظر صاحب المنشور وإشعار المُبلغ');
                     App.renderReports();
+                }
+            },
+            
+            banReportedUser: async (reportId, targetUid) => {
+                if(confirm('هل أنت متأكد من حظر هذا الملف الشخصي بشكل كامل من التطبيق؟')) {
+                    const report = Memory.reports.find(r => r.id === reportId);
+                    
+                    // استخدام دالة النظام الجديدة
+                    if (report && report.reportedBy) {
+                        await App.sendSystemNotification(report.reportedBy, 'قمنا بمراجعة إبلاغك عن الحساب المخالف وتم اتخاذ إجراء الحظر. شكراً لمساهمتك في حماية مجتمع زايلو 🛡️');
+                    }
+                    await banDevice(targetUid); 
+                    await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'processed' });
+                    
+                    UI.showMessage('تم حظر الحساب وإشعار المُبلغ');
+                    App.renderReports();
+                }
+            },
+            rejectReport: async (reportId) => {
+                const report = Memory.reports.find(r => r.id === reportId);
+                
+                await updateDoc(doc(db, REPORTS_PATH, reportId), { status: 'rejected' });
+                
+                // استخدام دالة النظام الجديدة
+                if (report && report.reportedBy) {
+                    await App.sendSystemNotification(report.reportedBy, 'قمنا بمراجعة إبلاغك ولم نجد أي انتهاك لمعايير المجتمع. شكراً لحرصك 🤍');
+                }
+                UI.showMessage('تم رفض الإبلاغ وإشعار المُبلغ');
+                App.renderReports();
+            },
+            
+            saveAlias: async () => {
+                const targetUid = window.currentAliasTarget;
+                const newName = document.getElementById('alias-input').value.trim();
+                if(!targetUid || !newName) return UI.showMessage('يرجى كتابة الاسم');
+                let aliases = currentUser.aliases || {};
+                aliases[targetUid] = newName;
+                await updateDoc(doc(db, USERS_PATH, currentUser.uid), { aliases: aliases });
+                currentUser.aliases = aliases;
+                
+                // تحديث الذاكرة المحلية فوراً لتجنب مشكلة الـ 3 ضغطات
+                if(Memory.users[currentUser.uid]) Memory.users[currentUser.uid].aliases = aliases;
+                // إرسال رسالة نظام شفافة (حسب الطلب 9)
+                await addDoc(collection(db, MESSAGES_PATH), {
+                    participants: [currentUser.uid, targetUid],
+                    senderId: currentUser.uid,
+                    text: newName,
+                    isSystemMsg: true, // علامة تدل على أنها رسالة نظام
+                    systemAction: 'alias_change',
+                    timestamp: Date.now(),
+                    read: false 
+                });
+                UI.closeModal('alias-modal');
+                UI.showMessage('تم تغيير الاسم بنجاح');
+                
+                // تحديث الواجهة بدون عمل ريفريش كامل يعلق التطبيق
+                App.renderChats();
+                if(!document.getElementById('chat-modal').classList.contains('hidden') && window.currentChatUserId === targetUid) {
+                    App.renderChatInfo(targetUid);
                 }
             },
             
@@ -3365,7 +3605,7 @@ window.handleReactBtnClick = (emoji, btnElement) => {
                             <div class="flex items-center gap-3 cursor-pointer group btn-tap" onclick="UI.openModal('profile-modal', '${author.uid}')">
                                 <img src="${author.photo || App.getDefaultAvatar()}" class="w-11 h-11 rounded-full object-cover border border-gray-100">
                                 <div>
-                                    <h4 class="font-bold leading-tight group-hover:text-blue-600 transition-colors flex items-center gap-1 theme-text">${author.name}</h4>
+                                    <h4 class="font-bold leading-tight group-hover:text-blue-600 transition-colors flex items-center gap-1 theme-text">${App.getUserName(author.uid)}</h4>
                                     <span class="text-xs opacity-60">${App.timeAgo(post.timestamp)}</span>
                                 </div>
                             </div>
@@ -3413,11 +3653,22 @@ window.handleReactBtnClick = (emoji, btnElement) => {
             },
 
             deletePost: async (postId) => {
-                if(confirm('هل متأكد من حذف المنشور؟')) {
-                    await deleteDoc(doc(db, POSTS_PATH, postId));
-                    UI.showMessage('تم حذف المنشور');
-                }
-            },
+                if(confirm('هل متأكد من حذف المنشور؟')) {
+                    UI.closeModal('action-modal'); // إغلاق قائمة الخيارات
+                    UI.closeModal('single-post-modal'); // إغلاق نافذة المنشور إذا كان مفتوحاً بمفرده
+                    
+                    // تحديث الواجهة فوراً قبل انتظار استجابة السيرفر
+                    Memory.posts = Memory.posts.filter(p => p.id !== postId);
+                    App.renderFeed();
+                    
+                    try {
+                        await deleteDoc(doc(db, POSTS_PATH, postId));
+                        UI.showMessage('تم حذف المنشور بنجاح');
+                    } catch (error) {
+                        UI.showMessage('حدث خطأ أثناء الحذف');
+                    }
+                }
+            },
 
             toggleLike: async (postId) => {
                 const post = Memory.posts.find(p => p.id === postId);
@@ -3574,14 +3825,20 @@ renderNotes: () => {
                 const activeNotes = Memory.notes.filter(n => {
                     if ((now - n.timestamp) >= oneDay) return false;
                     
+                    // إصلاح خصوصية الكلوز (الطلب 16)
                     if (n.isClose && n.authorId !== currentUser.uid) {
                         const author = Memory.users[n.authorId];
-                        if (!author || !author.closeFriends || !author.closeFriends.includes(currentUser.uid)) {
-                            return false;
+                        // يجب أن أكون أنا (currentUser) في قائمة الـ closeFriends الخاصة بالناشر
+                        // ويجب أن يكون الناشر في قائمة الـ closeFriends الخاصة بي أنا
+                        const imInHisClose = author && author.closeFriends && author.closeFriends.includes(currentUser.uid);
+                        const hesInMyClose = currentUser.closeFriends && currentUser.closeFriends.includes(n.authorId);
+                        
+                        if (!imInHisClose || !hesInMyClose) {
+                            return false; // إذا واحد منا ما ضايف الثاني كلوز، ما ينعرض!
                         }
                     }
                     return true;
-                }).sort((a,b) => a.timestamp - b.timestamp);
+                }).sort((a,b) => a.timestamp - b.timestamp); // الترتيب تصاعدي (القديم ثم الجديد)
                 
                 const groupedNotes = {};
                 activeNotes.forEach(n => {
@@ -3685,7 +3942,6 @@ renderNotes: () => {
                 } else {
                     App.storyAuthorsOrder = [currentUser.uid]; // إذا ضغط على نفسه يشاهد نفسه فقط
                 }
-
                 App.currentStoryAuthorId = authorId;
                 App.currentStoryIndex = 0;
                 
@@ -3693,16 +3949,19 @@ renderNotes: () => {
                 const notes = App.allStoryGroups[authorId];
                 const firstUnreadIndex = notes.findIndex(n => !(n.viewers && n.viewers.includes(currentUser.uid)));
                 if(firstUnreadIndex !== -1) App.currentStoryIndex = firstUnreadIndex;
-
                 UI.openModal('note-view-modal');
                 App.renderCurrentStory();
                 
-                // إيقاف الستوري عند الضغط المطول بالوسط
-                const pauseArea = document.getElementById('story-pause-area');
-                pauseArea.onmousedown = () => clearTimeout(App.storyTimer);
-                pauseArea.ontouchstart = () => clearTimeout(App.storyTimer);
-                pauseArea.onmouseup = () => App.resumeStoryTimer();
-                pauseArea.ontouchend = () => App.resumeStoryTimer();
+                // إيقاف واستئناف الستوري عند اللمس المطول (يشمل جميع مناطق الشاشة الآن)
+                const storyAreas = document.querySelectorAll('.absolute.inset-0.z-0.flex > div');
+                storyAreas.forEach(area => {
+                    area.onmousedown = App.pauseStoryTimer;
+                    area.ontouchstart = App.pauseStoryTimer;
+                    area.onmouseup = App.resumeStoryTimer;
+                    area.ontouchend = App.resumeStoryTimer;
+                    area.onmouseleave = App.resumeStoryTimer; 
+                    area.ontouchcancel = App.resumeStoryTimer;
+                });
             },
 
             renderCurrentStory: async () => {
@@ -3711,68 +3970,132 @@ renderNotes: () => {
                 const notes = App.allStoryGroups[authorId];
                 const author = Memory.users[authorId];
                 if(!notes || !author) return App.closeStoryViewer();
-
                 const note = notes[App.currentStoryIndex];
                 window.noteViewId = note.id;
                 window.noteViewAuthorId = authorId;
-
-                // تحديث الواجهة
                 document.getElementById('nv-avatar').src = author.photo || App.getDefaultAvatar();
                 document.getElementById('nv-name').innerText = author.name;
-                document.getElementById('nv-time').innerText = App.timeAgo(note.timestamp);
-                document.getElementById('nv-text').innerHTML = App.parseMentions(note.text);
-
-                // رسم أشرطة التقدم
+                
+                let timeText = App.timeAgo(note.timestamp);
+                if (note.isClose) timeText += ' • كلوز 🟢';
+                document.getElementById('nv-time').innerText = timeText;
+                
+                const viewerModal = document.getElementById('note-view-modal');
+                const textContainer = document.getElementById('nv-text');
+                const bottomSection = document.getElementById('note-bottom-section');
+                
+                const oldCaption = document.getElementById('story-image-caption');
+                if(oldCaption) oldCaption.remove();
+                if (note.image) {
+                    // الطلب 3: الحجم الحقيقي بدون زوم عشوائي
+                    viewerModal.style.background = `rgba(0,0,0,0.95) url(${note.image}) center/contain no-repeat`;
+                    textContainer.innerHTML = ''; 
+                    
+                    if(note.text && note.text.trim() !== '') {
+                        const captionDiv = document.createElement('div');
+                        captionDiv.id = 'story-image-caption';
+                        captionDiv.className = 'w-full px-4 pb-2 text-white text-[15px] font-medium whitespace-pre-wrap text-center z-10 drop-shadow-md';
+                        captionDiv.innerHTML = App.parseMentions(note.text);
+                        bottomSection.insertBefore(captionDiv, bottomSection.firstChild);
+                    }
+                } else {
+                    viewerModal.style.background = 'rgba(0,0,0,0.95)';
+                    textContainer.innerHTML = `<div class="text-white text-3xl font-black text-center leading-relaxed whitespace-pre-wrap drop-shadow-lg p-6 flex items-center justify-center h-full w-full">${App.parseMentions(note.text)}</div>`;
+                }
+                App.isStoryPaused = false;
                 const progContainer = document.getElementById('story-progress-container');
                 progContainer.innerHTML = '';
                 notes.forEach((n, idx) => {
                     const bar = document.createElement('div');
-                    bar.className = 'flex-1 h-1 bg-white/30 rounded-full overflow-hidden';
-                    let innerClass = 'h-full bg-white transition-all duration-[5000ms] ease-linear w-0';
+                    bar.className = 'flex-1 h-1 rounded-full overflow-hidden cursor-pointer';
+                    // السماح بالضغط على البار بالأعلى (الطلب 2)
+                    bar.onclick = (e) => {
+                        e.stopPropagation();
+                        App.currentStoryIndex = idx;
+                        App.renderCurrentStory();
+                    };
+                    bar.style.backgroundColor = 'rgba(156, 163, 175, 0.4)';
                     
-                    if(idx < App.currentStoryIndex) innerClass = 'h-full bg-white w-full'; // تمت مشاهدته
-                    else if (idx === App.currentStoryIndex) innerClass = 'h-full bg-white w-0'; // الحالي
-                    
-                    bar.innerHTML = `<div id="story-prog-inner-${idx}" class="${innerClass}"></div>`;
+                    if(idx < App.currentStoryIndex) {
+                        bar.innerHTML = '<div class="h-full w-full" style="background-color: #ffffff;"></div>'; 
+                    } else if (idx === App.currentStoryIndex) {
+                        bar.innerHTML = `<div id="active-story-bar" class="h-full w-0" style="background-color: #ffffff; animation: storyFillAnim 5s linear forwards;"></div>`;
+                    } else {
+                        bar.innerHTML = '<div class="h-full w-0" style="background-color: #ffffff;"></div>'; 
+                    }
                     progContainer.appendChild(bar);
                 });
-
-                // تفعيل الشريط الحالي
-                setTimeout(() => {
-                    const currentBar = document.getElementById(`story-prog-inner-${App.currentStoryIndex}`);
-                    if(currentBar) currentBar.style.width = '100%';
-                }, 50);
-
-                // تسجيل المشاهدة
+                let viewers = note.viewers || [];
+                if(!viewers.includes(currentUser.uid)) {
+                    viewers.push(currentUser.uid); 
+                    try { updateDoc(doc(db, NOTES_PATH, note.id), { viewers }); } catch(e){}
+                }
                 if(authorId !== currentUser.uid) {
-                    let viewers = note.viewers || [];
-                    if(!viewers.includes(currentUser.uid)) {
-                        viewers.push(currentUser.uid);
-                        try { await updateDoc(doc(db, NOTES_PATH, note.id), { viewers }); } catch(e){}
-                    }
                     document.getElementById('note-reply-section').classList.remove('hidden');
                     document.getElementById('note-reply-section').classList.add('flex');
                     document.getElementById('note-viewers-section').classList.add('hidden');
                     document.getElementById('nv-options-btn').classList.add('hidden');
+                    
+                    // إيقاف الستوري عند الكتابة (الطلب 2)
+                    const replyInput = document.getElementById('note-reply-input');
+                    replyInput.onfocus = App.pauseStoryTimer;
+                    replyInput.onblur = App.resumeStoryTimer;
                 } else {
                     document.getElementById('note-reply-section').classList.add('hidden');
+                    document.getElementById('note-reply-section').classList.remove('flex');
                     document.getElementById('note-viewers-section').classList.remove('hidden');
                     document.getElementById('note-viewers-section').classList.add('flex');
                     document.getElementById('nv-options-btn').classList.remove('hidden');
-                    document.getElementById('note-viewers-count').innerText = (note.viewers || []).length;
+                    
+                    const realViewersCount = viewers.filter(id => id !== currentUser.uid).length;
+                    document.getElementById('note-viewers-count').innerText = realViewersCount;
+                    
                     document.getElementById('nv-options-btn').onclick = () => {
-    App.showMyNoteOptions(note.id, note.text);
-};
+                        App.showMyNoteOptions(note.id, note.text);
+                    };
                 }
+                App.startStoryTimer(5000);
+            },
 
-                App.resumeStoryTimer();
+            storyTimer: null,
+            storyStartTime: 0,
+            storyRemainingTime: 5000,
+            isStoryPaused: false,
+
+            startStoryTimer: (duration) => {
+                clearTimeout(App.storyTimer);
+                App.storyStartTime = Date.now();
+                App.storyRemainingTime = duration;
+                
+                App.storyTimer = setTimeout(() => {
+                    App.nextStory();
+                }, duration);
+            },
+
+            pauseStoryTimer: () => {
+                if(App.isStoryPaused) return;
+                App.isStoryPaused = true;
+                clearTimeout(App.storyTimer);
+                
+                // حساب الوقت الي مضى ونقصه من الوقت الكلي
+                const elapsed = Date.now() - App.storyStartTime;
+                App.storyRemainingTime -= elapsed;
+                
+                // إيقاف حركة الشريط بالشاشة
+                const currentBar = document.getElementById('active-story-bar');
+                if(currentBar) currentBar.style.animationPlayState = 'paused';
             },
 
             resumeStoryTimer: () => {
-                clearTimeout(App.storyTimer);
-                App.storyTimer = setTimeout(() => {
-                    App.nextStory();
-                }, 5000); // 5 ثواني لكل ستوري
+                if(!App.isStoryPaused) return;
+                App.isStoryPaused = false;
+                
+                // استئناف الوقت بالثواني المتبقية
+                App.startStoryTimer(Math.max(App.storyRemainingTime, 100));
+                
+                // استئناف حركة الشريط
+                const currentBar = document.getElementById('active-story-bar');
+                if(currentBar) currentBar.style.animationPlayState = 'running';
             },
 
             nextStory: () => {
@@ -3811,7 +4134,8 @@ renderNotes: () => {
             closeStoryViewer: () => {
                 clearTimeout(App.storyTimer);
                 UI.closeModal('note-view-modal');
-                App.renderNotes(); // تحديث الدوائر بالخارج
+                App.renderNotes(); // تحديث الدوائر في قسم الملاحظات
+                App.renderChats(); // تحديث الدوائر في قسم المحادثات ليتحول اللون للرصاصي فوراً
             },
             // --- نهاية نظام الستوريات ---
             
@@ -3856,11 +4180,14 @@ renderNotes: () => {
             },
             
             showNoteViewers: () => {
+                App.pauseStoryTimer(); // إيقاف خط التحميل للستوري
                 const note = Memory.notes.find(n => n.id === window.noteViewId);
                 if(!note) return;
                 const container = document.getElementById('viewers-list-container');
                 container.innerHTML = '';
-                const viewers = note.viewers || [];
+                
+                // --- استبعاد صاحب القصة من الظهور في قائمة المشاهدين ---
+                const viewers = (note.viewers || []).filter(id => id !== currentUser.uid);
                 
                 if(viewers.length === 0) {
                     container.innerHTML = '<div class="text-center opacity-60 py-10 mt-10">لا يوجد مشاهدون بعد</div>';
@@ -3870,7 +4197,7 @@ renderNotes: () => {
                         if(!u) return;
                         const el = document.createElement('div');
                         el.className = 'flex items-center gap-3 p-3 theme-bg rounded-2xl border mb-2 cursor-pointer btn-tap';
-                        el.onclick = () => { UI.closeModal('viewers-list-modal'); UI.closeModal('note-view-modal'); UI.openModal('profile-modal', u.uid); };
+                        el.onclick = () => { UI.closeModal('viewers-list-modal'); App.closeStoryViewer(); UI.openModal('profile-modal', u.uid); };
                         el.innerHTML = `
                             <img src="${u.photo || App.getDefaultAvatar()}" class="w-10 h-10 rounded-full object-cover border">
                             <span class="font-bold theme-text">${u.name}</span>
@@ -3897,8 +4224,6 @@ renderNotes: () => {
                 
                 inputEl.value = '';
                 inputEl.focus();
-
-                // الكود الصحيح: إرسال الرد كرسالة محادثة خاصة (مع إرفاق نص الملاحظة)
                 const payload = {
                     participants: [currentUser.uid, window.noteViewAuthorId],
                     senderId: currentUser.uid,
@@ -3906,12 +4231,11 @@ renderNotes: () => {
                     timestamp: Date.now(),
                     read: false,
                     isNoteReply: true,
-                    replyNoteText: note.text // حفظ نص الستوري ليظهر بشكل جميل في المحادثة
+                    replyNoteText: note.text || '', // حفظ النص
+                    replyNoteImage: note.image || null // حفظ الصورة إن وجدت
                 };
-
                 // إرسال لقاعدة البيانات
                 await addDoc(collection(db, MESSAGES_PATH), payload);
-
                 UI.showMessage('تم إرسال الرد للخاص');
                 UI.closeModal('note-view-modal');
             },
@@ -3922,30 +4246,96 @@ renderNotes: () => {
                 else UI.openModal('create-note-modal');
             },
 
-            createNote: async () => {
-    const text = document.getElementById('note-text-input').value.trim();
-    const isClose = document.getElementById('is-close-note').checked; // جلب حالة الكلوز
-    if(!text) return UI.showMessage('اكتب شيئاً');
-    
-    const now = Date.now();
-    const oneDay = 24 * 60 * 60 * 1000;
-    const myActiveNotes = Memory.notes.filter(n => n.authorId === currentUser.uid && (now - n.timestamp) < oneDay);
-    if(myActiveNotes.length >= 5) {
-        return UI.showMessage('لا يمكنك نشر أكثر من 5 ملاحظات في اليوم');
-    }
+            tempStoryImageB64: null,
 
-    UI.closeModal('create-note-modal');
-    await addDoc(collection(db, NOTES_PATH), {
-        authorId: currentUser.uid, 
-        text: text, 
-        timestamp: Date.now(), 
-        viewers: [],
-        isClose: isClose // حفظ ككلوز
-    });
-    
-    App.notifyMentions(text, 'ملاحظة', null);
-    UI.showMessage(isClose ? 'تم النشر للكلوز 🟢' : 'تمت الإضافة (صالحة لـ 24 ساعة)');
-},
+            handleStoryImage: (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        // دقة عالية ومناسبة للستوريات بدون أخذ مساحة ضخمة
+                        const MAX_WIDTH = 1080; 
+                        const MAX_HEIGHT = 1920;
+                        let width = img.width; let height = img.height;
+
+                        if (width > height) {
+                            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                        } else {
+                            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        App.tempStoryImageB64 = canvas.toDataURL('image/jpeg', 0.85); // جودة ممتازة
+                        
+                        // تغيير واجهة المودال
+                        document.getElementById('create-note-bg').style.background = `url(${App.tempStoryImageB64}) center/cover no-repeat`;
+                        document.getElementById('note-text-container').classList.add('hidden');
+                        document.getElementById('note-image-caption-container').classList.remove('hidden');
+                    }
+                    img.src = event.target.result;
+                }
+                reader.readAsDataURL(file);
+            },
+
+            createNote: async () => {
+                const textOnly = document.getElementById('note-text-input').value.trim();
+                const caption = document.getElementById('note-caption-input').value.trim();
+                const isClose = document.getElementById('is-close-note').checked || document.getElementById('is-close-note-text')?.checked;
+                
+                const text = App.tempStoryImageB64 ? caption : textOnly;
+                if(!text && !App.tempStoryImageB64) return UI.showMessage('اكتب شيئاً أو اختر صورة');
+                
+                const now = Date.now();
+                const oneDay = 24 * 60 * 60 * 1000;
+                
+                // تصفير المحذوفات إذا مر يوم جديد
+                if (currentUser.lastStoryReset && (now - currentUser.lastStoryReset > oneDay)) {
+                    currentUser.deletedStoriesToday = 0;
+                    updateDoc(doc(db, USERS_PATH, currentUser.uid), { deletedStoriesToday: 0, lastStoryReset: now });
+                }
+                const myActiveNotes = Memory.notes.filter(n => n.authorId === currentUser.uid && (now - n.timestamp) < oneDay);
+                const deletedCount = currentUser.deletedStoriesToday || 0;
+                const totalAttempts = myActiveNotes.length + deletedCount; // نجمع المنشور + المحذوف
+                
+                const hasImageStory = myActiveNotes.some(n => n.image);
+                if (App.tempStoryImageB64 && hasImageStory) {
+                    return UI.showMessage('عذراً، يمكنك نشر ستوري صورة واحد فقط كل 24 ساعة.');
+                }
+                if (totalAttempts >= 5) {
+                    return UI.showMessage('لقد وصلت للحد الأقصى لمحاولات الستوري اليوم (5 محاولات شاملة الحذف).');
+                }
+                
+                UI.closeModal('create-note-modal');
+                UI.showMessage('جاري النشر...');
+
+                await addDoc(collection(db, NOTES_PATH), {
+                    authorId: currentUser.uid, 
+                    text: text,
+                    image: App.tempStoryImageB64 || null, 
+                    timestamp: Date.now(), 
+                    viewers: [],
+                    isClose: isClose 
+                });
+                
+                App.notifyMentions(text, 'ستوري', null);
+                
+                // إعادة تعيين المودال للحالة الافتراضية
+                App.tempStoryImageB64 = null;
+                document.getElementById('create-note-bg').style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                document.getElementById('note-text-container').classList.remove('hidden');
+                document.getElementById('note-image-caption-container').classList.add('hidden');
+                document.getElementById('note-text-input').value = '';
+                document.getElementById('note-caption-input').value = '';
+                document.getElementById('story-image-upload').value = '';
+                
+                UI.showMessage(isClose ? 'تم النشر للكلوز 🟢' : 'تم النشر (يُحذف تلقائياً بعد 24 ساعة)');
+            },
 
 openCloseFriendsManager: () => {
     UI.closeModal('action-modal'); // إغلاق قائمة الخيارات السابقة
@@ -3993,7 +4383,7 @@ saveCloseFriends: async () => {
 },
 
 showMyNoteOptions: (noteId, text) => {
-    App.closeStoryViewer(); // إيقاف وإغلاق الستوري المؤقت لفتح الخيارات براحة
+    App.pauseStoryTimer(); // إيقاف مؤقت فقط دون الخروج من النافذة
     const content = document.getElementById('action-modal-content');
     content.innerHTML = `
         <button onclick="App.openCloseFriendsManager()" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-green-50 btn-tap text-green-600 font-bold">
@@ -4002,10 +4392,21 @@ showMyNoteOptions: (noteId, text) => {
         <button onclick="UI.closeModal('action-modal'); App.openManageNote('${noteId}', '${escapeHTML(text).replace(/'/g, "\\'")}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-blue-50 btn-tap text-blue-600 font-bold">
             <span>تعديل الملاحظة</span> <i class="ph-fill ph-pencil-simple text-xl"></i>
         </button>
-        <button onclick="window.currentManageNoteId='${noteId}'; App.deleteNote(); UI.closeModal('action-modal');" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-500 font-bold">
+        <button onclick="window.currentManageNoteId='${noteId}'; App.deleteNote(); UI.closeModal('action-modal'); App.closeStoryViewer();" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-500 font-bold">
             <span>حذف الملاحظة</span> <i class="ph-fill ph-trash text-xl"></i>
         </button>
+        <button onclick="UI.closeModal('action-modal'); App.resumeStoryTimer();" class="w-full flex justify-center items-center p-4 bg-gray-100 dark:bg-gray-800 btn-tap text-gray-500 font-bold">
+            <span>إلغاء</span>
+        </button>
     `;
+    // تعديل خلفية النافذة ليتم استئناف الستوري إذا ضغط خارجها
+    const actionModal = document.getElementById('action-modal');
+    actionModal.onclick = (e) => {
+        if(e.target === actionModal) {
+            UI.closeModal('action-modal');
+            App.resumeStoryTimer();
+        }
+    };
     UI.openModal('action-modal');
 },
 
@@ -4026,10 +4427,17 @@ showMyNoteOptions: (noteId, text) => {
 
             deleteNote: async () => {
                 if(!window.currentManageNoteId) return;
+                
+                // إضافة متغير لعد المحاولات
+                if(!currentUser.deletedStoriesToday) currentUser.deletedStoriesToday = 0;
+                currentUser.deletedStoriesToday += 1;
+                await updateDoc(doc(db, USERS_PATH, currentUser.uid), { 
+                    deletedStoriesToday: currentUser.deletedStoriesToday 
+                });
                 await deleteDoc(doc(db, NOTES_PATH, window.currentManageNoteId));
                 window.currentManageNoteId = null;
                 UI.closeModal('manage-note-modal');
-                UI.showMessage('تم حذف الملاحظة');
+                UI.showMessage('تم حذف الملاحظة (احتسبت كمحاولة من حدك اليومي)');
             },
 
             switchFriendsSubTab: (tabId) => {
@@ -4065,7 +4473,7 @@ showMyNoteOptions: (noteId, text) => {
                             <div class="flex items-center gap-3 cursor-pointer group" onclick="UI.openModal('profile-modal', '${fromUser.uid}')">
                                 <img src="${fromUser.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200">
                                 <div class="flex flex-col">
-                                    <span class="font-bold theme-text group-hover:text-blue-600 truncate flex items-center gap-1">${fromUser.name}</span>
+                                    <span class="font-bold theme-text group-hover:text-blue-600 truncate flex items-center gap-1">${App.getUserName(fromUser.uid)}</span>
                                     <span class="text-xs opacity-60">${App.timeAgo(req.timestamp)}</span>
                                 </div>
                             </div>
@@ -4094,7 +4502,7 @@ showMyNoteOptions: (noteId, text) => {
                         el.innerHTML = `
                             <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200">
                             <div class="flex-1">
-                                <h4 class="font-bold theme-text flex items-center gap-1">${u.name}</h4>
+                                <h4 class="font-bold theme-text flex items-center gap-1">${App.getUserName(u.uid)}</h4>
                                 <p class="text-xs opacity-60 font-medium">@${u.username}</p>
                             </div>
                         `;
@@ -4147,7 +4555,7 @@ showMyNoteOptions: (noteId, text) => {
                         el.innerHTML = `
                             <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${u.uid}')">
                             <div class="flex-1 cursor-pointer" onclick="UI.openModal('profile-modal', '${u.uid}')">
-                                <h4 class="font-bold theme-text flex items-center gap-1">${u.name}</h4>
+                                <h4 class="font-bold theme-text flex items-center gap-1">${App.getUserName(u.uid)}</h4>
                                 <p class="text-xs opacity-60 font-medium">@${u.username}</p>
                             </div>
                             <button onclick="App.sendFriendRequest('${u.uid}')" class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full font-bold text-sm btn-tap hover:bg-blue-100">إضافة</button>
@@ -4241,37 +4649,43 @@ showMyNoteOptions: (noteId, text) => {
                     const u = Memory.users[uid];
                     if(!u) return;
                     const el = document.createElement('div');
-                    el.className = 'flex items-center gap-3 p-3 theme-card rounded-2xl border mb-2';
+                    el.className = 'inline-flex flex-col items-center cursor-pointer shrink-0 btn-tap w-16';
+                    el.style.scrollSnapAlign = 'start';
+                    // استخدام getUserName بدلاً من author.name
+                    const shortName = App.getUserName(authorId).split(' ')[0]; 
+                    
                     el.innerHTML = `
-                        <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200 cursor-pointer btn-tap" onclick="UI.openModal('profile-modal', '${u.uid}')">
-                        <div class="flex-1 cursor-pointer" onclick="UI.openModal('profile-modal', '${u.uid}')">
-                            <h4 class="font-bold theme-text">${u.name}</h4>
-                            <p class="text-xs opacity-60 font-medium">@${u.username}</p>
+                        <div class="relative rounded-full" style="background: ${getConicGradient(userNotes.length, isAllViewed, hasCloseNote)}; padding: 3px;">
+                            <img src="${author.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border-2 border-[var(--bg-color)] shadow-sm">
                         </div>
-                        <button class="bg-gray-200 text-gray-800 px-3 py-1.5 rounded-full font-bold text-sm btn-tap" onclick="App.unblockUser('${u.uid}')">إلغاء الحظر</button>
+                        <span class="text-[11px] font-bold mt-1 w-full text-center truncate theme-text ${!isAllViewed ? (hasCloseNote ? 'text-green-600' : 'text-blue-600') : ''}">${shortName}</span>
                     `;
-                    container.appendChild(el);
+                    el.onclick = () => { App.startStorySession(authorId, groupedNotes); };
+                    
+                    if(isAllViewed) container.appendChild(el);
+                    else container.insertBefore(el, container.children[1]);
                 });
             },
 
             searchUsers: () => {
-                const query = document.getElementById('search-input').value.toLowerCase().trim();
+                const query = document.getElementById('search-input').value.toLowerCase().trim().replace('@', '');
                 const container = document.getElementById('search-results');
                 container.innerHTML = '';
 
                 if(!query) {
-                    container.innerHTML = '<div class="text-center opacity-50 py-10 mt-10"><i class="ph ph-magnifying-glass text-4xl mb-2 block mx-auto"></i>اكتب للبحث عن مستخدمين</div>';
+                    container.innerHTML = '<div class="text-center opacity-50 py-10 mt-10"><i class="ph ph-magnifying-glass text-4xl mb-2 block mx-auto"></i>اكتب المعرف (اليوزر) الكامل للبحث</div>';
                     return;
                 }
 
+                // فلترة تعتمد على التطابق التام للمعرف فقط
                 const results = Object.values(Memory.users).filter(u => 
                     u.uid !== currentUser.uid && 
                     !App.isBlocked(u.uid) &&
-                    (u.name.toLowerCase().includes(query) || u.username.toLowerCase().includes(query))
+                    u.username.toLowerCase() === query
                 );
 
                 if(results.length === 0) {
-                    container.innerHTML = '<div class="text-center opacity-50 py-10 mt-10">لا توجد نتائج</div>';
+                    container.innerHTML = '<div class="text-center opacity-50 py-10 mt-10">لم يتم العثور على حساب بهذا المعرف</div>';
                     return;
                 }
 
@@ -4285,7 +4699,7 @@ showMyNoteOptions: (noteId, text) => {
                     el.innerHTML = `
                         <img src="${u.photo || App.getDefaultAvatar()}" class="w-12 h-12 rounded-full object-cover border border-gray-200">
                         <div class="flex-1">
-                            <h4 class="font-bold theme-text flex items-center gap-1">${u.name}</h4>
+                            <h4 class="font-bold theme-text flex items-center gap-1">${App.getUserName(u.uid)}</h4>
                             <p class="text-xs opacity-60 font-medium">@${u.username}</p>
                         </div>
                     `;
@@ -4296,14 +4710,55 @@ showMyNoteOptions: (noteId, text) => {
             renderUserProfile: (uid) => {
                 const u = Memory.users[uid];
                 if(!u) return;
-
-                document.getElementById('vp-name').innerText = u.name;
+                const isMe = uid === currentUser.uid;
+                const isFriend = App.isFriend(currentUser.uid, uid);
+                // تطبيق الخصوصية على الصورة والنبذة
+                let canSeePhoto = true;
+                if (!isMe) {
+                    if (u.photoVisibility === 'only_me') canSeePhoto = false;
+                    else if (u.photoVisibility === 'friends' && !isFriend) canSeePhoto = false;
+                }
+                let canSeeBio = true;
+                if (!isMe) {
+                    if (u.bioVisibility === 'only_me') canSeeBio = false;
+                    else if (u.bioVisibility === 'friends' && !isFriend) canSeeBio = false;
+                }
+                document.getElementById('vp-name').innerText = App.getUserName(uid);
                 document.getElementById('profile-options-btn').onclick = () => App.showProfileOptions(uid);
                 document.getElementById('vp-username').innerText = '@' + u.username;
-                document.getElementById('vp-bio').innerText = u.bio || 'لا توجد نبذة';
-                document.getElementById('vp-image').src = u.photo || App.getDefaultAvatar();
-
-                // حساب آخر ظهور بدقة
+                
+                document.getElementById('vp-bio').innerText = canSeeBio ? (u.bio || 'لا توجد نبذة') : 'مخفي بسبب إعدادات الخصوصية 🔒';
+                document.getElementById('vp-image').src = canSeePhoto ? (u.photo || App.getDefaultAvatar()) : App.getDefaultAvatar();
+                const bdayContainer = document.getElementById('vp-birthday-container');
+                if(bdayContainer) {
+                    if(u.birthDay && u.birthMonth) {
+                        bdayContainer.classList.remove('hidden');
+                        bdayContainer.style.display = 'flex'; 
+                        document.getElementById('vp-birthday').innerText = `${u.birthDay} / ${u.birthMonth}`;
+                    } else {
+                        bdayContainer.classList.add('hidden');
+                        bdayContainer.style.display = 'none'; 
+                    }
+                }
+                const userContainer = document.getElementById('vp-username-container');
+                if(userContainer) {
+                    let userPressTimer;
+                    let isUserLongPress = false;
+                    userContainer.onmousedown = userContainer.ontouchstart = (e) => {
+                        isUserLongPress = false;
+                        userPressTimer = setTimeout(() => {
+                            isUserLongPress = true;
+                            App.copyText('@' + u.username);
+                        }, 400); 
+                    };
+                    userContainer.onmouseup = userContainer.ontouchend = userContainer.ontouchcancel = userContainer.onmouseleave = () => {
+                        clearTimeout(userPressTimer);
+                    };
+                    userContainer.oncontextmenu = (e) => {
+                        e.preventDefault();
+                        App.copyText('@' + u.username);
+                    };
+                }
                 const isOnline = App.isOnline(u.lastActive);
                 if(isOnline) {
                     document.getElementById('vp-last-seen').innerText = 'متصل الآن';
@@ -4313,14 +4768,10 @@ showMyNoteOptions: (noteId, text) => {
                     const dateStr = date.toLocaleDateString('ar-EG', { day: 'numeric', month: 'long' });
                     const timeStr = date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
                     document.getElementById('vp-last-seen').innerText = `آخر ظهور ${dateStr} الساعة ${timeStr}`;
-                    document.getElementById('vp-last-seen').className = 'text-gray-500 dark:text-gray-400 text-sm mt-1';
+                    document.getElementById('vp-last-seen').className = 'text-sm mt-1 opacity-60 theme-text';
                 }
-
                 const actionContainer = document.getElementById('vp-action-container');
                 actionContainer.innerHTML = '';
-
-                const isMe = uid === currentUser.uid;
-                const isFriend = App.isFriend(currentUser.uid, uid);
                 const hasSentReq = Memory.requests.some(r => r.from === currentUser.uid && r.to === uid);
                 const hasReceivedReq = Memory.requests.some(r => r.from === uid && r.to === currentUser.uid);
                 const receivedReqId = hasReceivedReq ? Memory.requests.find(r => r.from === uid && r.to === currentUser.uid).id : null;
@@ -4328,15 +4779,13 @@ showMyNoteOptions: (noteId, text) => {
                 const isBlocked = App.isBlocked(uid);
                 const isMuted = App.isMuted(uid);
                 const canMessage = u.messagePrivacy === 'all' || (u.messagePrivacy === 'friends' && isFriend) || (u.messagePrivacy === 'only_me' && isMe);
-
-                const btnClass = "flex flex-col items-center justify-center bg-white dark:bg-gray-800 rounded-2xl w-20 h-16 shadow-sm btn-tap gap-1 text-gray-800 dark:text-white";
+                const btnClass = "flex flex-col items-center justify-center bg-[var(--card-bg)] border border-[var(--border-color)] rounded-2xl w-20 h-16 shadow-sm btn-tap gap-1 theme-text hover:opacity-80 transition-opacity";
                 const iconClass = "text-2xl";
-                const textClass = "text-[11px] font-medium";
-
+                const textClass = "text-[11px] font-bold mt-1";
                 if (isMe) {
                     actionContainer.innerHTML = `
                         <button onclick="copyProfileLink('${u.username}')" class="${btnClass} w-24">
-                            <i class="ph ph-copy ${iconClass}"></i><span class="${textClass}">نسخ الرابط</span>
+                            <i class="ph ph-copy ${iconClass} text-blue-500"></i><span class="${textClass}">نسخ الرابط</span>
                         </button>
                     `;
                 } else if (isBlocked) {
@@ -4348,57 +4797,45 @@ showMyNoteOptions: (noteId, text) => {
                 } else {
                     let buttons = '';
                     
-                    // 1. زر المراسلة
                     if (canMessage) {
                         buttons += `<button onclick="UI.closeModal('profile-modal'); UI.openModal('chat-modal', '${uid}')" class="${btnClass}">
-                            <i class="ph ph-chat-circle ${iconClass}"></i><span class="${textClass}">مراسلة</span>
+                            <i class="ph ph-chat-circle ${iconClass} text-green-500"></i><span class="${textClass}">مراسلة</span>
                         </button>`;
                     }
                     
-                    // 2. زر الكتم
                     buttons += `<button onclick="App.toggleMutePermanent('${uid}')" class="${btnClass}">
-                        <i class="ph ${isMuted ? 'ph-bell-simple-slash' : 'ph-bell-simple'} ${iconClass}"></i><span class="${textClass}">${isMuted ? 'إلغاء كتم' : 'كتم'}</span>
+                        <i class="ph ${isMuted ? 'ph-bell-simple-slash' : 'ph-bell-simple'} ${iconClass} text-orange-500"></i><span class="${textClass}">${isMuted ? 'إلغاء كتم' : 'كتم'}</span>
                     </button>`;
-
-                    // 3. زر نسخ الرابط
-                    buttons += `<button onclick="copyProfileLink('${u.username}')" class="${btnClass}">
-                        <i class="ph ph-link ${iconClass}"></i><span class="${textClass}">نسخ الرابط</span>
-                    </button>`;
-
-                    // 4. زر الصداقة
                     if (isFriend) {
-                        buttons += `<button onclick="App.unfriend('${uid}')" class="${btnClass} text-red-500">
-                            <i class="ph ph-user-minus ${iconClass}"></i><span class="${textClass}">إلغاء الصداقة</span>
+                        buttons += `<button onclick="App.unfriend('${uid}')" class="${btnClass}">
+                            <i class="ph ph-user-minus ${iconClass} text-red-500"></i><span class="${textClass}">إلغاء الصداقة</span>
                         </button>`;
                     } else if (hasReceivedReq) {
-                        buttons += `<button onclick="App.acceptRequest('${receivedReqId}', '${uid}')" class="${btnClass} text-green-500">
-                            <i class="ph ph-check ${iconClass}"></i><span class="${textClass}">قبول الطلب</span>
+                        buttons += `<button onclick="App.acceptRequest('${receivedReqId}', '${uid}')" class="${btnClass}">
+                            <i class="ph ph-check ${iconClass} text-green-500"></i><span class="${textClass}">قبول الطلب</span>
                         </button>`;
                     } else if (hasSentReq) {
                         buttons += `<button onclick="App.cancelRequest('${sentReqId}', '${uid}')" class="${btnClass}">
-                            <i class="ph ph-x ${iconClass}"></i><span class="${textClass}">إلغاء الطلب</span>
+                            <i class="ph ph-x ${iconClass} text-gray-500"></i><span class="${textClass}">إلغاء الطلب</span>
                         </button>`;
                     } else if (u.allowRequests !== false) {
                         buttons += `<button onclick="App.sendFriendRequest('${uid}')" class="${btnClass}">
-                            <i class="ph ph-user-plus ${iconClass}"></i><span class="${textClass}">إضافة</span>
+                            <i class="ph ph-user-plus ${iconClass} text-blue-500"></i><span class="${textClass}">إضافة</span>
                         </button>`;
                     }
                     
                     actionContainer.innerHTML = buttons;
                 }
-
                 const friendsGrid = document.getElementById('vp-friends-grid');
                 friendsGrid.innerHTML = '';
                 
                 let canSeeFriends = false;
                 if(isMe || u.friendsVisibility === 'all') canSeeFriends = true;
                 else if (u.friendsVisibility === 'friends' && isFriend) canSeeFriends = true;
-
                 if (canSeeFriends && !isBlocked) {
                     const userFriendsRelations = Memory.friends.filter(f => f.user1 === uid || f.user2 === uid);
                     const userFriendsIds = userFriendsRelations.map(f => f.user1 === uid ? f.user2 : f.user1);
                     document.getElementById('vp-friends-count-text').innerText = userFriendsIds.length;
-
                     if(userFriendsIds.length > 0) {
                         const friendsToShow = userFriendsIds.slice(0, 6);
                         friendsToShow.forEach(fid => {
@@ -4408,8 +4845,8 @@ showMyNoteOptions: (noteId, text) => {
                                 el.className = 'flex flex-col items-center gap-1 cursor-pointer btn-tap';
                                 el.onclick = () => UI.openModal('profile-modal', fid);
                                 el.innerHTML = `
-                                    <img src="${friend.photo || App.getDefaultAvatar()}" class="w-full aspect-square rounded-xl object-cover border border-gray-200 shadow-sm">
-                                    <span class="text-[11px] font-bold theme-text w-full text-center truncate px-1">${friend.name.split(' ')[0]}</span>
+                                    <img src="${friend.photo || App.getDefaultAvatar()}" class="w-full aspect-square rounded-xl object-cover border border-[var(--border-color)] shadow-sm">
+                                    <span class="text-[11px] font-bold theme-text w-full text-center truncate px-1">${App.getUserName(fid).split(' ')[0]}</span>
                                 `;
                                 friendsGrid.appendChild(el);
                             }
@@ -4425,10 +4862,8 @@ showMyNoteOptions: (noteId, text) => {
 
             showMessageOptions: (msgId, isMe, text, isPinned) => {
                 const content = document.getElementById('action-modal-content');
-                
-                // تم تقليل التفاعلات إلى 5 فقط
                 const emojis = ['👍🏻', '👎🏻', '❤️', '🔥', '😂'];
-                let emojiHtml = `<div class="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700" dir="ltr">`;
+                let emojiHtml = `<div class="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800" dir="ltr">`;
                 
                 emojis.forEach(emoji => {
                     emojiHtml += `
@@ -4439,36 +4874,34 @@ showMyNoteOptions: (noteId, text) => {
                     `;
                 });
                 
-                // زر لفتح باقي التفاعلات (السادس)
                 emojiHtml += `
-                    <button class="w-8 h-8 shrink-0 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center btn-tap text-gray-600 dark:text-gray-300 ml-1" onclick="UI.closeModal('action-modal'); App.showReactionsModal('${msgId}')">
+                    <button class="w-8 h-8 shrink-0 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center btn-tap text-gray-600 dark:text-gray-300 ml-1" onclick="UI.closeModal('action-modal'); App.showReactionsModal('${msgId}')">
                         <i class="ph ph-caret-down text-lg"></i>
                     </button>
                 </div>`;
-
                 let buttons = emojiHtml + `
-                    <button onclick="App.copyText('${escapeHTML(text).replace(/'/g, "\\'")}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
-                        <span>نسخ النص</span> <i class="ph-fill ph-copy text-lg text-gray-500"></i>
+                    <button onclick="App.copyText('${escapeHTML(text).replace(/'/g, "\\'")}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                        <span>نسخ النص</span> <i class="ph-fill ph-copy text-lg opacity-70"></i>
                     </button>
-                    <button onclick="App.togglePinMessage('${msgId}', ${isPinned})" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap text-blue-600">
-                        <span>${isPinned ? 'إلغاء التثبيت' : 'تثبيت'}</span> <i class="ph-fill ${isPinned ? 'ph-push-pin-slash' : 'ph-push-pin'} text-lg"></i>
+                    <button onclick="App.togglePinMessage('${msgId}', ${isPinned})" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                        <span>${isPinned ? 'إلغاء التثبيت' : 'تثبيت'}</span> <i class="ph-fill ${isPinned ? 'ph-push-pin-slash' : 'ph-push-pin'} text-lg opacity-70 text-blue-500"></i>
                     </button>
                 `;
                 
                 if(isMe) {
                     buttons += `
-                        <button onclick="App.editMessage('${msgId}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-green-50 btn-tap text-green-600">
-                            <span>تعديل</span> <i class="ph-fill ph-pencil-simple text-lg"></i>
+                        <button onclick="App.editMessage('${msgId}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                            <span>تعديل</span> <i class="ph-fill ph-pencil-simple text-lg opacity-70"></i>
                         </button>
-                        <button onclick="App.deleteMessage('${msgId}', 'all')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-red-50 btn-tap text-red-500">
-                            <span>حذف للجميع</span> <i class="ph-fill ph-trash text-lg"></i>
+                        <button onclick="App.deleteMessage('${msgId}', 'all')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                            <span>حذف للجميع</span> <i class="ph-fill ph-trash text-lg opacity-70 text-red-500"></i>
                         </button>
                     `;
                 }
                 
                 buttons += `
-                    <button onclick="App.deleteMessage('${msgId}', 'me')" class="w-full flex justify-between items-center p-4 hover:bg-orange-50 btn-tap text-orange-500">
-                        <span>حذف من عندي</span> <i class="ph-fill ph-trash-simple text-lg"></i>
+                    <button onclick="App.deleteMessage('${msgId}', 'me')" class="w-full flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                        <span>حذف من عندي</span> <i class="ph-fill ph-trash-simple text-lg opacity-70 text-orange-500"></i>
                     </button>
                 `;
                 
@@ -4530,12 +4963,21 @@ showMyNoteOptions: (noteId, text) => {
             },
             
             deleteMessage: async (msgId, type) => {
-                if(type === 'all') {
-                    await deleteDoc(doc(db, MESSAGES_PATH, msgId));
-                } else if (type === 'me') {
-                    await updateDoc(doc(db, MESSAGES_PATH, msgId), { deletedFor: arrayUnion(currentUser.uid) });
-                }
                 UI.closeModal('action-modal');
+                // جلب الرسالة من الشاشة وعمل تأثير التلاشي قبل حذفها
+                const msgRow = document.querySelector(`[data-msg-id="${msgId}"]`);
+                if(msgRow) {
+                    msgRow.classList.add('fade-out-delete');
+                }
+                
+                // ننتظر 300 جزء من الثانية (مدة التأثير) ثم نحذف من قاعدة البيانات
+                setTimeout(async () => {
+                    if(type === 'all') {
+                        await deleteDoc(doc(db, MESSAGES_PATH, msgId));
+                    } else if (type === 'me') {
+                        await updateDoc(doc(db, MESSAGES_PATH, msgId), { deletedFor: arrayUnion(currentUser.uid) });
+                    }
+                }, 300);
             },
             
             showReactionsModal: (msgId) => {
@@ -4658,48 +5100,43 @@ showMyNoteOptions: (noteId, text) => {
             },
 
 showChatOptions: (otherUid, event) => {
-                if (event) {
-                    event.stopPropagation();
-                }
+                if (event) event.stopPropagation();
                 
                 const isMyFriend = App.isFriend(currentUser.uid, otherUid);
                 const content = document.getElementById('action-modal-content');
                 
-                const isPinned = Memory.pins.some(p => 
-                    p.userId === currentUser.uid && p.chatId === otherUid
-                );
+                const isPinned = Memory.pins.some(p => p.userId === currentUser.uid && p.chatId === otherUid);
                 
                 let buttons = '';
                 
                 if(isPinned) {
                     buttons += `
-                        <button onclick="App.unpinChatFromOptions('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
-                            <span>إلغاء تثبيت المحادثة</span> <i class="ph-fill ph-push-pin-slash text-lg text-gray-500"></i>
+                        <button onclick="App.unpinChatFromOptions('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                            <span>إلغاء تثبيت المحادثة</span> <i class="ph-fill ph-push-pin-slash text-lg opacity-70"></i>
                         </button>
                     `;
                 } else {
-                    // التعديل هنا: استدعاء دالة التثبيت المباشر
                     buttons += `
-                        <button onclick="App.pinChatFromOptions('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
-                            <span>تثبيت المحادثة</span> <i class="ph-fill ph-push-pin text-lg text-gray-500"></i>
+                        <button onclick="App.pinChatFromOptions('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                            <span>تثبيت المحادثة</span> <i class="ph-fill ph-push-pin text-lg opacity-70"></i>
                         </button>
                     `;
                 }
                 
                 buttons += `
-                    <button onclick="App.toggleMutePermanent('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
-                        <span>${App.isMuted(otherUid) ? 'إلغاء الكتم' : 'كتم المحادثة'}</span> <i class="ph-fill ${App.isMuted(otherUid) ? 'ph-bell-simple-slash' : 'ph-bell-simple-z'} text-lg text-gray-500"></i>
+                    <button onclick="App.toggleMutePermanent('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                        <span>${App.isMuted(otherUid) ? 'إلغاء الكتم' : 'كتم المحادثة'}</span> <i class="ph-fill ${App.isMuted(otherUid) ? 'ph-bell-simple-slash' : 'ph-bell-simple-z'} text-lg opacity-70"></i>
                     </button>
                     ${isMyFriend ? `
-                    <button onclick="App.unfriend('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-black/5 btn-tap">
-                        <span>إزالة من الأصدقاء</span> <i class="ph-fill ph-user-minus text-lg text-gray-500"></i>
+                    <button onclick="App.unfriend('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                        <span>إزالة من الأصدقاء</span> <i class="ph-fill ph-user-minus text-lg opacity-70"></i>
                     </button>
                     ` : ''}
-                    <button onclick="App.blockUser('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-orange-50 btn-tap text-orange-500">
-                        <span>حظر المستخدم</span> <i class="ph-fill ph-prohibit text-lg"></i>
+                    <button onclick="App.blockUser('${otherUid}')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                        <span>حظر المستخدم</span> <i class="ph-fill ph-prohibit text-lg opacity-70 text-orange-500"></i>
                     </button>
-                    <button onclick="App.showDeleteChatPopup('${otherUid}')" class="w-full flex justify-between items-center p-4 hover:bg-red-50 btn-tap text-red-500">
-                        <span>حذف المحادثة</span> <i class="ph-fill ph-trash text-lg"></i>
+                    <button onclick="App.showDeleteChatPopup('${otherUid}')" class="w-full flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 hover:opacity-80 btn-tap theme-text font-bold">
+                        <span>حذف المحادثة</span> <i class="ph-fill ph-trash text-lg opacity-70 text-red-500"></i>
                     </button>
                 `;
                 
@@ -4724,34 +5161,33 @@ showChatOptions: (otherUid, event) => {
                 UI.openModal('delete-chat-popup');
             },
             
-            // دالة الكتم المباشر والدائم
-            toggleMutePermanent: async (uid) => {
-                if(!uid) return;
-                try {
-                    const isMuted = App.isMuted(uid);
-                    if(isMuted) {
-                        // إلغاء الكتم
-                        const existingMute = Memory.mutes.find(m => m.userId === currentUser.uid && m.chatId === uid);
-                        if(existingMute) await deleteDoc(doc(db, MUTES_PATH, existingMute.id));
-                        UI.showMessage('تم إلغاء الكتم 🔔');
-                    } else {
-                        // كتم دائم (لمدة 10 سنوات)
-                        await addDoc(collection(db, MUTES_PATH), {
-                            userId: currentUser.uid, chatId: uid, until: Date.now() + (10 * 365 * 24 * 60 * 60 * 1000)
-                        });
-                        UI.showMessage('تم كتم المحادثة بشكل دائم 🔕');
-                    }
-                    
-                    // تحديث الواجهة مباشرة
-                    if(!document.getElementById('profile-modal').classList.contains('hidden')) App.renderUserProfile(uid);
-                    if(!document.getElementById('chat-modal').classList.contains('hidden')) App.renderChatInfo(uid);
-                    App.renderChats();
-                    UI.closeModal('action-modal'); 
-                } catch (error) {
-                    console.error("Error muting:", error);
-                    UI.showMessage('حدث خطأ، حاول مرة أخرى');
-                }
-            },
+toggleMutePermanent: async (uid) => {
+    if(!uid) return;
+    try {
+        const isMuted = App.isMuted(uid);
+        if(isMuted) {
+            const existingMute = Memory.mutes.find(m => m.userId === currentUser.uid && m.chatId === uid);
+            if(existingMute) await deleteDoc(doc(db, MUTES_PATH, existingMute.id));
+            UI.showMessage('تم إلغاء الكتم 🔔');
+            // إبلاغ الأندرويد بإلغاء الكتم
+            if(window.AndroidInterface && window.AndroidInterface.muteUser) window.AndroidInterface.muteUser(uid, false);
+        } else {
+            await addDoc(collection(db, MUTES_PATH), {
+                userId: currentUser.uid, chatId: uid, until: Date.now() + (10 * 365 * 24 * 60 * 60 * 1000)
+            });
+            UI.showMessage('تم كتم المحادثة بشكل دائم 🔕');
+            // إبلاغ الأندرويد بكتم هذا الشخص
+            if(window.AndroidInterface && window.AndroidInterface.muteUser) window.AndroidInterface.muteUser(uid, true);
+        }
+        
+        if(!document.getElementById('profile-modal').classList.contains('hidden')) App.renderUserProfile(uid);
+        if(!document.getElementById('chat-modal').classList.contains('hidden')) App.renderChatInfo(uid);
+        App.renderChats();
+        UI.closeModal('action-modal'); 
+    } catch (error) {
+        UI.showMessage('حدث خطأ، حاول مرة أخرى');
+    }
+},
             
             deleteChatHistory: async (type) => {
                 const otherUid = window.deleteChatTarget;
@@ -4762,21 +5198,33 @@ showChatOptions: (otherUid, event) => {
                     m.participants.includes(otherUid)
                 );
                 
+                // التحديث الوهمي الفوري (Optimistic UI) لإخفاء المحادثة مباشرة من الواجهة
+                Memory.messages = Memory.messages.filter(m => {
+                    const inChat = m.participants.includes(currentUser.uid) && m.participants.includes(otherUid);
+                    if (!inChat) return true;
+                    if (type === 'everyone') return false; 
+                    if (!m.deletedFor) m.deletedFor = [];
+                    m.deletedFor.push(currentUser.uid);
+                    return false;
+                });
+                
+                App.renderChats();
+                UI.closeModal('delete-chat-popup');
+                UI.closeModal('chat-modal');
+                
                 if(type === 'everyone') {
                     for(let msg of msgsToDelete) {
-                        await deleteDoc(doc(db, MESSAGES_PATH, msg.id));
+                        deleteDoc(doc(db, MESSAGES_PATH, msg.id)).catch(()=>{});
                     }
                     UI.showMessage('تم حذف المحادثة للجميع');
                 } else {
                     for(let msg of msgsToDelete) {
-                        await updateDoc(doc(db, MESSAGES_PATH, msg.id), { 
+                        updateDoc(doc(db, MESSAGES_PATH, msg.id), { 
                             deletedFor: arrayUnion(currentUser.uid) 
-                        });
+                        }).catch(()=>{});
                     }
                     UI.showMessage('تم حذف المحادثة من جهازك فقط');
                 }
-                
-                UI.closeModal('chat-modal');
             },
 
             renderChats: () => {
@@ -4817,7 +5265,26 @@ showChatOptions: (otherUid, event) => {
                     const el = document.createElement('div');
                     el.className = `flex items-center gap-3 p-3 border-b cursor-pointer theme-card ${hasUnread && !isMuted ? 'bg-blue-50/10 dark:bg-blue-900/20' : ''}`;
                     
-                    // --- بداية منطق حالة الاتصال (النقطة الخضراء أو الوقت) ---
+                    const currentNow = Date.now();
+                    const oneDayMs = 24 * 60 * 60 * 1000;
+                    const userStoryNotes = Memory.notes.filter(n => n.authorId === otherUid && (currentNow - n.timestamp) < oneDayMs);
+                    const hasStory = userStoryNotes.length > 0;
+                    const allStoriesViewed = hasStory && userStoryNotes.every(n => n.viewers && n.viewers.includes(currentUser.uid));
+                    const hasCloseStory = hasStory && userStoryNotes.some(n => n.isClose);
+                    
+                    let ringStyle = '';
+                    let ringClass = 'border border-gray-200 dark:border-gray-700';
+                    if (hasStory) {
+                        ringClass = 'border-2 border-[var(--card-bg)]';
+                        if (allStoriesViewed) {
+                            ringStyle = 'background: #9ca3af; padding: 2px; border-radius: 50%;';
+                        } else if (hasCloseStory) {
+                            ringStyle = 'background: #22c55e; padding: 2px; border-radius: 50%;';
+                        } else {
+                            ringStyle = 'background: linear-gradient(45deg, #3b82f6, #8b5cf6, #ec4899); padding: 2px; border-radius: 50%;';
+                        }
+                    }
+
                     let statusBadgeHtml = '';
                     const now = Date.now();
                     const lastActive = u.lastActive || 0;
@@ -4826,15 +5293,11 @@ showChatOptions: (otherUid, event) => {
                     const diffHours = Math.floor(diffMins / 60);
 
                     if (diffMins < 5) {
-                        // متصل الآن (أقل من 5 دقائق) -> نقطة خضراء
-                        statusBadgeHtml = '<span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full z-10 shadow-sm"></span>';
+                        statusBadgeHtml = '<span class="absolute bottom-0 left-0 w-3.5 h-3.5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full z-10 shadow-sm"></span>';
                     } else if (diffHours < 6) {
-                        // غير متصل منذ فترة قريبة (أقل من 6 ساعات) -> وقت (مثلاً: 15د أو 2س)
                         let timeText = diffHours > 0 ? `${diffHours}س` : `${diffMins}د`;
-                        statusBadgeHtml = `<span class="absolute -bottom-1 -right-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-[9px] font-bold px-1.5 py-0.5 border-2 border-white dark:border-gray-800 rounded-full z-10 shadow-sm" dir="rtl">${timeText}</span>`;
+                        statusBadgeHtml = `<span class="absolute -bottom-1 -left-1 bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 text-[9px] font-bold px-1.5 py-0.5 border-2 border-white dark:border-gray-800 rounded-full z-10 shadow-sm" dir="rtl">${timeText}</span>`;
                     }
-                    // إذا كان أكثر من 6 ساعات، statusBadgeHtml سيبقى فارغاً ولن يظهر شيء
-                    // --- نهاية منطق حالة الاتصال ---
 
                     let pressTimer;
                     let isLongPress = false;
@@ -4857,7 +5320,15 @@ showChatOptions: (otherUid, event) => {
                     };
 
                     el.onclick = (e) => {
-                        if(!isLongPress) UI.openModal('chat-modal', u.uid);
+                        if(!isLongPress) {
+                            if (e.target.closest('.story-avatar-container') && hasStory) {
+                                e.stopPropagation();
+                                const groupedForView = { [otherUid]: userStoryNotes };
+                                App.startStorySession(otherUid, groupedForView);
+                            } else {
+                                UI.openModal('chat-modal', u.uid);
+                            }
+                        }
                     };
                     
                     const badgeColorClass = isMuted ? 'bg-gray-400 dark:bg-gray-600' : 'bg-blue-600';
@@ -4866,13 +5337,13 @@ showChatOptions: (otherUid, event) => {
                     const isTyping = Memory.typing[otherUid]; 
                     
                     el.innerHTML = `
-                        <div class="relative shrink-0">
-                            <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover border border-gray-200 dark:border-gray-700 pointer-events-none">
-                            ${chatData.pin ? '<span class="absolute -top-1 -left-1 bg-blue-600 text-white p-1 rounded-full text-[8px] z-10 shadow-sm"><i class="ph-fill ph-push-pin"></i></span>' : ''}
+                        <div class="relative shrink-0 story-avatar-container" style="${ringStyle}">
+                            <img src="${u.photo || App.getDefaultAvatar()}" class="w-14 h-14 rounded-full object-cover ${ringClass} pointer-events-none">
+                            ${chatData.pin ? '<span class="absolute -top-1 right-0 bg-blue-600 text-white p-1 rounded-full text-[8px] z-10 shadow-sm"><i class="ph-fill ph-push-pin"></i></span>' : ''}
                             ${statusBadgeHtml} </div>
                         <div class="flex-1 overflow-hidden pr-2 pointer-events-none">
                             <div class="flex justify-between items-center">
-                                <h4 class="font-bold truncate ${hasUnread && !isMuted ? 'text-blue-600 dark:text-blue-400' : 'theme-text'}">${u.name} ${isMuted ? '<i class="ph-fill ph-bell-simple-slash text-gray-400 text-sm ml-1"></i>' : ''}</h4>
+                                <h4 class="font-bold truncate ${hasUnread && !isMuted ? 'text-blue-600 dark:text-blue-400' : 'theme-text'}">${App.getUserName(otherUid)} ${isMuted ? '<i class="ph-fill ph-bell-simple-slash text-gray-400 text-sm ml-1"></i>' : ''}</h4>
                                 <span class="text-xs opacity-60">${App.timeAgo(chatData.lastMsg.timestamp)}</span>
                             </div>
                             <div class="flex items-center justify-between mt-1">
@@ -4912,19 +5383,15 @@ showChatOptions: (otherUid, event) => {
                 const u = Memory.users[uid];
                 if(!u) return;
                 document.getElementById('chat-user-img').src = u.photo || App.getDefaultAvatar();
-                document.getElementById('chat-user-name').innerText = u.name;
+                // قراءة الاسم الجديد 
+                document.getElementById('chat-user-name').innerText = App.getUserName(uid);
                 
                 const isOnline = App.isOnline(u.lastActive);
                 document.getElementById('chat-online-dot').style.display = isOnline ? 'block' : 'none';
                 
                 const statusEl = document.getElementById('chat-user-status');
                 
-                // التحقق الدقيق: هل الشخص الآخر متصل + فاتح محادثتي أنا بالذات؟
-                if (isOnline && u.currentChatWith === currentUser.uid) {
-                    statusEl.innerHTML = '<span class="text-green-500 font-bold" style="animation: pulseAura 1.5s infinite;">(داخل المحادثة)</span>';
-                } else {
-                    statusEl.innerText = isOnline ? 'نشط الآن' : `آخر ظهور ${App.timeAgo(u.lastActive)}`;
-                }
+                statusEl.innerText = isOnline ? 'نشط الآن' : `آخر ظهور ${App.timeAgo(u.lastActive)}`;
                 
                 const isMuted = App.isMuted(uid);
                 const muteBtnIcon = document.getElementById('chat-mute-btn').querySelector('i');
@@ -4973,23 +5440,14 @@ showChatOptions: (otherUid, event) => {
             renderMessages: () => {
                 const otherUid = window.currentChatUserId;
                 if(!otherUid) return;
-
                 const container = document.getElementById('chat-messages-container');
-                
-                // جلب جميع رسائل المحادثة مباشرة من الذاكرة
                 let msgs = Memory.messages.filter(m => m.participants.includes(currentUser.uid) && m.participants.includes(otherUid));
-                
-                // الترتيب: الأقدم أولاً
                 msgs = msgs.sort((a,b) => a.timestamp - b.timestamp);
                 msgs = msgs.filter(m => !(m.deletedFor && m.deletedFor.includes(currentUser.uid)));
-
                 App.updateChatPet(msgs);
-
-                // تفريغ الرسائل فقط مع إبقاء فقاعة الكتابة
                 Array.from(container.children).forEach(child => {
                     if(child.id !== 'live-typing-bubble') child.remove();
                 });
-
                 const pinnedMsg = msgs.find(m => m.pinned);
                 if(pinnedMsg) {
                     const pinEl = document.createElement('div');
@@ -4998,27 +5456,137 @@ showChatOptions: (otherUid, event) => {
                     pinEl.onclick = () => { App.highlightMessage(pinnedMsg.id); };
                     container.appendChild(pinEl);
                 }
-
                 if(msgs.length === 0) {
                     container.innerHTML += '<div class="text-center opacity-50 py-10 mt-auto theme-text">بدء محادثة جديدة 👋</div>';
                     return;
                 }
-
+                // دالة فحص الإيموجي (الطلب 8)
+                const isOnlyEmojis = (str) => {
+                    const stripped = str.replace(/\s/g, '');
+                    if(!stripped) return false;
+                    const emojiRegex = /^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F|\p{Emoji_Modifier_Base})+$/gu;
+                    const isEmoji = emojiRegex.test(stripped);
+                    const length = [...new Intl.Segmenter().segment(stripped)].length;
+                    return isEmoji && length <= 15;
+                };
+                let lastDateStr = '';
                 msgs.forEach(m => {
+                    // نظام التواريخ الفاصلة (الطلب 10)
+                    const msgDateObj = new Date(m.timestamp);
+                    const msgDateStr = msgDateObj.toLocaleDateString('ar-EG', { month: 'long', day: 'numeric' });
+                    
+                    if (msgDateStr !== lastDateStr) {
+                        const dateDivider = document.createElement('div');
+                        dateDivider.className = 'flex justify-center w-full my-3 pointer-events-none z-10';
+                        dateDivider.innerHTML = `<span class="bg-gray-200/60 dark:bg-gray-700/60 text-gray-700 dark:text-gray-300 text-[11px] font-bold px-3 py-1 rounded-full backdrop-blur-sm shadow-sm">${msgDateStr}</span>`;
+                        container.appendChild(dateDivider);
+                        lastDateStr = msgDateStr;
+                    }
                     const isMe = m.senderId === currentUser.uid;
                     const row = document.createElement('div');
-                    row.className = `msg-row flex w-full mb-4 ${isMe ? 'justify-end' : 'justify-start'}`;
-                    row.setAttribute('data-msg-id', m.id);
-
-                    const el = document.createElement('div');
-                    el.className = `max-w-[80%] rounded-2xl p-3 shadow-sm relative break-words ${isMe ? 'bubble-me rounded-br-sm' : 'bubble-other rounded-bl-sm'}`;
                     
-                    // --- برمجة الضغط المزدوج والضغط المفرد ---
+                    // رسالة النظام لتغيير الاسم (الطلب 9)
+                    if (m.isSystemMsg && m.systemAction === 'alias_change') {
+                        row.className = 'flex justify-center w-full my-2 pointer-events-none z-10';
+                        const systemText = isMe ? `لقد غيرت اسمه إلى ${m.text}` : `غيّر ${Memory.users[m.senderId]?.name || 'المستخدم'} اسمك في التطبيق إلى ${m.text}`;
+                        row.innerHTML = `<span class="bg-black/40 dark:bg-black/60 text-white text-[11px] font-bold px-4 py-1.5 rounded-full backdrop-blur-md shadow-sm">${systemText}</span>`;
+                        container.appendChild(row);
+                        return; // لا تكمل رسم الرسالة العادية
+                    }
+                    const isSelected = window.selectedMessages && window.selectedMessages.includes(m.id);
+                    const selectedBgClass = isSelected ? 'bg-blue-100/50 dark:bg-blue-900/30' : '';
+                    row.className = `msg-row flex w-full mb-3 cursor-pointer transition-colors ${isMe ? 'justify-end' : 'justify-start'} ${selectedBgClass}`;
+                    row.setAttribute('data-msg-id', m.id);
+                    const el = document.createElement('div');
+                    
+// فحص إذا كانت الرسالة ملصقات فقط
+                    const emojiOnly = isOnlyEmojis(m.text) && !m.isNoteReply && !m.replyToId;
+                    
+                    if (emojiOnly) {
+                        // حساب عدد الإيموجيات لضبط الحجم الديناميكي (نظام تليجرام)
+                        const stripped = m.text.replace(/\s/g, '');
+                        const emojiCount = [...new Intl.Segmenter().segment(stripped)].length;
+                        
+                        let emojiSizeClass = 'text-[55px]'; // إيموجي واحد (عملاق)
+                        if (emojiCount === 2) emojiSizeClass = 'text-[45px]'; // 2 إيموجي (كبير)
+                        else if (emojiCount === 3) emojiSizeClass = 'text-[38px]'; // 3 إيموجي (وسط)
+                        else if (emojiCount > 3 && emojiCount <= 6) emojiSizeClass = 'text-[30px]'; // 4 إلى 6 (أصغر)
+                        else if (emojiCount > 6) emojiSizeClass = 'text-[24px]'; // أكثر من 6 (حجم طبيعي)
+                        // استخدمنا نفس الكلاسات والاتجاهات التي طلبتها مع دمج حجم الإيموجي المتغير
+                        el.className = `w-fit max-w-[85%] px-1 py-1 relative ${emojiSizeClass} bg-transparent shadow-none flex flex-wrap break-words ${isMe ? 'justify-end' : 'justify-start'}`;
+                        el.style.lineHeight = '1.2';
+                    } else {
+                        el.className = `w-fit min-w-[80px] max-w-[85%] rounded-2xl px-3 py-2 shadow-sm relative flex flex-col ${isMe ? 'bubble-me rounded-br-sm' : 'bubble-other rounded-bl-sm'}`;
+                        el.style.lineHeight = 'normal';
+                    }
+                    
                     let clickTimer = null;
                     let lastClickTime = 0;
-                    
-                    el.onclick = (e) => {
-                        e.stopPropagation();
+                    let pressTimer = null;
+                    let isSelecting = false;
+                    let startX = 0, startY = 0, currentX = 0, currentY = 0;
+                    let isSwiping = false;
+                    let isScrolling = false;
+                    row.addEventListener('touchstart', (e) => { 
+                        startX = e.touches[0].clientX; 
+                        startY = e.touches[0].clientY; 
+                        isSwiping = false; 
+                        isScrolling = false;
+                        if (!window.selectedMessages || window.selectedMessages.length === 0) {
+                            pressTimer = setTimeout(() => {
+                                if(!isScrolling && !isSwiping) {
+                                    isSelecting = true;
+                                    App.toggleMessageSelection(m.id, row);
+                                    if(navigator.vibrate) navigator.vibrate(50);
+                                }
+                            }, 400);
+                        }
+                    }, {passive: true});
+                    row.addEventListener('touchmove', (e) => { 
+                        if(!startX || !startY) return;
+                        currentX = e.touches[0].clientX; 
+                        currentY = e.touches[0].clientY;
+                        let diffX = currentX - startX; 
+                        let diffY = currentY - startY;
+                        
+                        if (Math.abs(diffY) > 10) {
+                            isScrolling = true;
+                            clearTimeout(pressTimer);
+                        } else if (diffX < -10 && Math.abs(diffX) > Math.abs(diffY)) { 
+                            isSwiping = true;
+                            clearTimeout(pressTimer);
+                            if(e.cancelable) e.preventDefault();
+                            let translate = Math.max(diffX, -70); 
+                            row.style.transform = `translateX(${translate}px)`;
+                            replyIcon.style.opacity = Math.abs(translate) / 70;
+                        }
+                    }, {passive: false});
+                    row.addEventListener('touchend', (e) => { 
+                        clearTimeout(pressTimer);
+                        if(!isSwiping) return;
+                        row.style.transform = `translateX(0)`; replyIcon.style.opacity = 0;
+                        if (currentX - startX < -50) { 
+                            App.setReplyMode(m.id, m.text, isMe ? 'نفسك' : Memory.users[m.senderId].name);
+                        }
+                        startX = 0; isSwiping = false; isScrolling = false;
+                    });
+                    row.addEventListener('mousedown', (e) => { 
+                        if (!window.selectedMessages || window.selectedMessages.length === 0) {
+                            pressTimer = setTimeout(() => {
+                                isSelecting = true;
+                                App.toggleMessageSelection(m.id, row);
+                            }, 400);
+                        }
+                    });
+                    row.addEventListener('mouseup', () => clearTimeout(pressTimer));
+                    row.addEventListener('mouseleave', () => clearTimeout(pressTimer));
+                    row.onclick = (e) => { 
+                        if (e.target.closest('.btn-tap') || e.target.closest('.link-internal') || e.target.closest('.link-external')) return;
+                        if (isSelecting) { isSelecting = false; return; }
+                        if (window.selectedMessages && window.selectedMessages.length > 0) {
+                            App.toggleMessageSelection(m.id, row);
+                            return;
+                        }
                         const currentTime = new Date().getTime();
                         const timeDiff = currentTime - lastClickTime;
                         
@@ -5030,7 +5598,9 @@ showChatOptions: (otherUid, event) => {
                         } else {
                             lastClickTime = currentTime;
                             clickTimer = setTimeout(() => {
-                                App.showMessageOptions(m.id, isMe, m.text, m.pinned);
+                                if (!window.selectedMessages || window.selectedMessages.length === 0) {
+                                    App.showMessageOptions(m.id, isMe, m.text, m.pinned);
+                                }
                             }, 300); 
                         }
                     };
@@ -5038,31 +5608,7 @@ showChatOptions: (otherUid, event) => {
                     let replyIcon = document.createElement('i');
                     replyIcon.className = `ph-fill ph-reply reply-icon-indicator ${isMe ? '-left-8' : '-right-8'}`;
                     row.appendChild(replyIcon);
-
-                    let startX = 0, startY = 0, currentX = 0;
-                    let isSwiping = false;
-                    row.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; startY = e.touches[0].clientY; isSwiping = false; }, {passive: true});
-                    row.addEventListener('touchmove', (e) => {
-                        if(!startX || !startY) return;
-                        currentX = e.touches[0].clientX; let diffX = currentX - startX; let diffY = e.touches[0].clientY - startY;
-                        if (diffX < -10 && Math.abs(diffX) > Math.abs(diffY)) { 
-                            isSwiping = true;
-                            if(e.cancelable) e.preventDefault();
-                            let translate = Math.max(diffX, -70); 
-                            row.style.transform = `translateX(${translate}px)`;
-                            replyIcon.style.opacity = Math.abs(translate) / 70;
-                        }
-                    }, {passive: false});
-                    row.addEventListener('touchend', (e) => {
-                        if(!isSwiping) return;
-                        row.style.transform = `translateX(0)`; replyIcon.style.opacity = 0;
-                        if (currentX - startX < -50) { 
-                            App.setReplyMode(m.id, m.text, isMe ? 'نفسك' : Memory.users[m.senderId].name);
-                        }
-                        startX = 0; isSwiping = false;
-                    });
-
-                    const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-500 text-[16px] ml-1 drop-shadow-sm"></i>' : '<i class="ph ph-check opacity-70 text-[16px] ml-1"></i>') : '';
+                    const tickHtml = isMe ? (m.read ? '<i class="ph-fill ph-checks text-blue-300 drop-shadow-sm ml-0.5 text-[15px]"></i>' : '<i class="ph ph-check opacity-70 ml-0.5 text-[15px]"></i>') : '';
                     
                     let reactionsHtml = '';
                     if (m.reactions && Object.keys(m.reactions).length > 0) {
@@ -5071,20 +5617,19 @@ showChatOptions: (otherUid, event) => {
                             if (!reactionGroups[emoji]) reactionGroups[emoji] = [];
                             reactionGroups[emoji].push(uid);
                         });
-
                         let bubbles = '';
                         Object.entries(reactionGroups).forEach(([emoji, uids]) => {
                             let avatarsHtml = '';
                             uids.forEach(uid => {
                                 const user = Memory.users[uid];
                                 if (user) {
-                                    avatarsHtml += `<img src="${user.photo || App.getDefaultAvatar()}" class="w-5 h-5 min-w-[20px] shrink-0 rounded-full border border-blue-100 dark:border-blue-900 -ml-1.5 inline-block object-cover z-10 relative">`;
+                                    avatarsHtml += `<img src="${user.photo || App.getDefaultAvatar()}" class="w-4 h-4 min-w-[16px] shrink-0 rounded-full border border-blue-100 dark:border-blue-900 -ml-1 inline-block object-cover z-10 relative">`;
                                 }
                             });
                             
                             bubbles += `
-                                <div class="bg-blue-100 dark:bg-blue-900/60 border border-blue-200 dark:border-blue-800 rounded-full pl-2 pr-1 py-0.5 flex items-center gap-1.5 shadow-sm cursor-pointer btn-tap" onclick="App.showReactionsModal('${m.id}')">
-                                    <span class="text-[14px] -mt-0.5">${emoji}</span>
+                                <div class="bg-blue-100/90 dark:bg-blue-900/80 border border-blue-200 dark:border-blue-700 rounded-full pl-1.5 pr-1 py-0.5 flex items-center gap-1 shadow-sm cursor-pointer btn-tap" onclick="App.showReactionsModal('${m.id}')">
+                                    <span class="text-[12px] -mt-0.5">${emoji}</span>
                                     <div class="flex pl-1">${avatarsHtml}</div>
                                 </div>
                             `;
@@ -5094,22 +5639,39 @@ showChatOptions: (otherUid, event) => {
                     
                     let messageContentHtml = '';
                     
-                    if (m.isNoteReply && m.replyNoteText) {
-                        // تصميم الرد على الستوري
+                    // التصميم الجديد للرد على الستوري والملاحظات
+                    if (m.isNoteReply) {
+                        let storyContentHtml = '';
+                        if (m.replyNoteImage) {
+                            // إذا كانت قصة صورة (يظهر النص واسم القصة وصورة مصغرة)
+                            storyContentHtml = `
+                                <div class="flex items-center gap-2 bg-black/15 dark:bg-white/10 p-1.5 rounded-xl border-r-[3px] ${isMe ? 'border-white' : 'border-blue-500'} mb-2 w-fit min-w-[180px] max-w-full cursor-pointer overflow-hidden">
+                                    <div class="flex flex-col flex-1 pr-1 text-right overflow-hidden">
+                                        <span class="text-[11px] font-bold ${isMe ? 'text-white' : 'text-blue-600 dark:text-blue-400'} block mb-0.5">رد على قصة</span>
+                                        <span class="text-[12px] truncate block opacity-80">${m.replyNoteText ? escapeHTML(m.replyNoteText) : 'صورة'}</span>
+                                    </div>
+                                    <img src="${m.replyNoteImage}" class="w-10 h-12 rounded-lg object-cover border border-black/10 shrink-0 ml-1">
+                                </div>
+                            `;
+                        } else {
+                            // إذا كانت ملاحظة نصية (يظهر مربع أسود كخلفية وبداخله النص فقط)
+                            storyContentHtml = `
+                                <div class="flex items-center justify-between gap-2 bg-black/15 dark:bg-white/10 p-1.5 rounded-xl border-r-[3px] ${isMe ? 'border-white' : 'border-blue-500'} mb-2 w-fit min-w-[180px] max-w-full cursor-pointer overflow-hidden">
+                                    <div class="flex flex-col flex-1 pr-1 text-right overflow-hidden">
+                                        <span class="text-[11px] font-bold ${isMe ? 'text-white' : 'text-blue-600 dark:text-blue-400'} block">رد على ملاحظة</span>
+                                    </div>
+                                    <div class="w-10 h-12 rounded-lg bg-gray-900 flex items-center justify-center shrink-0 p-1 border border-black/20 ml-1">
+                                        <span class="text-[6px] text-white text-center leading-tight overflow-hidden break-words line-clamp-3">${escapeHTML(m.replyNoteText)}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
                         messageContentHtml = `
-                            <div class="flex items-center gap-2.5 mb-1 bg-black/5 dark:bg-white/10 p-1.5 rounded-xl border border-black/10 dark:border-white/10">
-                                <div class="w-9 h-12 rounded-lg bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 flex items-center justify-center p-1.5 overflow-hidden shrink-0 shadow-inner">
-                                    <span class="text-[7px] font-bold text-center leading-tight line-clamp-3">${escapeHTML(m.replyNoteText)}</span>
-                                </div>
-                                <div class="flex-1 overflow-hidden pr-1">
-                                    <span class="text-[11px] font-bold text-blue-500 block mb-0.5">ملاحظة</span>
-                                    <span class="text-[14px] truncate block theme-text">${parseTextWithLinks(m.text, true)}</span>
-                                </div>
-                            </div>
+                            ${storyContentHtml}
+                            <span class="${emojiOnly ? '' : 'text-[15px] leading-relaxed'} whitespace-pre-wrap break-words inline-block pb-4">${parseTextWithLinks(m.text, true)}</span>
                         `;
                     } else if (m.replyToId) {
-                        // --- الكود الجديد: تصميم الرد على الرسائل العادية داخل المحادثة ---
-                        // البحث عن الرسالة الأصلية لمعرفة نصها واسم مرسلها
                         const repliedMsg = window.allMessages.find(x => x.id === m.replyToId) || Memory.messages.find(x => x.id === m.replyToId);
                         let repliedText = 'رسالة محذوفة';
                         let repliedName = 'مستخدم';
@@ -5121,34 +5683,129 @@ showChatOptions: (otherUid, event) => {
                                 repliedName = repliedMsg.senderId === currentUser.uid ? 'أنت' : repliedUser.name;
                             }
                         }
-
                         messageContentHtml = `
-                            <div class="flex flex-col">
-                                <div class="mb-1.5 p-2 rounded-xl bg-black/10 dark:bg-white/10 border-r-4 border-blue-500 cursor-pointer hover:opacity-80 transition-opacity" onclick="App.highlightMessage('${m.replyToId}')">
-                                    <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400 block mb-0.5">${repliedName}</span>
-                                    <span class="text-[12px] opacity-80 truncate block theme-text max-w-[200px]">${escapeHTML(repliedText)}</span>
-                                </div>
-                                <p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p>
+                            <div class="mb-1.5 p-1.5 rounded-lg bg-black/10 dark:bg-white/10 border-r-[3px] ${isMe ? 'border-white' : 'border-blue-500'} cursor-pointer hover:opacity-80 transition-opacity flex flex-col" onclick="App.highlightMessage('${m.replyToId}')">
+                                <span class="text-[11px] font-bold ${isMe ? 'text-white opacity-90' : 'text-blue-600 dark:text-blue-400'} block mb-0.5">${repliedName}</span>
+                                <span class="text-[12px] opacity-80 truncate block max-w-[200px]">${escapeHTML(repliedText)}</span>
                             </div>
+                            <span class="${emojiOnly ? '' : 'text-[15px] leading-relaxed'} whitespace-pre-wrap break-words inline-block pb-4">${parseTextWithLinks(m.text, true)}</span>
                         `;
                     } else {
-                        // رسالة عادية جداً
-                        messageContentHtml = `<p class="text-[15px] leading-relaxed whitespace-pre-wrap">${parseTextWithLinks(m.text, true)}</p>`;
+                        messageContentHtml = `<span class="${emojiOnly ? '' : 'text-[15px] leading-relaxed'} whitespace-pre-wrap break-words inline-block ${emojiOnly ? 'pb-1' : 'pb-4'}">${parseTextWithLinks(m.text, true)}</span>`;
                     }
-
-                    el.innerHTML = `${messageContentHtml}<span class="text-[10px] mt-1.5 flex justify-end items-center gap-1 font-medium opacity-80">${new Date(m.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})} ${tickHtml}</span>${reactionsHtml}`;
+                    const timeString = new Date(m.timestamp).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'});
+                    
+                    const timeContainerClass = emojiOnly ? "absolute -bottom-1 -right-2 bg-black/40 text-white rounded-full px-1.5 pb-0.5 pt-1" : "absolute bottom-1 right-2 opacity-70";
+                    el.innerHTML = `
+                        ${messageContentHtml}
+                        <span class="${timeContainerClass} text-[10px] flex items-center justify-end font-medium w-fit" dir="ltr">
+                            ${timeString} ${tickHtml}
+                        </span>
+                        ${reactionsHtml}
+                    `;
                     
                     row.appendChild(el);
                     container.appendChild(row);
                 });
-
                 const typingBubble = document.getElementById('live-typing-bubble');
                 if(typingBubble) container.appendChild(typingBubble);
+                // إجبار النزول للأسفل فورا (الطلب 11)
+                container.style.scrollBehavior = 'auto'; // إلغاء السموث
+                container.scrollTop = container.scrollHeight; // نزول مباشر وسريع
+            },
 
-                // النزول لأسفل المحادثة دائماً
-                setTimeout(() => {
-                    container.scrollTop = container.scrollHeight;
-                }, 50);
+            // --- دوال نظام التحديد المتعدد للحذف الجديدة ---
+            toggleMessageSelection: (msgId, rowEl) => {
+                if (!window.selectedMessages) window.selectedMessages = [];
+                const index = window.selectedMessages.indexOf(msgId);
+                
+                if (index === -1) {
+                    window.selectedMessages.push(msgId);
+                    rowEl.classList.add('bg-blue-100/50', 'dark:bg-blue-900/30');
+                } else {
+                    window.selectedMessages.splice(index, 1);
+                    rowEl.classList.remove('bg-blue-100/50', 'dark:bg-blue-900/30');
+                }
+                App.updateSelectionHeader();
+            },
+
+            updateSelectionHeader: () => {
+                const normalHeader = document.getElementById('normal-chat-header');
+                const selectionHeader = document.getElementById('selection-chat-header');
+                const countSpan = document.getElementById('selection-count');
+
+                if (window.selectedMessages && window.selectedMessages.length > 0) {
+                    normalHeader.classList.add('hidden');
+                    selectionHeader.classList.remove('hidden');
+                    selectionHeader.classList.add('flex');
+                    countSpan.innerText = window.selectedMessages.length;
+                } else {
+                    normalHeader.classList.remove('hidden');
+                    selectionHeader.classList.add('hidden');
+                    selectionHeader.classList.remove('flex');
+                    window.selectedMessages = [];
+                }
+            },
+
+            clearMessageSelection: () => {
+                window.selectedMessages = [];
+                App.updateSelectionHeader();
+                document.querySelectorAll('.msg-row').forEach(row => {
+                    row.classList.remove('bg-blue-100/50', 'dark:bg-blue-900/30');
+                });
+            },
+
+            showBulkDeleteOptions: () => {
+                if (!window.selectedMessages || window.selectedMessages.length === 0) return;
+
+                // فحص إذا كانت هناك رسالة للطرف الآخر ضمن المحدد
+                const msgs = window.selectedMessages.map(id => Memory.messages.find(m => m.id === id)).filter(Boolean);
+                const hasOtherUserMsg = msgs.some(m => m.senderId !== currentUser.uid);
+
+                const content = document.getElementById('action-modal-content');
+                let buttons = '';
+
+                // إذا كانت كل الرسائل المحددة مرسلة مني، يظهر خيار (حذف للجميع)
+                if (!hasOtherUserMsg) {
+                    buttons += `
+                        <button onclick="App.executeBulkDelete('all')" class="w-full flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-red-50 btn-tap text-red-500 font-bold">
+                            <span>حذف للجميع</span> <i class="ph-fill ph-trash text-lg"></i>
+                        </button>
+                    `;
+                }
+
+                // خيار الحذف من عندي يظهر دائماً
+                buttons += `
+                    <button onclick="App.executeBulkDelete('me')" class="w-full flex justify-between items-center p-4 hover:bg-orange-50 btn-tap text-orange-500 font-bold">
+                        <span>حذف من عندي</span> <i class="ph-fill ph-trash-simple text-lg"></i>
+                    </button>
+                `;
+
+                content.innerHTML = buttons;
+                UI.openModal('action-modal');
+            },
+
+            executeBulkDelete: async (type) => {
+                UI.closeModal('action-modal');
+                const msgsToDelete = [...window.selectedMessages];
+                App.clearMessageSelection(); // إرجاع الشريط للحالة الطبيعية
+
+                // عمل تأثير تلاشي للرسائل المحذوفة لتسريع الاستجابة
+                msgsToDelete.forEach(msgId => {
+                    const row = document.querySelector(`[data-msg-id="${msgId}"]`);
+                    if (row) row.classList.add('fade-out-delete');
+                });
+
+                setTimeout(async () => {
+                    for (let msgId of msgsToDelete) {
+                        if (type === 'all') {
+                            await deleteDoc(doc(db, MESSAGES_PATH, msgId)).catch(()=>{});
+                        } else if (type === 'me') {
+                            await updateDoc(doc(db, MESSAGES_PATH, msgId), { deletedFor: arrayUnion(currentUser.uid) }).catch(()=>{});
+                        }
+                    }
+                    UI.showMessage(type === 'all' ? 'تم حذف الرسائل للجميع' : 'تم حذف الرسائل من جهازك');
+                }, 300);
             },
 
             sendMessage: async () => {
@@ -5191,11 +5848,39 @@ showChatOptions: (otherUid, event) => {
             },
 
             sendNotification: async (toUid, text, linkId) => {
-                if(toUid === currentUser.uid) return;
+    if(toUid === currentUser.uid) return;
+    await addDoc(collection(db, NOTIFS_PATH), {
+        to: toUid, from: currentUser.uid, text: text, linkId: linkId, timestamp: Date.now(), read: false
+    });
+
+    // التعديل: إرسال الإشعار العادي إلى شاشة الهاتف المحمول!
+    const targetUser = Memory.users[toUid];
+    if(targetUser && targetUser.fcmToken && window.AndroidInterface) {
+        // نرسل الإشعار بدون رقم محادثة (لأنه إشعار إعجاب/تعليق وليس رسالة)
+        window.AndroidInterface.sendNotification(targetUser.fcmToken, "إشعار من " + currentUser.name, text, currentUser.uid, "");
+    }
+},
+
+sendSystemNotification: async (toUid, text) => {
+                if(!toUid) return;
+                
+                // 1. الإرسال لقاعدة البيانات باسم النظام (SYSTEM)
                 await addDoc(collection(db, NOTIFS_PATH), {
-                    to: toUid, from: currentUser.uid, text: text, linkId: linkId, timestamp: Date.now(), read: false
+                    to: toUid, 
+                    from: "SYSTEM", 
+                    text: text, 
+                    linkId: null, 
+                    timestamp: Date.now(), 
+                    read: false
                 });
+                // 2. إرسال إشعار الهاتف الخارجي (Push) باسم الإدارة
+                const targetUser = Memory.users[toUid];
+                if(targetUser && targetUser.fcmToken && window.AndroidInterface) {
+                    window.AndroidInterface.sendNotification(targetUser.fcmToken, "الإدارة (قسم الإبلاغات)", text, "SYSTEM", "");
+                }
             },
+            
+            
             deleteNotification: async (notifId) => {
                 await deleteDoc(doc(db, NOTIFS_PATH, notifId));
                 UI.closeModal('action-modal');
@@ -5218,6 +5903,18 @@ showChatOptions: (otherUid, event) => {
                 container.innerHTML = '';
                 const notifs = [...Memory.notifications].sort((a,b) => b.timestamp - a.timestamp);
                 
+                const unreadCount = notifs.filter(n => !n.read).length;
+                const badge = document.getElementById('badge-notifications');
+                if (badge) {
+                    // التعديل: الفقاعة تبقى ظاهرة طالما اكو اشعارات ما مقروءة، حتى لو فتحت القسم
+                    if (unreadCount > 0) {
+                        badge.classList.remove('hidden');
+                        badge.innerText = unreadCount > 9 ? '+9' : unreadCount; 
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+                
                 if(notifs.length === 0) {
                     container.innerHTML = '<div class="text-center opacity-50 py-10 mt-10">لا توجد إشعارات</div>';
                     return;
@@ -5225,10 +5922,12 @@ showChatOptions: (otherUid, event) => {
 
                 notifs.forEach(n => {
                     let sName, sPhoto, canClick = true;
-
-                    if(n.from === "SYSTEM") {
-                        sName = "إدارة زايلو";
-                        sPhoto = "https://cdn-icons-png.flaticon.com/512/3936/3936411.png"; 
+                    
+                    // التحقق الصارم من أن الإشعار من النظام
+                    const isAdminByEmail = Memory.users[n.from] && Memory.users[n.from].email && window.MASTER_EMAIL && Memory.users[n.from].email.toLowerCase() === window.MASTER_EMAIL.toLowerCase();
+                    if(n.from === "SYSTEM" || isAdminByEmail) {
+                        sName = "إدارة تطبيق زايلو";
+                        sPhoto = "https://cdn-icons-png.flaticon.com/512/6062/6062646.png"; 
                         canClick = false;
                     } else {
                         const u = Memory.users[n.from];
@@ -5236,21 +5935,43 @@ showChatOptions: (otherUid, event) => {
                         sName = u.name;
                         sPhoto = u.photo || App.getDefaultAvatar();
                     }
-
+                    const unreadBgClass = !n.read ? 'bg-gray-200 dark:bg-gray-700' : 'bg-transparent';
+                    const unreadTextClass = !n.read ? 'font-black text-black dark:text-white' : 'font-medium text-gray-600 dark:text-gray-300';
                     const el = document.createElement('div');
-                    el.className = `flex items-center gap-3 p-3.5 border-b cursor-pointer theme-card ${!n.read ? 'bg-blue-50/10' : ''}`;
-                    el.onclick = () => {
-                        if(!n.read) App.markNotificationRead(n.id);
-                        if(!canClick) return UI.showMessage("إشعار من النظام");
+                    // إذا كان من النظام نزيل شكل المؤشر ليظهر كأنه غير قابل للضغط
+                    el.className = `flex items-center gap-3 p-4 border-b theme-card transition-colors duration-300 ${unreadBgClass} ${canClick ? 'cursor-pointer' : 'cursor-default'}`;
+                    
+                    el.onclick = (e) => {
+                        if(!n.read) {
+                            App.markNotificationRead(n.id);
+                            n.read = true; 
+                            App.renderNotifications(); 
+                            
+                            el.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+                            el.classList.add('bg-transparent');
+                            const pTag = el.querySelector('p');
+                            if(pTag) {
+                                pTag.classList.remove('font-black', 'text-black', 'dark:text-white');
+                                pTag.classList.add('font-medium', 'text-gray-600', 'dark:text-gray-300');
+                            }
+                        }
+                        
+                        // الإيقاف الفوري هنا إذا كان الإشعار من الإدارة
+                        if(!canClick) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            return; 
+                        }
+                        
                         if(n.linkId) UI.openModal('comments-modal', n.linkId);
                         else UI.openModal('profile-modal', n.from);
                     };
 
                     el.innerHTML = `
-                        <img src="${sPhoto}" class="w-12 h-12 rounded-full border">
+                        <img src="${sPhoto}" class="w-12 h-12 rounded-full border border-gray-300 shadow-sm">
                         <div class="flex-1">
-                            <p class="text-sm"><span class="font-bold">${sName}</span> ${n.text}</p>
-                            <span class="text-[10px] opacity-50">${App.timeAgo(n.timestamp)}</span>
+                            <p class="text-[15px] ${unreadTextClass}"><span class="font-black">${sName}</span> ${n.text}</p>
+                            <span class="text-[11px] opacity-60 font-bold mt-1 block">${App.timeAgo(n.timestamp)}</span>
                         </div>`;
                     container.appendChild(el);
                 });
@@ -5282,8 +6003,22 @@ showChatOptions: (otherUid, event) => {
                 const username = usernameInput.value.trim();
                 const bio = document.getElementById('edit-bio').value.trim();
                 
+                // جمع تاريخ الميلاد
+                const bDay = parseInt(document.getElementById('edit-birth-day').value);
+                const bMonth = parseInt(document.getElementById('edit-birth-month').value);
+                
                 if(!name || (!username && !usernameInput.disabled)) return UI.showMessage('الاسم والمعرف مطلوبان');
+                
                 const updates = { name, bio };
+                
+                // التأكد من صحة ارقام الميلاد قبل الحفظ
+                if(!isNaN(bDay) && !isNaN(bMonth)) {
+                    updates.birthDay = bDay;
+                    updates.birthMonth = bMonth;
+                } else {
+                    updates.birthDay = null;
+                    updates.birthMonth = null;
+                }
 
                 if(!usernameInput.disabled && username !== currentUser.username) {
                     const tenDaysInMs = 10 * 24 * 60 * 60 * 1000;
@@ -5297,7 +6032,6 @@ showChatOptions: (otherUid, event) => {
                     updates.lastUsernameChange = Date.now();
                 }
                 
-                // حفظ الجنس إذا تغير
                 if(window.selectedEditGender && window.selectedEditGender !== currentUser.gender) {
                     const sixtyDaysInMs = 60 * 24 * 60 * 60 * 1000;
                     const lastChange = currentUser.lastGenderChange || 0;
@@ -5311,10 +6045,21 @@ showChatOptions: (otherUid, event) => {
 
                 await updateDoc(doc(db, USERS_PATH, currentUser.uid), updates);
                 Object.assign(currentUser, updates);
+                
+                // التحديث الفوري بالذاكرة المحلية لضمان العرض مباشرة
+                if(Memory.users[currentUser.uid]) {
+                    Object.assign(Memory.users[currentUser.uid], updates);
+                }
+                
                 window.tempEditPhoto = null;
                 App.updateUIWithUserData();
                 UI.closeModal('edit-profile-modal');
-                UI.showMessage('تم حفظ التغييرات');
+                UI.showMessage('تم حفظ التغييرات بنجاح');
+                
+                // إذا كان الملف الشخصي مفتوح خلف نافذة التعديل يتم تحديثه
+                if(!document.getElementById('profile-modal').classList.contains('hidden')){
+                    App.renderUserProfile(currentUser.uid);
+                }
             },
 
             updatePrivacy: async (key, value) => {
@@ -5404,6 +6149,25 @@ showChatOptions: (otherUid, event) => {
                 touchStartX = 0; isPageSwiping = false;
             });
         });
+        
+        // دالة استلام وحفظ التوكن الذكية
+window.updateFCMToken = (token) => {
+    // راح نظل نحاول كل ثانيتين لحد ما نلقى المستخدم مسجل دخول
+    const trySaveToken = setInterval(async () => {
+        if (window.currentUser && window.currentUser.uid) {
+            clearInterval(trySaveToken); // نوقف المحاولة لأن لكيناه
+            try {
+                await updateDoc(doc(db, USERS_PATH, window.currentUser.uid), {
+                    fcmToken: token
+                });
+                window.currentUser.fcmToken = token;
+                console.log("تم حفظ التوكن بنجاح!");
+            } catch (error) {
+                console.error("خطأ بالحفظ:", error);
+            }
+        }
+    }, 2000); 
+};
 
         window.onload = () => {
             Auth.init();
